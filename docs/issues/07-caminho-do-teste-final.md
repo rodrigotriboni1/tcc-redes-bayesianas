@@ -31,7 +31,7 @@ Acrescentar o modo `--final` a `modelos.py`, `avaliar.py` e `decisao.py`, para o
 | `resultados/predicoes_teste.csv` | `record_id,kredit,p_nb,p_tan,p_logreg` |
 | `resultados/metricas_teste.csv` | Uma linha por modelo e `taxa_base`: métricas com intervalo por bootstrap para ROC-AUC e Brier |
 | `resultados/calibracao_teste.png` | Diagrama de calibração |
-| `resultados/politicas_teste.csv`, `resultados/resumo_politicas_teste.csv` | Mesmo formato dos arquivos do dev |
+| `resultados/politicas_teste.csv`, `resultados/resumo_politicas_teste.csv` | Mesmo formato dos arquivos do dev; o resumo ganha `utilidade_media_ic_inf` e `utilidade_media_ic_sup`, do bootstrap de 2000 reamostras (semente 2026, percentis 2,5 e 97,5), as mesmas para todos os modelos e regras |
 
 ## Comportamento
 

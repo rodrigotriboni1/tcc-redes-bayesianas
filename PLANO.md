@@ -8,7 +8,7 @@ Situação: **fechado em 15/11/2026**, salvo as respostas do orientador (item 11
 
 ## 1. Pergunta
 
-Uma política de decisão que separa a estimativa do risco (rede bayesiana calibrada) da escolha da ação (utilidade esperada explícita) produz recomendações mais consistentes e transparentes do que regras de limiar sobre um escore?
+Uma política que separa a estimativa do risco (rede bayesiana, com calibração medida) da escolha da ação (utilidade esperada) tem (1) limiares explícitos, que qualquer pessoa reproduz a partir da matriz de utilidade e de `p`, e (2) que efeito medido sobre as ações e a utilidade média, em comparação com um limiar fixo de 0,5?
 
 ## 2. O que o trabalho entrega
 
@@ -76,9 +76,9 @@ Cuidados com a base:
 | Estrutura 3 (opcional) | Busca hill climbing com BIC | Estrutura livre, aprendida dos dados |
 | Probabilidades | Estimação bayesiana com prior BDeu | Evita probabilidade zero em combinações raras |
 | Inferência | Eliminação de variáveis, exata | A rede é pequena |
-| Calibração | Medir. Corrigir com regressão isotônica é decisão do autor depois de ver `metricas_dev.csv`; se entrar, é issue nova | Naive Bayes costuma exagerar a confiança; a escolha não pode ser do agente |
+| Calibração | Só medir (decidido em 15/11/2026). Não há correção de calibração; a necessidade de calibrar vem da literatura e o experimento mede o erro de calibração. Se o autor mudar de ideia depois de ver `metricas_dev.csv`, é issue nova | Naive Bayes costuma exagerar a confiança; a escolha não pode ser do agente |
 | Decisão | Utilidade esperada de cada ação; escolhe a maior | Núcleo do trabalho |
-| Comparação | {Naive Bayes, TAN, regressão logística} × {limiares derivados da utilidade, limiar fixo de 0,5}. O autor escolhe qual rede vai para a tabela 2×2 do texto antes do commit de congelamento | Separa o efeito do modelo do efeito da regra |
+| Comparação | {Naive Bayes, TAN, regressão logística} × {limiares derivados da utilidade, limiar fixo de 0,5}. O TAN vai para a tabela 2×2 do texto (decidido em 15/11/2026, antes de qualquer métrica); os três modelos ficam no apêndice | Compara uma política de três ações por utilidade com um corte de duas ações. A diferença mistura modelo, representação (a regressão logística usa as contínuas originais, as redes usam 3 faixas) e conjunto de ações |
 | Validação | Cruzada estratificada em 5 partes, só no dev | Não gasta o teste |
 | Evidência incompleta | Esconder uma variável por vez na inferência e medir a queda de ROC-AUC e Brier | A rede infere sem a variável; na regressão logística a variável escondida é preenchida com a mediana do treino (3 contínuas) ou a moda do treino (17 categóricas), para haver comparação |
 
@@ -100,13 +100,13 @@ Proposta de matriz para levar ao orientador, com os valores da apresentação de
 
 Com essa matriz, a análise manual é escolhida quando `c/400 ≤ p ≤ 1 − c/100`. Com c = 40, a faixa vai de 0,10 a 0,60; com c > 80, nunca é escolhida. Em caso de empate, a prioridade é análise manual, depois rejeitar, depois aprovar (tolerância 1e-9).
 
-**O que o trabalho afirma e o que não afirma.** Como a utilidade esperada de cada ação é uma reta em `p`, a política resultante equivale a uma regra de limiares sobre `p`. A contribuição não é uma regra de outro tipo: é **derivar os limiares dos custos, de forma explícita, e mostrar que isso exige probabilidade calibrada**. Por isso a comparação é a tabela 2×2 acima, e não "utilidade esperada contra limiar".
+**O que o trabalho afirma e o que não afirma.** Como a utilidade esperada de cada ação é uma reta em `p`, a política resultante equivale a uma regra de limiares sobre `p`. A contribuição não é uma regra de outro tipo: é **derivar os limiares dos custos, de forma explícita, e medir a calibração das probabilidades** (que a política exige probabilidade calibrada é resultado da literatura, não um achado deste experimento). Por isso a comparação é a tabela 2×2 acima, e não "utilidade esperada contra limiar".
 
-Como os termos da pergunta são observados: *consistência* é a ação só mudar quando `p` ou `U` mudam, medida pelo número de casos que mudam de ação entre as políticas; *transparência* é a matriz e as fronteiras ficarem escritas e auditáveis.
+Como os termos da pergunta são observados: *limiares explícitos e reproduzíveis* é, dadas a matriz em `config/utilidade.json` e `p`, qualquer pessoa obter a ação e as fronteiras (na matriz demonstrativa, `c/400` e `1 − c/100`); isso vale para qualquer escore e não distingue a rede da regressão logística. *Efeito medido* é a utilidade média e a distribuição das ações, com intervalo no teste, e o número de casos que mudam de ação entre as políticas (discordância, não consistência).
 
 ## 6. Métricas
 
-- **Modelo de risco:** ROC-AUC, Brier, log loss, erro de calibração, diagrama de calibração. No dev, média e desvio da validação cruzada; no teste, intervalo por bootstrap para ROC-AUC e Brier. Com 60 casos ruins no teste, diferença de AUC de 0,02 a 0,03 é ruído e não define vencedor.
+- **Modelo de risco:** ROC-AUC, Brier, log loss, erro de calibração, diagrama de calibração. No dev, média e desvio da validação cruzada; no teste, intervalo por bootstrap para ROC-AUC, Brier e utilidade média. Com 60 casos ruins no teste, diferença de AUC de 0,02 a 0,03 é ruído e não define vencedor.
 - **Política:** utilidade média, distribuição das ações, casos que mudam de ação entre as políticas.
 - **Sensibilidade:** ação recomendada em função do risco, da perda por inadimplência e do custo da análise manual.
 
@@ -219,7 +219,7 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 1. **Prazo:** datas de entrega e de defesa.
 2. **Matriz de utilidade:** ele aceita a matriz demonstrativa do item 5, com c = 40?
 3. **Monografia:** modelo de documento exigido pelo curso (LaTeX, Word, normas ABNT da UFU).
-4. **Avisos a dar:** a base passou a ser a South German Credit, versão corrigida da citada na proposta; o protótipo previsto na proposta virou demonstração em terminal.
+4. **Avisos a dar:** a base passou a ser a South German Credit, versão corrigida da citada na proposta; o protótipo previsto na proposta virou demonstração em terminal; a pergunta foi reformulada em duas partes e deixou de falar em "calibrada", "consistentes" e "transparentes" (a calibração é só medida, e a contribuição é derivar limiares dos custos de forma explícita e medir o efeito). Ver `docs/decisoes.md`.
 
 ## 12. Para depois
 

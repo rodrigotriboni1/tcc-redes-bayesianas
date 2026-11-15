@@ -53,6 +53,20 @@ Regra G4 do critério de aceite: mudar uma delas é motivo para parar e pergunta
 | 15/11/2026 | Demonstração treina nas 4 partições que não contêm o caso e usa `tan` por padrão (D1, D8) | Reproduz o mesmo número de `predicoes_dev.csv`, que é o da monografia. Por que `tan` e não `nb`: motivo não registrado | Autor (proposta do levantamento) |
 | 15/11/2026 | O trabalho afirma derivar limiares dos custos e mostrar que isso exige probabilidade calibrada. Não afirma que utilidade esperada seja regra de outro tipo que o limiar | A utilidade esperada de cada ação é uma reta em `p`, então a política equivale a limiares | Autor |
 
+### Decidido depois da revisão do repositório (15/11/2026)
+
+Decididas em conversa com o autor; um avaliador independente (subagente) julgou as sete antes do registro. Veredito dele entre parênteses; as ressalvas viram texto obrigatório na monografia.
+
+| Data | Decisão | Motivo | Quem |
+|---|---|---|---|
+| 15/11/2026 | **Calibração só é medida**, sem correção isotônica (P1). A pergunta troca "calibrada" por "com calibração medida" | Nenhuma issue nova; a correção dependeria de olhar `metricas_dev.csv`. Desvio da proposta, que promete "calibrar": avisar o orientador (plano, item 11.4). (Aceitável com ressalva) | Autor |
+| 15/11/2026 | A monografia não afirma que o experimento mostra que a política exige probabilidade calibrada; isso vem da literatura, e o experimento mede o erro de calibração (P2) | Alegação menor e honesta. Citar a fonte conferida no original. (Sólida) | Autor |
+| 15/11/2026 | **Pergunta reformulada em duas partes** (P3): (1) limiares explícitos e reproduzíveis a partir da matriz e de `p`; (2) efeito medido sobre as ações e a utilidade média contra o limiar fixo de 0,5 | "Consistentes e transparentes" não eram medidos. A primeira redação, "mais auditáveis", foi julgada problemática: contradiz a proposta (que chama regras e escores de auditáveis), vale por construção para qualquer escore e deixa a rede sem papel. A forma em duas partes separa a propriedade do efeito medido. Aviso ao orientador no item 11.4 | Autor |
+| 15/11/2026 | Bootstrap (2000 reamostras, semente 2026, percentis 2,5 e 97,5, as mesmas para todos os modelos e regras) também para a utilidade média no teste final (P4). Entra em `resumo_politicas_teste.csv` (critério 07.9) | A utilidade é a métrica da pergunta e não tinha intervalo. Ressalva: o intervalo é por política, não da diferença entre políticas, e não cobre a variação do treino; dizer isso no texto, ou decidir gravar o intervalo da diferença pareada (não decidido) | Autor |
+| 15/11/2026 | **O TAN vai para a tabela 2×2** do texto; os três modelos ficam no apêndice (P5) | Escolha pré-especificada, feita antes de existir `metricas_dev.csv`, então não depende de resultado. Fecha a D3. (Sólida) | Autor |
+| 15/11/2026 | A regressão logística mantém as 3 contínuas originais; as redes usam 3 faixas (P6) | Baseline usual; discretizar enfraqueceria o baseline e mudaria a issue 01 e a D2. Ressalva: a diferença TAN × logística mistura modelo e representação; escrever "modelo e representação", não "efeito do modelo". (Aceitável com ressalva) | Autor |
+| 15/11/2026 | Matriz de utilidade mantida (+100, −400, c = 40) como hipótese pendente do orientador; "o analista sempre acerta" vai para as limitações (P7) | Sem custo de código. Ressalva: com analista infalível, a política de três ações ganha por construção do corte de duas ações; dizer isso junto da tabela 2×2, não só nas limitações. (Aceitável com ressalva) | Autor |
+
 ## 5. Processo
 
 | Data | Decisão | Motivo | Quem |

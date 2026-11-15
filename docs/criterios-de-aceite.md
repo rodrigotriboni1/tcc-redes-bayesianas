@@ -12,8 +12,8 @@ As onze propostas abaixo foram aceitas em bloco em 15/11/2026.
 |---|---|---|
 | D1 | A demonstração treina no dev inteiro, mas o plano pede "mesmo risco de `predicoes_dev.csv`". Os dois não coincidem | A demonstração treina nas 4 partições que não contêm o caso; reproduz o número da monografia |
 | D2 | Na regressão logística com variável escondida, "moda" não serve para `hoehe` (753 valores distintos em 800 linhas, conferido) | Mediana do treino para as 3 contínuas; moda para as 17 categóricas |
-| D3 | A tabela 2×2 fala em "rede bayesiana", mas há duas (Naive Bayes e TAN) | A factory calcula as políticas para os três modelos; o autor escolhe qual vai para o texto antes do commit de congelamento |
-| D4 | "Calibrar se estiver ruim" depende do resultado | Fica fora das 7 issues; o autor decide depois de ver `metricas_dev.csv`; se entrar, é issue nova |
+| D3 | A tabela 2×2 fala em "rede bayesiana", mas há duas (Naive Bayes e TAN) | A factory calcula as políticas para os três modelos; o autor escolhe qual vai para o texto antes do commit de congelamento. **Decidido em 15/11/2026: o TAN** (ver `docs/decisoes.md`) |
+| D4 | "Calibrar se estiver ruim" depende do resultado | Fica fora das 7 issues; o autor decide depois de ver `metricas_dev.csv`; se entrar, é issue nova. **Decidido em 15/11/2026: só medir, sem correção** |
 | D5 | Empate entre ações (com c = 80 e p = 0,20 as três empatam) | Prioridade: análise manual > rejeitar > aprovar, tolerância 1e-9 |
 | D6 | Dois números da monografia não teriam arquivo | Criar `resumo_politicas_dev.csv` e `sensibilidade.csv` |
 | D7 | Grade da sensibilidade | Perda em {200, 400, 600, 800} × custo da análise em {0, 5, …, 100} |
@@ -179,7 +179,7 @@ A factory escreve e testa o caminho com linhas do dev. Quem o executa sobre o te
 6. `--verificar` cobre o caminho com um arquivo falso: as 160 linhas da partição 0 do dev, gravadas em pasta temporária. O resultado tem 160 linhas e é igual a `prever(dev, falso)` a 1e-12.
 7. `uv run python codigo/avaliar.py --final` lê `predicoes_teste.csv` e grava `metricas_teste.csv` e `calibracao_teste.png`: uma linha por modelo e a linha `taxa_base` (previsão = proporção de ruins do dev, 0,30), colunas `modelo,roc_auc,roc_auc_ic_inf,roc_auc_ic_sup,brier,brier_ic_inf,brier_ic_sup,log_loss,ece`.
 8. Intervalo por bootstrap: 2000 reamostras das linhas com reposição, semente 2026, percentis 2,5 e 97,5. O valor pontual fica dentro do intervalo.
-9. `uv run python codigo/decisao.py --final` lê `predicoes_teste.csv` e grava `politicas_teste.csv` e `resumo_politicas_teste.csv`, no mesmo formato dos arquivos do dev.
+9. `uv run python codigo/decisao.py --final` lê `predicoes_teste.csv` e grava `politicas_teste.csv` e `resumo_politicas_teste.csv`, no mesmo formato dos arquivos do dev, mais duas colunas em `resumo_politicas_teste.csv`: `utilidade_media_ic_inf` e `utilidade_media_ic_sup`. Elas usam o bootstrap do item 8 (2000 reamostras, semente 2026, percentis 2,5 e 97,5), com as mesmas reamostras para todos os modelos e regras. A utilidade média fica dentro do intervalo.
 10. Sem `predicoes_teste.csv`, `avaliar.py --final` e `decisao.py --final` terminam com mensagem e saída diferente de 0.
 11. Nenhum arquivo `*_teste*` é commitado pelo PR; o gate confere que não existem em `resultados/`.
 12. Os comandos sem `--final` geram os mesmos arquivos de antes, idênticos.
