@@ -52,7 +52,7 @@ if [ ${#alvos[@]} -gt 0 ]; then
 $achado"
 
   # 5. Padrões proibidos.
-  achado="$(grep -nE 'fillna|nan_to_num|pickle|joblib' "${alvos[@]}" || true)"
+  achado="$(grep -nE 'fillna|nan_to_num|pickle|joblib|\bclip\(' "${alvos[@]}" || true)"
   [ -z "$achado" ] || falha "padrão proibido:
 $achado"
   if [ -f codigo/avaliar.py ]; then

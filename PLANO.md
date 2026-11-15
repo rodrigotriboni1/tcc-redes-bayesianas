@@ -165,7 +165,7 @@ Arquivos passados entre scripts:
 | 2 | Teste de fumaça do `pgmpy` | começo de `modelos.py` | Nada | Naive Bayes e TAN treinam; `predict_probability` bate com `VariableElimination` em 5 linhas | Não |
 | 3 | Predições no dev, validação cruzada em 5 partes | `modelos.py` | `predicoes_dev.csv`, `cortes.json`, `tan_arestas.csv` | 800 linhas, sem vazio, valores entre 0 e 1; autoteste `--verificar` passa | Não |
 | 4 | Métricas e calibração | `avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | Linha `taxa_base` dá Brier 0,21 exato. Brier de um modelo igual ou acima disso gera aviso, não falha | Não |
-| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` | Para cada modelo e variável, ao menos uma predição muda. A comparação `laufkont` × `telef` é só aviso | Não |
+| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` | Nenhuma predição mudar ao esconder uma variável é aviso. A comparação `laufkont` × `telef` é só aviso | Não |
 | 6 | Camada de decisão | `decisao.py`, `test_decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` | Testes passam; contagens somam 800. Ação ausente gera aviso | Código não; números finais sim (matriz) |
 | 7 | Sensibilidade | `sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` | Fronteiras batem com a conta à mão | Código não; valores sim |
 | 8 | Demonstração | `demo.py` | Texto no terminal | Mesmo risco de `predicoes_dev.csv` para o mesmo caso | Não |
