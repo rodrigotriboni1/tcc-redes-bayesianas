@@ -21,6 +21,8 @@
     "factory/*",
     "dados/*",
     "codigo/preparar_sgc.py",
+    "config/utilidade.json",
+    "codigo/test_decisao.py",
     "PLANO.md",
     "AGENTS.md",
     "README.md",
