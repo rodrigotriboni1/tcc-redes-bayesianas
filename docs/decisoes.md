@@ -90,6 +90,7 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | 15/11/2026 | Na seção 2.5 do mapa, Platt (sigmoide) e regressão isotônica são métodos da literatura citados sem aplicar; o trabalho só mede a calibração (P27) | Evita sugerir que a isotônica é de Platt e fica coerente com a P1 | Autor |
 | 15/11/2026 | O mapa de referências ganha a coluna "Verificar" com o que falta conferir em cada entrada; o plano passa a dizer 15 entradas a conferir, não 9 (P28) | Cinco marcas `% VERIFICAR` do `.bib` não apareciam no mapa. A conferência no original continua sendo do autor | Autor |
 | 15/11/2026 | O log de uso de IA registra uma linha por tipo de uso (nove linhas), com o que foi aproveitado e o que **não** foi conferido (P29) | Transparência e reprodução, como pede `uso-de-ia.md`. Confirmar com o professor os usos aceitos e a forma de declarar | Autor |
+| 15/11/2026 | O `README.md` ganha índice da documentação, comandos, mapa das pastas e um parágrafo dizendo que `factory/` e `.claude/` são ferramenta de processo, não parte do experimento (P30) | Quem abre o repositório, incluindo a banca, via sete linhas e oito agentes sem explicação | Autor |
 
 ## 5. Processo
 
