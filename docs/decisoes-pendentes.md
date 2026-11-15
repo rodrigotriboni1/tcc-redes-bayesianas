@@ -6,17 +6,9 @@ Como usar: responda no campo **Decisão**; depois mova a linha para [decisoes.md
 
 Cada item diz se a afirmação foi **conferida** por mim no repositório ou **só da revisão** (não verifiquei).
 
-## 1. Antes de colocar a próxima issue na fila
+## 1. Resolvidas em 15/11/2026 (P1 a P7)
 
-| # | Questão | Opções | Consequência de cada uma | Conferido | Decisão |
-|---|---|---|---|---|---|
-| P1 | A pergunta (`PLANO.md:11`) fala em rede "calibrada", mas a calibração só é medida (`PLANO.md:79`, D4) | (a) Trocar a palavra por "com calibração medida" e registrar a mudança no item 11 do plano. (b) Abrir uma issue nova de calibração (regressão isotônica) antes do teste final | (a) Fica coerente com o que o experimento faz. A proposta promete "calibrar"; a mudança precisa ser avisada ao orientador. (b) Cumpre a proposta, mas acrescenta uma etapa e um número novo que o autor teria de escolher só depois de ver `metricas_dev.csv` | Conferido | |
-| P2 | O texto da monografia vai dizer que o experimento "mostra que a política exige probabilidade calibrada"? | (a) Sim, e entra uma análise comparando a política com `p` calibrado e descalibrado. (b) Não: diz que a necessidade vem da literatura e o experimento mede o ECE | (a) Mais trabalho, alegação sustentada pelo experimento. (b) Sem trabalho extra, alegação menor e honesta | Só da revisão | |
-| P3 | "Consistente" e "transparente" estão na pergunta, mas o plano não os mede. `PLANO.md:105` define consistência, mas a métrica gravada (`n_mudam_vs_outra_regra`) mede discordância entre duas políticas, não consistência de uma | (a) Operacionalizar os dois termos (por exemplo, discordância e uma lista de verificação de transparência). (b) Reformular a pergunta para "limiares explícitos e calibração" | (a) Mantém a proposta. (b) Muda a pergunta e exige aviso ao orientador | Conferido |  |
-| P4 | A utilidade média, que responde à pergunta, não tem intervalo; AUC e Brier têm só no teste (critério 07.8) | (a) Estender o bootstrap pareado à utilidade. (b) Deixar descritivo e dizer isso no texto | (a) Um número novo a decidir (reamostras, nível), um pouco mais de código. (b) Sem código, mas a diferença entre políticas pode ser ruído | Conferido |  |
-| P5 | Qual modelo vai para a tabela 2×2 e **qual regra** escolhe (D3)? Se a escolha vier depois de ver `metricas_dev.csv`, ela depende do resultado | (a) Definir a regra antes de olhar (por exemplo, "o TAN, por ser o que permite dependência"). (b) Escolher depois e registrar como escolha, mantendo os três no apêndice | (a) Mais defensável. (b) Permitido, mas precisa estar escrito como escolha, não como pré-especificação | Conferido |  |
-| P6 | A regressão logística recebe as 3 contínuas cruas; as redes recebem 3 faixas. Os dois variam juntos | (a) Manter e dizer que a vantagem de representação é deliberada. (b) Discretizar a logística também | (a) Sem mudança, mas "efeito do modelo" deixa de ser puro. (b) Mudaria a issue 01 e a D2 (a mediana das contínuas deixaria de existir) | Conferido |  |
-| P7 | A matriz de utilidade (+100, −400, c = 40) e a hipótese "o analista sempre acerta" | (a) Manter como estão, pendentes do orientador. (b) Acrescentar à sensibilidade uma dimensão de taxa de acerto do analista | (a) Declarar na seção de limitações. (b) Mais código (issue 05) e mais um valor a decidir | Conferido |  |
+P1 a P7 foram decididas e estão registradas em [decisoes.md](decisoes.md), seção "Decidido depois da revisão do repositório". Ficam aqui só as demais.
 
 ## 2. Redação e método, sem código novo
 
