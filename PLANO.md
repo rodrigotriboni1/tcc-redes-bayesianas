@@ -157,7 +157,7 @@ Arquivos passados entre scripts:
 | # | Passo | Script | Saída | Como conferir | Depende do orientador |
 |---|---|---|---|---|---|
 | 0 | Mensagem ao orientador | — | Respostas no item 11 | Enviada | — |
-| 1 | Ambiente, primeiro commit e nova divisão | `preparar_sgc.py` | `dev.csv`, `teste.csv`, hashes em `dados/processados/README.md` | 800/200, 240/60 ruins, nenhum `record_id` nos dois; toda categoria do teste existe no dev | Não |
+| 1 | Ambiente, primeiro commit e nova divisão | `preparar_sgc.py` | `dev.csv`, `teste.csv`, hashes em `dados/processados/SHA256SUMS` | 800/200, 240/60 ruins, nenhum `record_id` nos dois; toda categoria do teste existe no dev | Não |
 | 2 | Teste de fumaça do `pgmpy` | começo de `modelos.py` | Nada | Naive Bayes e TAN treinam; `predict_probability` bate com `VariableElimination` em 5 linhas | Não |
 | 3 | Predições no dev, validação cruzada em 5 partes | `modelos.py` | `predicoes_dev.csv`, `cortes.json` | 800 linhas, sem vazio, valores entre 0 e 1 | Não |
 | 4 | Métricas e calibração | `avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | Brier abaixo de 0,21, que é o de chutar sempre 0,30 | Não |
