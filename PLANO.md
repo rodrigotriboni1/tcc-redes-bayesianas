@@ -198,7 +198,7 @@ Na coluna "Como conferir", nada exige valor de resultado: critério restringe a 
 
 A estrutura é a usual; o modelo exigido pela UFU ainda não foi conferido.
 
-Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referencias.md). O arquivo `monografia/referencias.bib` tem 29 entradas; as 9 marcadas "A CONFERIR" foram sugeridas por IA de memória e só podem ser citadas depois de conferidas no original.
+Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referencias.md). O arquivo `monografia/referencias.bib` tem 29 entradas; 15 têm algo a conferir (9 sugeridas por IA de memória e marcadas "A CONFERIR", mais 6 com `% VERIFICAR`) e só podem ser citadas depois de conferidas no original; a coluna "Verificar" do mapa diz o que falta em cada uma.
 
 ## 10. Decidido em 14/11/2026
 
