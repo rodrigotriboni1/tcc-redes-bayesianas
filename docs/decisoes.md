@@ -85,6 +85,7 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | 15/11/2026 | Os avisos ao orientador (troca de base, de protótipo, de pergunta e de calibração) seguem em uma única mensagem, com rascunho escrito na conversa (P23) | Cumpre o item 11.4 do plano | Autor |
 | 15/11/2026 | O placeholder "[Supervisor's Name]" só existe na cópia local da proposta; a versão submetida está correta (P24) | Informação do autor | Autor |
 | 15/11/2026 | As contagens de categorias raras do plano e do glossário passam a ser rotuladas "da base completa, a conferir pelo autor no `sgc.csv`" (P25) | Não batem com o dev e o agente não pode abrir a base completa | Autor |
+| 15/11/2026 | A interface de uma tela só será construída no fim, depois do experimento pronto. Esboço escolhido: layout "mapa de sensibilidade do caso" (grade perda × custo colorida pela ação), que só mostra e lê `sensibilidade.csv` e `predicoes_dev.csv` por `fetch` com servidor local, sem script novo | Cumpre o item 12 do plano sem quebrar os 7 scripts. Até lá vale a demonstração de terminal | Autor |
 
 ## 5. Processo
 
@@ -103,7 +104,7 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | Aceita a matriz de utilidade demonstrativa (c = 40)? Os valores `+100`, `−400` e `100 − c` são hipóteses | Orientador |
 | Modelo de documento do Colegiado (Anexo 6, art. 6º, §5º): não foi encontrado; confirmar com a coordenação | Autor, à coordenação |
 | Avisar a troca de base (SGC), a troca do protótipo, a nova pergunta e a calibração só medida | Autor, ao orientador (rascunho da mensagem na conversa de 15/11/2026) |
-| Interface de uma tela (plano, item 12) | Autor, só depois de o experimento estar pronto |
+| Construir a interface de uma tela (plano, item 12). Esboço escolhido em 15/11/2026: mapa de sensibilidade do caso, lendo os CSV por `fetch` com servidor local; fica para depois do experimento | Autor, só depois de o experimento estar pronto |
 
 ## 7. Normas do curso (pesquisado em 15/11/2026)
 
