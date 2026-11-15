@@ -35,11 +35,10 @@ P22 a P25 foram tratadas em 15/11/2026 (registro em [decisoes.md](decisoes.md));
 
 ## 6. Referências e registros
 
-P26 a P28 foram decididas em 15/11/2026 (registro em [decisoes.md](decisoes.md)). P29 foi tratada em 15/11/2026. Resta a P30.
+P26 a P28 foram decididas em 15/11/2026 (registro em [decisoes.md](decisoes.md)). P29 e P30 foram tratadas em 15/11/2026.
 
 | # | Questão | Conferido | Decisão |
 |---|---|---|---|
-| P30 | `README.md` tem sete linhas: sem índice da documentação e sem dizer que `factory/` e `.claude/` são processo, não experimento | Conferido | |
 
 ## O que já foi resolvido
 
