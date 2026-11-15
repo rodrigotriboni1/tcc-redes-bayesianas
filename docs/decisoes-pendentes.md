@@ -35,11 +35,10 @@ P22 a P25 foram tratadas em 15/11/2026 (registro em [decisoes.md](decisoes.md));
 
 ## 6. Referências e registros
 
+P26 a P28 foram decididas em 15/11/2026 (registro em [decisoes.md](decisoes.md)). Restam P29 e P30.
+
 | # | Questão | Conferido | Decisão |
 |---|---|---|---|
-| P26 | `russell2010`: o `.bib` mistura título e editora da tradução com ano de 2010. Escolher edição (original ou tradução) e ajustar título, editora, cidade e ano | Só da revisão | |
-| P27 | Seção 2.5 do mapa de referências lista `platt1999` junto à regressão isotônica; Platt é sigmoide, a isotônica é de outros autores | Só da revisão | |
-| P28 | Cinco entradas têm `% VERIFICAR` no `.bib` (`platt1999`, `gromping2019`, `kaufman2012`, `uci573`, `howard2005`), mas o mapa não mostra a marca, e o plano só fala nas 9 "A CONFERIR". O total a conferir é maior | Só da revisão | |
 | P29 | O log de uso de IA (`docs/uso-de-ia.md`) está vazio, mas houve subagente em 15/11/2026, escrita assistida de documentos e revisão por outra IA | Conferido (a tabela está vazia) | |
 | P30 | `README.md` tem sete linhas: sem índice da documentação e sem dizer que `factory/` e `.claude/` são processo, não experimento | Conferido | |
 
