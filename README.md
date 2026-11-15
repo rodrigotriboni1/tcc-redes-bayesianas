@@ -17,6 +17,7 @@ Comece por [PLANO.md](PLANO.md). A proposta submetida está em `docs/proposta/`.
 | O que ainda depende do autor | [docs/decisoes-pendentes.md](docs/decisoes-pendentes.md) |
 | Termos e dicionário das variáveis | [docs/glossario.md](docs/glossario.md) |
 | Critérios de aceite de cada script | [docs/criterios-de-aceite.md](docs/criterios-de-aceite.md) |
+| Como cada resultado será lido (escrito antes dos resultados) | [docs/plano-de-analise.md](docs/plano-de-analise.md) |
 | Como reproduzir os resultados | [docs/reproduzir.md](docs/reproduzir.md) |
 | Referências por seção da monografia | [docs/mapa-de-referencias.md](docs/mapa-de-referencias.md) |
 | Uso de IA no trabalho | [docs/uso-de-ia.md](docs/uso-de-ia.md) |
