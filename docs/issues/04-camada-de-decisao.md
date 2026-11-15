@@ -24,7 +24,7 @@ Criar a camada de decisão: a matriz de utilidade em arquivo, a conta da utilida
 | Arquivo | Conteúdo |
 |---|---|
 | `config/utilidade.json` | `aprovar` 100 / −400; `rejeitar` 0 / 0; `analise_manual` 60 / −40; campo `hipoteses` |
-| `resultados/politicas_dev.csv` | 800 linhas: `record_id,kredit` e 6 colunas `acao_<nb|tan|logreg>_<ue|limiar>` |
+| `resultados/politicas_dev.csv` | 800 linhas: `record_id,kredit`, 6 colunas `acao_<nb|tan|logreg>_<ue|limiar>` e, só para a regra de utilidade, 6 colunas `segunda_<nb|tan|logreg>` (ação de segunda maior utilidade esperada) e `dif_ue_<nb|tan|logreg>` (diferença de utilidade esperada entre a primeira e a segunda) |
 | `resultados/resumo_politicas_dev.csv` | 6 linhas: `modelo,regra,utilidade_media,n_aprovar,n_rejeitar,n_analise_manual,n_mudam_vs_outra_regra` |
 
 ## Comportamento

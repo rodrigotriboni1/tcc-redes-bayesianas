@@ -23,13 +23,13 @@ Criar `codigo/avaliar.py`, que lê as predições do dev e grava a tabela de mé
 
 | Arquivo | Conteúdo |
 |---|---|
-| `resultados/metricas_dev.csv` | 4 linhas (`nb`, `tan`, `logreg`, `taxa_base`): média e desvio, entre as 5 partições, de ROC-AUC, Brier, log loss e erro de calibração |
+| `resultados/metricas_dev.csv` | 4 linhas (`nb`, `tan`, `logreg`, `taxa_base`): média e desvio, entre as 5 partições, de ROC-AUC, PR-AUC, Brier, log loss e erro de calibração |
 | `resultados/calibracao_dev.png` | Diagrama de calibração dos três modelos |
 
 ## Comportamento
 
 1. Lê as predições e confere colunas, vazios e faixa das probabilidades; entrada inválida encerra com mensagem.
-2. Para cada modelo e cada partição, calcula ROC-AUC, Brier, log loss e erro de calibração (10 faixas de mesma largura), com ruim como classe positiva.
+2. Para cada modelo e cada partição, calcula ROC-AUC, PR-AUC (`average_precision_score`), Brier, log loss e erro de calibração (10 faixas de mesma largura), com ruim como classe positiva.
 3. Acrescenta a linha `taxa_base`: previsão constante igual à proporção de ruins das outras quatro partições.
 4. Grava média e desvio amostral das 5 partições.
 5. Desenha o diagrama com as 800 predições juntas, diagonal de referência e uma curva por modelo.
