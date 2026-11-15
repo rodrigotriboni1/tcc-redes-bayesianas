@@ -62,7 +62,7 @@ Cuidados com a base:
 
 - **Alvo invertido:** 0 é ruim. Toda coluna `p_*` gravada é a probabilidade de **ruim**.
 - **Contínuas (3):** `laufzeit` (duração), `hoehe` (valor), `alter` (idade), em 3 faixas por tercis. As outras 17 já são categóricas.
-- **Categorias raras:** por exemplo `bishkred`=4 (6 casos), `verw`=8 (9), `verw`=4 e `verw`=10 (12 cada). Por isso o prior BDeu e a lista fixa de estados (`state_names`) com tudo que aparece no dev.
+- **Categorias raras:** por exemplo `bishkred`=4 (6 casos), `verw`=8 (9), `verw`=4 e `verw`=10 (12 cada); contagens da base completa, a conferir pelo autor no `sgc.csv`. Por isso o prior BDeu e a lista fixa de estados (`state_names`) com tudo que aparece no dev.
 - **Tipos:** manter todos os valores como inteiros; tirar `record_id` antes de chamar o `pgmpy`.
 - **Nomes em alemão** ficam no código; a tradução entra só na monografia.
 
@@ -217,9 +217,9 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 
 ## 11. Em aberto, depende do orientador
 
-1. **Prazo:** datas de entrega e de defesa.
+1. **Prazo:** datas de entrega e de defesa. O autor informou em 15/11/2026 "até o final do mês", sem dizer se é entrega ou defesa; pelo Anexo 6 do curso, a defesa só pode ser agendada 15 dias depois da entrega das cópias na secretaria.
 2. **Matriz de utilidade:** ele aceita a matriz demonstrativa do item 5, com c = 40?
-3. **Monografia:** modelo de documento exigido pelo curso (LaTeX, Word, normas ABNT da UFU).
+3. **Monografia:** modelo de documento exigido pelo curso. Pesquisado em 15/11/2026: o Anexo 6 manda usar o modelo do Colegiado, que não foi encontrado; as regras de formatação da FEELT aceitam Word, LibreOffice, Google Docs ou LaTeX. Ver `docs/decisoes.md`, seção 7.
 4. **Avisos a dar:** a base passou a ser a South German Credit, versão corrigida da citada na proposta; o protótipo previsto na proposta virou demonstração em terminal; a pergunta foi reformulada em duas partes e deixou de falar em "calibrada", "consistentes" e "transparentes" (a calibração é só medida, e a contribuição é derivar limiares dos custos de forma explícita e medir o efeito). Ver `docs/decisoes.md`.
 
 ## 12. Para depois

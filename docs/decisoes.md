@@ -80,6 +80,11 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | 15/11/2026 | O critério 03.5 (alguma predição muda ao esconder a variável) vira aviso (P19) | É presença de efeito, que os critérios proíbem. O critério estrutural 03.4 continua | Autor |
 | 15/11/2026 | O verificador passa a conferir as falhas esperadas de `--final` e as utilidades do demo, além dos arquivos novos (P20) | Tudo de forma, não de resultado | Autor |
 | 15/11/2026 | `AGENTS.md` registra as exceções: `preparar_sgc.py` grava em `dados/processados/` e `test_decisao.py` é o único arquivo de teste previsto (P21) | Alinha o `AGENTS.md` ao plano e à G3 | Autor |
+| 15/11/2026 | Prazo informado pelo autor: "até o final do mês" (P22). Falta dizer se é entrega ou defesa | Pelo Anexo 6, a defesa só pode ser agendada 15 dias depois da entrega das cópias | Autor |
+| 15/11/2026 | O autor pediu pesquisa do modelo de documento da UFU (P22). Resultado na seção 7: não foi achado o modelo do Colegiado; as regras de formatação da FEELT aceitam Word, LibreOffice, Google Docs ou LaTeX | Fica a confirmar com a coordenação | Autor |
+| 15/11/2026 | Os avisos ao orientador (troca de base, de protótipo, de pergunta e de calibração) seguem em uma única mensagem, com rascunho escrito na conversa (P23) | Cumpre o item 11.4 do plano | Autor |
+| 15/11/2026 | O placeholder "[Supervisor's Name]" só existe na cópia local da proposta; a versão submetida está correta (P24) | Informação do autor | Autor |
+| 15/11/2026 | As contagens de categorias raras do plano e do glossário passam a ser rotuladas "da base completa, a conferir pelo autor no `sgc.csv`" (P25) | Não batem com o dev e o agente não pode abrir a base completa | Autor |
 
 ## 5. Processo
 
@@ -94,13 +99,30 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 
 | Questão | Depende de |
 |---|---|
-| Prazo de entrega e de defesa | Orientador |
+| Prazo: o autor informou "até o final do mês" (15/11/2026); falta dizer se é entrega ou defesa. Se for a defesa, as cópias têm de estar na secretaria 15 dias antes (seção 7) | Autor |
 | Aceita a matriz de utilidade demonstrativa (c = 40)? Os valores `+100`, `−400` e `100 − c` são hipóteses | Orientador |
-| Modelo de documento da monografia (LaTeX, Word, normas ABNT da UFU) | Orientador |
-| Avisar que a base passou a ser a South German Credit (versão corrigida) e que o protótipo virou demonstração em terminal | Autor, ao orientador |
-| Calibrar ou não | Autor, depois de ver `metricas_dev.csv` |
-| Qual modelo vai para a tabela 2×2 | Autor, antes do commit de congelamento |
+| Modelo de documento do Colegiado (Anexo 6, art. 6º, §5º): não foi encontrado; confirmar com a coordenação | Autor, à coordenação |
+| Avisar a troca de base (SGC), a troca do protótipo, a nova pergunta e a calibração só medida | Autor, ao orientador (rascunho da mensagem na conversa de 15/11/2026) |
 | Interface de uma tela (plano, item 12) | Autor, só depois de o experimento estar pronto |
+
+## 7. Normas do curso (pesquisado em 15/11/2026)
+
+Duas fontes oficiais da FEELT/UFU, lidas nos PDFs. Nenhuma tem data de vigência clara; confirmar com a coordenação.
+
+**Anexo 6, normas gerais do curso de Engenharia de Controle e Automação** (`feelt.ufu.br`, `ea_anexo_06_...pdf`):
+- Art. 6º: a monografia é elaborada, escrita, apresentada e defendida em sessão pública perante banca; §5º: o formato é "o modelo estabelecido pelo Colegiado do Curso".
+- Art. 6º, §6º a §8º: a defesa é agendada na secretaria com a entrega de cópias encadernadas e a composição da banca feita pelo orientador; o intervalo mínimo é de **15 dias** entre a entrega das cópias e a defesa.
+- Art. 7º: banca de 3 membros, o orientador preside; apresentação oral de 20 a 30 minutos; o arguido é o último a ser arguido pelo presidente.
+- Art. 8º: resultado APROVADO, APROVADO CONDICIONALMENTE (correções em até 30 dias, com apreciação do Colegiado) ou REPROVADO; o aprovado entrega cópia em mídia eletrônica para publicação, sem a qual a disciplina não encerra.
+- Art. 9º: sem defesa até o fim do semestre letivo, o conceito é NÃO CONCLUIU, que não entra no CRA.
+
+**Regras de formatação do TCC** (`feelt.ufu.br`, `4_-_formatacao_do_projeto_final_de_curso.pdf`; o título do documento diz "Curso de Engenharia Elétrica", então falta confirmar que vale para Controle e Automação):
+- Formato eletrônico; editores recomendados: Word, LibreOffice Writer, Google Docs, TeXstudio e Overleaf (LaTeX serve).
+- Estrutura: capa, folha de rosto, dedicatória e agradecimentos (opcionais), sumário, listas de figuras, tabelas e siglas, lista de símbolos (opcional), **resumo de 150 a 500 palavras com cinco palavras-chave e abstract equivalente em inglês com cinco keywords**, introdução, corpo, conclusões, referências, anexos, apêndices e glossário (opcionais).
+- Times New Roman ou Arial, tamanho 12, frente e verso; cada elemento pré-textual, capítulo e elemento pós-textual começa em página ímpar; títulos de capítulo em 14, negrito, caixa alta.
+- Referências em ABNT NBR 6023-2018, citação por sobrenome e ano, ordem alfabética.
+
+Efeito no plano: os capítulos do item 9 do `PLANO.md` cabem nessa estrutura. O plano ainda não prevê resumo, abstract, listas e glossário; entram no texto, sem código.
 
 ## Como acrescentar uma decisão
 

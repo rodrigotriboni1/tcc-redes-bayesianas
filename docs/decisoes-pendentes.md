@@ -28,12 +28,10 @@ P17, P19, P20 e P21 foram decididas e aplicadas em 15/11/2026 (registro em [deci
 
 ## 5. Orientador e entregas
 
+P22 a P25 foram tratadas em 15/11/2026 (registro em [decisoes.md](decisoes.md)); ficam em aberto o prazo (entrega ou defesa), o aceite da matriz pelo orientador e o modelo do Colegiado. Ver a seção 6 de `decisoes.md`.
+
 | # | Questão | Conferido | Decisão |
 |---|---|---|---|
-| P22 | Prazo de entrega e de defesa; modelo de documento da UFU; aceita a matriz demonstrativa (itens 11.1 a 11.3 do plano) | Conferido | |
-| P23 | Avisar a troca de base (SGC) e de protótipo (terminal) (item 11.4) e **registrar também a mudança de alegação**: a proposta fala em "mais consistente e transparente"; o plano afirma derivar limiares dos custos | Conferido | |
-| P24 | A folha de rosto da proposta traz "Supervisor: Prof. Dr. [Supervisor's Name]"; conferir se a versão submetida corrigiu | Só da revisão | |
-| P25 | As contagens de categorias raras do `PLANO.md:65` (`bishkred`=4: 6; `verw`=8: 9; `verw`=4 e 10: 12) diferem das do dev (5, 7, 9, 9). Provavelmente são da base completa. Quem confere é o autor, no `sgc.csv`, e o plano passa a dizer "na base completa" ou "no dev" | Só da revisão (feita só no dev) | |
 
 ## 6. Referências e registros
 
