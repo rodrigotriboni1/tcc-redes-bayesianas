@@ -29,7 +29,7 @@ Regra G4 do critério de aceite: mudar uma delas é motivo para parar e pergunta
 | Faixas das variáveis contínuas | 3, por tercis, cortes aprendidos só no treino de cada partição | "A rede discreta exige" e o corte só no treino evita vazamento (plano, item 5). Por que 3 e não 4 ou 5: motivo não registrado |
 | Prior | BDeu, tamanho equivalente 5 | Evita probabilidade zero em combinações raras (plano, item 5). Por que 5: motivo não registrado |
 | Regressão logística | `LogisticRegression(max_iter=1000)` | Herdada do baseline anterior (`build()` do `baseline_logreg.py`) |
-| Erro de calibração | 10 faixas de mesma largura | Herdada do protocolo anterior (v0.2), como diz o `baseline_logreg.py` |
+| Erro de calibração | 10 faixas de mesma largura | Só o número de faixas (10) é herdado do `baseline_logreg.py`. A definição mudou: o `baseline_logreg.py` (linhas ~32-40) calcula o ECE top-label (confiança max(p, 1-p) contra acerto), e o critério 02.6 de `docs/criterios-de-aceite.md` define o ECE sobre P(ruim) contra a taxa observada de ruins. Motivo da mudança de definição: não registrado |
 
 ## 3. Modelo de risco
 
