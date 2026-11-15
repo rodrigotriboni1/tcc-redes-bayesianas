@@ -34,7 +34,7 @@ São 20 variáveis mais o alvo. `record_id` é só identificador e sai antes de 
 
 Cuidados já registrados no plano:
 - **Alvo invertido.** 0 é ruim. Toda coluna `p_*` e `p_ruim` é a probabilidade de **ruim**.
-- **Categorias raras.** Por exemplo `bishkred` = 4 (6 casos) e `verw` = 8 (9 casos). É por isso que se usa prior BDeu e uma lista fixa de estados com tudo que aparece no dev.
+- **Categorias raras.** Por exemplo `bishkred` = 4 (6 casos) e `verw` = 8 (9 casos), contagens da base completa a conferir. É por isso que se usa prior BDeu e uma lista fixa de estados com tudo que aparece no dev.
 - **Tipos.** Todos os valores categóricos e faixas são inteiros.
 
 ## 2. Termos

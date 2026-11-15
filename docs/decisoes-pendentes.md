@@ -20,32 +20,25 @@ Registradas em [decisoes.md](decisoes.md), na seção "Decidido depois da revis�
 
 ## 4. Mudanças em arquivos que a factory não pode tocar
 
+P17, P19, P20 e P21 foram decididas e aplicadas em 15/11/2026 (registro em [decisoes.md](decisoes.md)). Resta a P18.
+
 | # | Questão | Onde | Conferido | Decisão |
 |---|---|---|---|---|
-| P17 | O gate não busca `clip`, que o `AGENTS.md` proíbe sobre probabilidades | `factory/checks.sh:55` | Só da revisão | |
 | P18 | Depois da issue 04, incluir `config/utilidade.json` e `codigo/test_decisao.py` em `protected_paths`. Antes disso a issue 04 não consegue criá-los | `factory/config.json` | Só da revisão | |
-| P19 | O critério 03.5 ("ao menos uma predição muda") é de presença de efeito, que os próprios critérios proíbem; o verificador o trata como falha | `docs/criterios-de-aceite.md:118`, `factory/verificar_saidas.py:146` | Só da revisão | |
-| P20 | O verificador não cobre os valores das utilidades do demo nem as falhas esperadas do caminho `--final` (07.1 e 07.10) | `factory/verificar_saidas.py` | Só da revisão | |
-| P21 | `AGENTS.md` diz "scripts só gravam em `resultados/`" e "nenhum outro arquivo de teste"; o `preparar_sgc.py` e o `test_decisao.py` são exceções. Editar depois do PR #8, que também mexe no arquivo | `AGENTS.md` | Conferido | |
 
 ## 5. Orientador e entregas
 
+P22 a P25 foram tratadas em 15/11/2026 (registro em [decisoes.md](decisoes.md)); ficam em aberto o prazo (entrega ou defesa), o aceite da matriz pelo orientador e o modelo do Colegiado. Ver a seção 6 de `decisoes.md`.
+
 | # | Questão | Conferido | Decisão |
 |---|---|---|---|
-| P22 | Prazo de entrega e de defesa; modelo de documento da UFU; aceita a matriz demonstrativa (itens 11.1 a 11.3 do plano) | Conferido | |
-| P23 | Avisar a troca de base (SGC) e de protótipo (terminal) (item 11.4) e **registrar também a mudança de alegação**: a proposta fala em "mais consistente e transparente"; o plano afirma derivar limiares dos custos | Conferido | |
-| P24 | A folha de rosto da proposta traz "Supervisor: Prof. Dr. [Supervisor's Name]"; conferir se a versão submetida corrigiu | Só da revisão | |
-| P25 | As contagens de categorias raras do `PLANO.md:65` (`bishkred`=4: 6; `verw`=8: 9; `verw`=4 e 10: 12) diferem das do dev (5, 7, 9, 9). Provavelmente são da base completa. Quem confere é o autor, no `sgc.csv`, e o plano passa a dizer "na base completa" ou "no dev" | Só da revisão (feita só no dev) | |
 
 ## 6. Referências e registros
 
+P26 a P28 foram decididas em 15/11/2026 (registro em [decisoes.md](decisoes.md)). P29 e P30 foram tratadas em 15/11/2026.
+
 | # | Questão | Conferido | Decisão |
 |---|---|---|---|
-| P26 | `russell2010`: o `.bib` mistura título e editora da tradução com ano de 2010. Escolher edição (original ou tradução) e ajustar título, editora, cidade e ano | Só da revisão | |
-| P27 | Seção 2.5 do mapa de referências lista `platt1999` junto à regressão isotônica; Platt é sigmoide, a isotônica é de outros autores | Só da revisão | |
-| P28 | Cinco entradas têm `% VERIFICAR` no `.bib` (`platt1999`, `gromping2019`, `kaufman2012`, `uci573`, `howard2005`), mas o mapa não mostra a marca, e o plano só fala nas 9 "A CONFERIR". O total a conferir é maior | Só da revisão | |
-| P29 | O log de uso de IA (`docs/uso-de-ia.md`) está vazio, mas houve subagente em 15/11/2026, escrita assistida de documentos e revisão por outra IA | Conferido (a tabela está vazia) | |
-| P30 | `README.md` tem sete linhas: sem índice da documentação e sem dizer que `factory/` e `.claude/` são processo, não experimento | Conferido | |
 
 ## O que já foi resolvido
 

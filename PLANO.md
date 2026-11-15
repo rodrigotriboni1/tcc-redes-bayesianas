@@ -62,7 +62,7 @@ Cuidados com a base:
 
 - **Alvo invertido:** 0 é ruim. Toda coluna `p_*` gravada é a probabilidade de **ruim**.
 - **Contínuas (3):** `laufzeit` (duração), `hoehe` (valor), `alter` (idade), em 3 faixas por tercis. As outras 17 já são categóricas.
-- **Categorias raras:** por exemplo `bishkred`=4 (6 casos), `verw`=8 (9), `verw`=4 e `verw`=10 (12 cada). Por isso o prior BDeu e a lista fixa de estados (`state_names`) com tudo que aparece no dev.
+- **Categorias raras:** por exemplo `bishkred`=4 (6 casos), `verw`=8 (9), `verw`=4 e `verw`=10 (12 cada); contagens da base completa, a conferir pelo autor no `sgc.csv`. Por isso o prior BDeu e a lista fixa de estados (`state_names`) com tudo que aparece no dev.
 - **Tipos:** manter todos os valores como inteiros; tirar `record_id` antes de chamar o `pgmpy`.
 - **Nomes em alemão** ficam no código; a tradução entra só na monografia.
 
@@ -165,7 +165,7 @@ Arquivos passados entre scripts:
 | 2 | Teste de fumaça do `pgmpy` | começo de `modelos.py` | Nada | Naive Bayes e TAN treinam; `predict_probability` bate com `VariableElimination` em 5 linhas | Não |
 | 3 | Predições no dev, validação cruzada em 5 partes | `modelos.py` | `predicoes_dev.csv`, `cortes.json`, `tan_arestas.csv` | 800 linhas, sem vazio, valores entre 0 e 1; autoteste `--verificar` passa | Não |
 | 4 | Métricas e calibração | `avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | Linha `taxa_base` dá Brier 0,21 exato. Brier de um modelo igual ou acima disso gera aviso, não falha | Não |
-| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` | Para cada modelo e variável, ao menos uma predição muda. A comparação `laufkont` × `telef` é só aviso | Não |
+| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` | Nenhuma predição mudar ao esconder uma variável é aviso. A comparação `laufkont` × `telef` é só aviso | Não |
 | 6 | Camada de decisão | `decisao.py`, `test_decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` | Testes passam; contagens somam 800. Ação ausente gera aviso | Código não; números finais sim (matriz) |
 | 7 | Sensibilidade | `sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` | Fronteiras batem com a conta à mão | Código não; valores sim |
 | 8 | Demonstração | `demo.py` | Texto no terminal | Mesmo risco de `predicoes_dev.csv` para o mesmo caso | Não |
@@ -198,7 +198,7 @@ Na coluna "Como conferir", nada exige valor de resultado: critério restringe a 
 
 A estrutura é a usual; o modelo exigido pela UFU ainda não foi conferido.
 
-Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referencias.md). O arquivo `monografia/referencias.bib` tem 29 entradas; as 9 marcadas "A CONFERIR" foram sugeridas por IA de memória e só podem ser citadas depois de conferidas no original.
+Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referencias.md). O arquivo `monografia/referencias.bib` tem 29 entradas; 15 têm algo a conferir (9 sugeridas por IA de memória e marcadas "A CONFERIR", mais 6 com `% VERIFICAR`) e só podem ser citadas depois de conferidas no original; a coluna "Verificar" do mapa diz o que falta em cada uma.
 
 ## 10. Decidido em 14/11/2026
 
@@ -217,9 +217,9 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 
 ## 11. Em aberto, depende do orientador
 
-1. **Prazo:** datas de entrega e de defesa.
+1. **Prazo:** datas de entrega e de defesa. O autor informou em 15/11/2026 "até o final do mês", sem dizer se é entrega ou defesa; pelo Anexo 6 do curso, a defesa só pode ser agendada 15 dias depois da entrega das cópias na secretaria.
 2. **Matriz de utilidade:** ele aceita a matriz demonstrativa do item 5, com c = 40?
-3. **Monografia:** modelo de documento exigido pelo curso (LaTeX, Word, normas ABNT da UFU).
+3. **Monografia:** modelo de documento exigido pelo curso. Pesquisado em 15/11/2026: o Anexo 6 manda usar o modelo do Colegiado, que não foi encontrado; as regras de formatação da FEELT aceitam Word, LibreOffice, Google Docs ou LaTeX. Ver `docs/decisoes.md`, seção 7.
 4. **Avisos a dar:** a base passou a ser a South German Credit, versão corrigida da citada na proposta; o protótipo previsto na proposta virou demonstração em terminal; a pergunta foi reformulada em duas partes e deixou de falar em "calibrada", "consistentes" e "transparentes" (a calibração é só medida, e a contribuição é derivar limiares dos custos de forma explícita e medir o efeito). Ver `docs/decisoes.md`.
 
 ## 12. Para depois
@@ -227,3 +227,4 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 Ideias que surgirem no caminho entram aqui, não no código.
 
 - **Interface de uma tela** (15/11/2026): página única que mostra caso, risco, ação recomendada e controles de custo. Cumpriria o "protótipo" da proposta melhor que o terminal. Decidir só depois de o experimento estar pronto; até lá vale a demonstração de terminal. Se entrar: última issue, um arquivo, só mostra e não calcula, e é a única exceção à regra de não acrescentar dependência.
+  - **Desenho esboçado em 15/11/2026** (a construção continua para depois do experimento): layout "mapa de sensibilidade do caso", uma grade perda × custo da análise colorida pela ação recomendada para um caso escolhido, com os valores atuais destacados. A página só compara o risco do caso com os limiares de `resultados/sensibilidade.csv`; lê `resultados/predicoes_dev.csv` e `sensibilidade.csv` por `fetch`, então abre com `python -m http.server` na raiz, sem script novo e sem biblioteca. Com isso a exceção de dependência provavelmente não é necessária.

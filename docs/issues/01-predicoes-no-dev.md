@@ -42,7 +42,7 @@ Criar `codigo/modelos.py`, que treina Naive Bayes, TAN e regressão logística c
 
 ## Critérios de aceitação
 
-Os da seção 4, issue 01, de `docs/criterios-de-aceite.md` (itens 1 a 11), sem acréscimo. Valem também as regras comuns G1 a G9 da seção 3.
+Os da seção 4, issue 01, de `docs/criterios-de-aceite.md` (itens 1 a 12), sem acréscimo. Valem também as regras comuns G1 a G9 da seção 3.
 
 ## Avisos (não são critérios)
 

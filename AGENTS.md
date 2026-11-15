@@ -51,11 +51,11 @@ Parar e perguntar, na factory, é responder `STATUS: BLOCKED` com a pergunta em 
 
 ## Escopo
 
-- Os scripts são os 7 listados no item 7 do `PLANO.md`. Não crie outro arquivo em `codigo/`, outra pasta nem outro arquivo de teste. Autoteste fica no modo `--verificar` do próprio script e não grava nada.
+- Os scripts são os 7 listados no item 7 do `PLANO.md`. Não crie outro arquivo em `codigo/`, outra pasta nem outro arquivo de teste. Autoteste fica no modo `--verificar` do próprio script e não grava nada; a única exceção é `codigo/test_decisao.py`, previsto no plano.
 - **Nenhuma dependência nova.** `pyproject.toml` e `uv.lock` não mudam.
 - Não edite `PLANO.md`, `AGENTS.md`, `README.md`, `dados/`, `factory/` nem `codigo/preparar_sgc.py`.
 - Faça só o que a issue pede. O que ela lista como fora do escopo fica fora.
-- Scripts só gravam em `resultados/`. Os arquivos gerados são commitados junto com o código.
+- Scripts só gravam em `resultados/` (a exceção é `codigo/preparar_sgc.py`, que grava em `dados/processados/`). Os arquivos gerados são commitados junto com o código.
 
 ## Convenções
 
