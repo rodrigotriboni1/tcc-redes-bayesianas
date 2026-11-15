@@ -4,7 +4,7 @@ Passo a passo para gerar de novo todos os arquivos de `resultados/`. Vira o apê
 
 Tudo roda a partir da raiz do repositório, sem interação, com Python 3.12 e as dependências travadas pelo `uv`.
 
-**Situação em 15/11/2026.** Só `codigo/preparar_sgc.py` existe. Os demais scripts nascem das issues em `docs/issues/`, e cada seção abaixo vale só depois do merge da issue correspondente. A coluna "Issue" diz qual.
+**Situação em 15/11/2026.** Existem hoje `codigo/preparar_sgc.py` e o `codigo/baseline_logreg.py` herdado, que a issue 01 apaga. Os demais scripts nascem das issues em `docs/issues/`, e cada seção abaixo vale só depois do merge da issue correspondente. A coluna "Issue" diz qual.
 
 ## 1. Ambiente
 
