@@ -192,6 +192,8 @@ Se o prazo apertar, cortar nesta ordem: passo 9, depois passo 5. A terceira aç�
 
 A estrutura é a usual; o modelo exigido pela UFU ainda não foi conferido.
 
+Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referencias.md). O arquivo `monografia/referencias.bib` tem 29 entradas; as 9 marcadas "A CONFERIR" foram sugeridas por IA de memória e só podem ser citadas depois de conferidas no original.
+
 ## 10. Decidido em 14/11/2026
 
 - **Teste:** divisão refeita com semente nova (item 4).
