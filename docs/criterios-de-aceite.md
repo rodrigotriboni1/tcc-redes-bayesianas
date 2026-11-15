@@ -45,7 +45,7 @@ Itens do plano reclassificados:
 | Item | Destino | Motivo |
 |---|---|---|
 | "Brier abaixo de 0,21" | Aviso no log. Entra uma linha `taxa_base` em `metricas_dev.csv`, cujo Brier tem de dar 0,21 exato | Como critério, convidaria o agente a mexer no prior até passar |
-| "Esconder `laufkont` piora mais que `telef`" | Aviso. O critério passa a ser: para cada modelo e variável, ao menos uma predição muda ao esconder | É hipótese sobre os dados |
+| "Esconder `laufkont` piora mais que `telef`" | Aviso. Nenhuma predição mudar ao esconder uma variável é aviso, não critério (decidido em 15/11/2026) | É hipótese sobre os dados |
 | "As três ações aparecem" | Aviso | Depende do modelo e da matriz, que ainda vai ao orientador |
 | AUC abaixo de 0,5 | Aviso ("alvo pode estar invertido") | O teste de inversão é estrutural (critério 01.6a) |
 
@@ -116,7 +116,7 @@ Fora do escopo: calibração, intervalo por bootstrap (é do teste final), apont
 2. 48.000 linhas (800 × 3 modelos × 20 variáveis); colunas `record_id,modelo,variavel_oculta,p_ruim`; cada par (modelo, variável) tem os 800 casos uma vez; `p_ruim` entre 0 e 1; ordem fixa.
 3. Mesmas partições e modelos da issue 01: treina com todas as variáveis e esconde só na inferência. Nas redes, remove a coluna; nunca passa `NaN`.
 4. `--verificar`: (a) Naive Bayes com variável escondida = produto das tabelas sem aquele fator, 5 linhas, 1e-9; (b) nas duas redes, igual a `VariableElimination.query` com a evidência sem a variável; (c) regressão: igual a `prever` com a coluna preenchida conforme D2.
-5. Para cada um dos 60 pares, ao menos uma predição difere da completa.
+5. Se algum dos 60 pares não mudar nenhuma predição, o aviso é `AVISO: esconder <variável> não mudou nenhuma predição de <modelo>`. Não é critério: presença de efeito depende dos dados.
 6. `avaliar.py --ocultar` grava `evidencia_incompleta.csv`: 60 linhas, colunas `modelo,variavel_oculta,roc_auc,brier,delta_roc_auc,delta_brier`; delta = escondido − completo; bate com `metricas_dev.csv` a 1e-9.
 7. `avaliar.py` sem opção gera os mesmos arquivos de antes.
 8. Aviso: `AVISO: ocultar laufkont não piorou mais que ocultar telef em <modelo>`.
@@ -160,7 +160,7 @@ Fora do escopo: sensibilidade com dados, variar o ganho, gráfico interativo, co
 
 1. `uv run python codigo/demo.py <record_id> [--modelo nb|tan|logreg]` imprime: o caso, os três `p_ruim` com 6 casas, a utilidade esperada de cada ação para o modelo escolhido, as fronteiras e a ação recomendada.
 2. Não grava arquivo nem salva modelo.
-3. Para 3 casos de partições diferentes, os três `p_ruim` são iguais aos de `predicoes_dev.csv` a 1e-6 e a ação é igual à de `politicas_dev.csv` (depende de D1).
+3. Para 3 casos de partições diferentes, os três `p_ruim` são iguais aos de `predicoes_dev.csv` a 1e-6, a utilidade esperada de cada ação do `tan` aparece na tela com erro de até 0,05 e a ação é igual à de `politicas_dev.csv` (depende de D1).
 4. Usa `modelos.prever` e as funções de `decisao.py`; não reimplementa.
 5. `record_id` inexistente ou fora do dev: uma linha de mensagem em português, saída diferente de 0, sem traceback.
 6. Sem argumento: mensagem de uso, saída 2.
@@ -196,7 +196,7 @@ O gate roda o `checks.sh` da cópia principal com a pasta de trabalho no ramo do
 | 1 | Hashes dos dados (`shasum -a 256 -c SHA256SUMS`) | < 1 s |
 | 2 | Nada apagado em `codigo`, `config`, `resultados`, exceto `baseline_logreg.py` | < 1 s |
 | 3 | Busca por `teste.csv`, `sgc.csv`, `dados/brutos`, listagem de pastas em `codigo/` (fora `preparar_sgc.py`): tem de vir vazia | < 1 s |
-| 4 | Busca por `fillna`, `nan_to_num`, `pickle`, `joblib`; e por `pgmpy` ou `.fit(` em `avaliar.py` | < 1 s |
+| 4 | Busca por `fillna`, `nan_to_num`, `clip(`, `pickle`, `joblib`; e por `pgmpy` ou `.fit(` em `avaliar.py` | < 1 s |
 | 5 | `uv sync --frozen` | segundos (não medido) |
 | 6 | Caixa de areia: pasta temporária só com `codigo/`, `config/` e `dev.csv` | < 1 s |
 | 7 | Autotestes (`--verificar`) e `test_decisao.py` | ~10 s |

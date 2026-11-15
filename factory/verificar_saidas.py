@@ -11,6 +11,7 @@ Uso:
 onde <raiz> contém codigo/, config/, dados/processados/dev.csv e resultados/.
 """
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -18,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.metrics import brier_score_loss, log_loss, roc_auc_score
+from sklearn.metrics import average_precision_score, brier_score_loss, log_loss, roc_auc_score
 
 RAIZ = Path(sys.argv[1]).resolve()
 RES = RAIZ / "resultados"
@@ -58,11 +59,11 @@ def probabilidades(serie, nome, estrito=True):
 
 
 def metricas_por_fold(y_ruim, p, fold):
-    """Média e desvio amostral, entre as partições, de ROC-AUC, Brier e log loss."""
+    """Média e desvio amostral, entre as partições, de ROC-AUC, Brier, log loss e PR-AUC (nessa ordem)."""
     linhas = []
     for k in sorted(set(fold)):
         m = fold == k
-        linhas.append([roc_auc_score(y_ruim[m], p[m]), brier_score_loss(y_ruim[m], p[m]), log_loss(y_ruim[m], p[m], labels=[0, 1])])
+        linhas.append([roc_auc_score(y_ruim[m], p[m]), brier_score_loss(y_ruim[m], p[m]), log_loss(y_ruim[m], p[m], labels=[0, 1]), average_precision_score(y_ruim[m], p[m])])
     linhas = np.array(linhas)
     return linhas.mean(axis=0), linhas.std(axis=0, ddof=1)
 
@@ -72,6 +73,16 @@ def escolher(p, u):
     ue = {a: (1 - p) * u[a]["bom"] + p * u[a]["ruim"] for a in ACOES}
     melhor = max(ue.values())
     return next(a for a in ["analise_manual", "rejeitar", "aprovar"] if ue[a] >= melhor - 1e-9)
+
+
+def ordenar(p, u):
+    """(melhor, segunda, diferença de UE entre elas), com o desempate da D5."""
+    ue = {a: (1 - p) * u[a]["bom"] + p * u[a]["ruim"] for a in ACOES}
+    prioridade = ["analise_manual", "rejeitar", "aprovar"]
+    primeira = next(a for a in prioridade if ue[a] >= max(ue.values()) - 1e-9)
+    resto = [a for a in prioridade if a != primeira]
+    segunda = next(a for a in resto if ue[a] >= max(ue[b] for b in resto) - 1e-9)
+    return primeira, segunda, ue[primeira] - ue[segunda]
 
 
 def rodar(*args):
@@ -99,13 +110,25 @@ if (RES / "predicoes_dev.csv").exists():
         pred = None
     cortes = json.loads((RES / "cortes.json").read_text()) if exigir((RES / "cortes.json").exists(), "cortes.json ausente") else None
     exigir(cortes == CORTES, f"cortes.json: {cortes}, esperado {CORTES}")
+    if exigir((RES / "tan_arestas.csv").exists(), "tan_arestas.csv ausente"):
+        arestas = pd.read_csv(RES / "tan_arestas.csv")
+        n = "tan_arestas.csv"
+        if colunas(arestas, ["fold", "origem", "destino"], n):
+            exigir(sorted(arestas["fold"].unique()) == [0, 1, 2, 3, 4], f"{n}: fold deve ir de 0 a 4")
+            exigir(arestas.equals(arestas.sort_values(["fold", "origem", "destino"]).reset_index(drop=True)), f"{n}: linhas fora de ordem (fold, origem, destino)")
+            exigir(not arestas.duplicated().any(), f"{n}: aresta repetida")
+            exigir(set(arestas["origem"]) | set(arestas["destino"]) <= set(variaveis) | {"kredit"}, f"{n}: nome que não é coluna do dev")
+            for k, parte in arestas.groupby("fold"):
+                exigir(set(parte.loc[parte["origem"] == "kredit", "destino"]) == set(variaveis), f"{n}: partição {k}: kredit deve apontar para as 20 variáveis")
+                entre = parte[parte["origem"] != "kredit"]
+                exigir(not entre["destino"].duplicated().any(), f"{n}: partição {k}: variável com mais de um pai entre as variáveis")
 
 # --- Issue 02 -------------------------------------------------------------
 metricas = None
 if (RES / "metricas_dev.csv").exists() and pred is not None:
     metricas = pd.read_csv(RES / "metricas_dev.csv")
     n = "metricas_dev.csv"
-    nomes = ["roc_auc", "brier", "log_loss", "ece"]
+    nomes = ["roc_auc", "pr_auc", "brier", "log_loss", "ece"]
     esperadas = ["modelo"] + [f"{m}_{s}" for m in nomes for s in ("media", "desvio")]
     if colunas(metricas, esperadas, n) and exigir(list(metricas["modelo"]) == MODELOS + ["taxa_base"], f"{n}: linhas devem ser nb, tan, logreg, taxa_base"):
         metricas = metricas.set_index("modelo")
@@ -113,11 +136,11 @@ if (RES / "metricas_dev.csv").exists() and pred is not None:
         for m in MODELOS:
             media, desvio = metricas_por_fold(y, pred[f"p_{m}"].to_numpy(), fold)
             linha = metricas.loc[m]
-            exigir(perto(linha[["roc_auc_media", "brier_media", "log_loss_media"]], media), f"{n}: médias de {m} não batem com as predições")
-            exigir(perto(linha[["roc_auc_desvio", "brier_desvio", "log_loss_desvio"]], desvio), f"{n}: desvios de {m} não batem com as predições")
+            exigir(perto(linha[["roc_auc_media", "brier_media", "log_loss_media", "pr_auc_media"]], media), f"{n}: médias de {m} não batem com as predições")
+            exigir(perto(linha[["roc_auc_desvio", "brier_desvio", "log_loss_desvio", "pr_auc_desvio"]], desvio), f"{n}: desvios de {m} não batem com as predições")
             exigir(0 <= linha["ece_media"] <= 1 and linha["ece_desvio"] >= 0, f"{n}: ece de {m} fora do intervalo")
         base = metricas.loc["taxa_base"]
-        exigir(perto(base[["roc_auc_media", "brier_media", "log_loss_media", "ece_media"]], [0.5, 0.21, 0.610864, 0.0], 1e-6), f"{n}: linha taxa_base com valores errados")
+        exigir(perto(base[["roc_auc_media", "brier_media", "log_loss_media", "ece_media", "pr_auc_media"]], [0.5, 0.21, 0.610864, 0.0, 0.30], 1e-6), f"{n}: linha taxa_base com valores errados")
         exigir(perto(base[[f"{m}_desvio" for m in nomes]], 0, 1e-6), f"{n}: desvios da taxa_base devem ser 0")
         for m in MODELOS:
             if metricas.loc[m, "brier_media"] >= base["brier_media"]:
@@ -143,7 +166,8 @@ if (RES / "predicoes_dev_oculta.csv").exists() and pred is not None:
             if not exigir(sorted(parte["record_id"]) == sorted(ids), f"{n}: par ({m}, {v}) não tem os 800 casos uma vez"):
                 continue
             p = parte.set_index("record_id").loc[ids, "p_ruim"].to_numpy()
-            exigir(not perto(p, pred[f"p_{m}"].to_numpy(), 0), f"{n}: esconder {v} não mudou nenhuma predição de {m}")
+            if perto(p, pred[f"p_{m}"].to_numpy(), 0):
+                aviso(f"esconder {v} não mudou nenhuma predição de {m}")
             resumo[(m, v)] = metricas_por_fold(y, p, fold)[0]
         if exigir((RES / "evidencia_incompleta.csv").exists(), "evidencia_incompleta.csv ausente") and metricas is not None:
             ev = pd.read_csv(RES / "evidencia_incompleta.csv")
@@ -174,12 +198,17 @@ if (RES / "politicas_dev.csv").exists() and pred is not None and utilidade is no
     politicas = pd.read_csv(RES / "politicas_dev.csv")
     n = "politicas_dev.csv"
     cols = ["record_id", "kredit"] + [f"acao_{m}_{r}" for m in MODELOS for r in ("ue", "limiar")]
-    if colunas(politicas, cols, n) and exigir(len(politicas) == 800, f"{n}: {len(politicas)} linhas, esperado 800"):
+    novas = [f"{k}_{m}" for k in ("segunda", "dif_ue") for m in MODELOS]
+    colunas_ok = exigir(list(politicas.columns[: len(cols)]) == cols and set(politicas.columns[len(cols):]) == set(novas) and len(politicas.columns) == len(cols) + len(novas), f"{n}: colunas {list(politicas.columns)}, esperado {cols} mais {novas}")
+    if colunas_ok and exigir(len(politicas) == 800, f"{n}: {len(politicas)} linhas, esperado 800"):
         exigir(list(politicas["record_id"]) == list(pred["record_id"]) and list(politicas["kredit"]) == list(pred["kredit"]), f"{n}: record_id ou kredit diferem das predições")
         for m in MODELOS:
             p = pred[f"p_{m}"]
             exigir(list(politicas[f"acao_{m}_ue"]) == [escolher(x, utilidade) for x in p], f"{n}: acao_{m}_ue não é a de maior utilidade esperada")
             exigir(list(politicas[f"acao_{m}_limiar"]) == ["aprovar" if x < 0.5 else "rejeitar" for x in p], f"{n}: acao_{m}_limiar não segue o limiar 0,5")
+            ordem = [ordenar(x, utilidade) for x in p]
+            exigir(list(politicas[f"segunda_{m}"]) == [o[1] for o in ordem], f"{n}: segunda_{m} não é a ação de segunda maior utilidade esperada")
+            exigir(perto(politicas[f"dif_ue_{m}"], [o[2] for o in ordem]) and (politicas[f"dif_ue_{m}"] >= -1e-9).all(), f"{n}: dif_ue_{m} não bate com a conta")
     else:
         politicas = None
     if exigir((RES / "resumo_politicas_dev.csv").exists(), "resumo_politicas_dev.csv ausente") and politicas is not None:
@@ -223,6 +252,10 @@ if (RAIZ / "codigo/demo.py").exists() and pred is not None and politicas is not 
         if exigir(r.returncode == 0, f"demo.py {caso['record_id']}: saída {r.returncode}\n{r.stderr[-500:]}"):
             for m in MODELOS:
                 exigir(f"{caso[f'p_{m}']:.6f}" in r.stdout, f"demo.py {caso['record_id']}: não mostra p_{m} = {caso[f'p_{m}']:.6f}")
+            numeros = [float(x) for x in re.findall(r"-?\d+(?:\.\d+)?", r.stdout)]
+            for a in ACOES:
+                ue = (1 - caso["p_tan"]) * utilidade[a]["bom"] + caso["p_tan"] * utilidade[a]["ruim"]
+                exigir(any(abs(x - ue) <= 0.05 for x in numeros), f"demo.py {caso['record_id']}: não mostra a utilidade esperada de {a} ({ue:.2f}) para o tan")
             acao = politicas.loc[politicas["record_id"] == caso["record_id"], "acao_tan_ue"].iloc[0]
             exigir(acao in r.stdout, f"demo.py {caso['record_id']}: não mostra a ação {acao}")
             exigir(rodar("codigo/demo.py", caso["record_id"]).stdout == r.stdout, "demo.py: saída muda ao repetir")
@@ -232,8 +265,12 @@ if (RAIZ / "codigo/demo.py").exists() and pred is not None and politicas is not 
     exigir(not list(RES.glob("*.pkl")) and not list(RES.glob("*.joblib")), "demo.py salvou modelo em arquivo")
 
 # --- Issue 07 -------------------------------------------------------------
-if "--final" in (RAIZ / "codigo/modelos.py").read_text() and pred is not None:
+if (RAIZ / "codigo/modelos.py").exists() and "--final" in (RAIZ / "codigo/modelos.py").read_text() and pred is not None:
     antes = {f.name: f.read_bytes() for f in RES.iterdir()}
+    exigir(rodar("codigo/modelos.py", "--final").returncode != 0 and not (RES / "predicoes_teste.csv").exists(), "modelos.py --final sem caminho deve falhar sem gravar")
+    for script in ("avaliar.py", "decisao.py"):
+        if "--final" in (RAIZ / "codigo" / script).read_text():
+            exigir(rodar(f"codigo/{script}", "--final").returncode != 0, f"{script} --final sem predicoes_teste.csv deve falhar")
     with tempfile.TemporaryDirectory() as pasta:
         falso = Path(pasta) / "falso.csv"
         dev[(pred["fold"] == 0).to_numpy()].to_csv(falso, index=False)
@@ -248,18 +285,33 @@ if "--final" in (RAIZ / "codigo/modelos.py").read_text() and pred is not None:
             conteudo = (RES / "predicoes_teste.csv").read_bytes()
             r = rodar("codigo/modelos.py", "--final", str(falso))
             exigir(r.returncode != 0 and (RES / "predicoes_teste.csv").read_bytes() == conteudo, "modelos.py --final deve recusar sobrescrever predicoes_teste.csv")
-            for script, saidas in (("avaliar.py", ["metricas_teste.csv", "calibracao_teste.png"]), ("decisao.py", ["politicas_teste.csv", "resumo_politicas_teste.csv"])):
+            for script, saidas in (("avaliar.py", ["metricas_teste.csv", "calibracao_teste.png"]), ("decisao.py", ["politicas_teste.csv", "resumo_politicas_teste.csv", "diferenca_politicas_teste.csv"])):
                 if "--final" in (RAIZ / "codigo" / script).read_text():
                     r = rodar(f"codigo/{script}", "--final")
                     exigir(r.returncode == 0 and all((RES / s).exists() for s in saidas), f"{script} --final falhou ou não gravou {saidas}\n{r.stderr[-500:]}")
             if (RES / "metricas_teste.csv").exists():
                 mt = pd.read_csv(RES / "metricas_teste.csv")
                 n = "metricas_teste.csv"
-                if colunas(mt, ["modelo", "roc_auc", "roc_auc_ic_inf", "roc_auc_ic_sup", "brier", "brier_ic_inf", "brier_ic_sup", "log_loss", "ece"], n):
+                if colunas(mt, ["modelo", "roc_auc", "roc_auc_ic_inf", "roc_auc_ic_sup", "pr_auc", "pr_auc_ic_inf", "pr_auc_ic_sup", "brier", "brier_ic_inf", "brier_ic_sup", "log_loss", "ece"], n):
                     exigir(list(mt["modelo"]) == MODELOS + ["taxa_base"], f"{n}: linhas devem ser nb, tan, logreg, taxa_base")
-                    for nome in ("roc_auc", "brier"):
+                    for nome in ("roc_auc", "pr_auc", "brier"):
                         dentro = (mt[f"{nome}_ic_inf"] <= mt[nome] + 1e-9) & (mt[nome] <= mt[f"{nome}_ic_sup"] + 1e-9)
                         exigir(dentro.all(), f"{n}: {nome} fora do próprio intervalo")
+            if (RES / "resumo_politicas_teste.csv").exists() and (RES / "resumo_politicas_dev.csv").exists():
+                rt = pd.read_csv(RES / "resumo_politicas_teste.csv")
+                n = "resumo_politicas_teste.csv"
+                if colunas(rt, list(pd.read_csv(RES / "resumo_politicas_dev.csv").columns) + ["utilidade_media_ic_inf", "utilidade_media_ic_sup"], n):
+                    dentro = (rt["utilidade_media_ic_inf"] <= rt["utilidade_media"] + 1e-9) & (rt["utilidade_media"] <= rt["utilidade_media_ic_sup"] + 1e-9)
+                    exigir(dentro.all(), f"{n}: utilidade_media fora do próprio intervalo")
+                    if (RES / "diferenca_politicas_teste.csv").exists():
+                        dif = pd.read_csv(RES / "diferenca_politicas_teste.csv")
+                        n = "diferenca_politicas_teste.csv"
+                        if colunas(dif, ["modelo", "dif_utilidade_media", "dif_ic_inf", "dif_ic_sup"], n) and exigir(sorted(dif["modelo"]) == sorted(MODELOS), f"{n}: uma linha por modelo"):
+                            dentro = (dif["dif_ic_inf"] <= dif["dif_utilidade_media"] + 1e-9) & (dif["dif_utilidade_media"] <= dif["dif_ic_sup"] + 1e-9)
+                            exigir(dentro.all(), f"{n}: diferença fora do próprio intervalo")
+                            for _, r in dif.iterrows():
+                                u = rt.set_index(["modelo", "regra"])["utilidade_media"]
+                                exigir(perto(r["dif_utilidade_media"], u[(r["modelo"], "ue")] - u[(r["modelo"], "limiar")]), f"{n}: diferença de {r['modelo']} não bate com resumo_politicas_teste.csv")
             if (RES / "politicas_teste.csv").exists() and politicas is not None:
                 exigir(list(pd.read_csv(RES / "politicas_teste.csv").columns) == list(politicas.columns), "politicas_teste.csv: colunas diferem de politicas_dev.csv")
     exigir(all(not f.exists() or f.read_bytes() == antes[f.name] for f in (RES / nome for nome in antes)), "--final alterou arquivo do dev")
