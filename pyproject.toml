@@ -1,0 +1,10 @@
+[project]
+name = "tcc-redes-bayesianas"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "pandas>=3.1.1",
+    "pgmpy==1.1.2",
+    "scikit-learn>=1.9.1",
+]
