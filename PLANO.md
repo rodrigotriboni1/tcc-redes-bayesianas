@@ -4,7 +4,7 @@ Redes bayesianas e utilidade esperada aplicadas à seleção de *next best actio
 
 Rodrigo Mialichi Triboni · Engenharia de Controle e Automação, UFU · Orientador: Fabio Vincenzi
 
-Situação: **rascunho, em discussão.** Nenhum código novo é escrito antes de este plano estar fechado.
+Situação: **fechado em 15/11/2026**, salvo as respostas do orientador (item 11). O código é escrito pela software factory a partir das issues em `docs/issues/`; regras em [AGENTS.md](AGENTS.md) e [docs/criterios-de-aceite.md](docs/criterios-de-aceite.md).
 
 ## 1. Pergunta
 
@@ -39,7 +39,7 @@ A versão do `pgmpy` é fixa porque a API mudou entre 1.0 e 1.1.2 e a documenta�
 
 | Necessidade | Nome na 1.1.2 |
 |---|---|
-| Naive Bayes | `pgmpy.models.NaiveBayes(feature_vars, dependent_var)` |
+| Naive Bayes | Rede em estrela: `DiscreteBayesianNetwork([("kredit", f) for f in variaveis])`. A classe `pgmpy.models.NaiveBayes` treina, mas falha em `predict_probability` na 1.1.2 |
 | TAN | `pgmpy.estimators.TreeSearch(df).estimate(estimator_type="tan", class_node="kredit")`; devolve um grafo, que vira `DiscreteBayesianNetwork(dag.edges())` |
 | Prior BDeu | `pgmpy.parameter_estimator.DiscreteBayesianEstimator(state_names=..., prior_type="BDeu", equivalent_sample_size=5)`, passado como instância em `model.fit(df, estimator=...)` |
 | Probabilidade por linha | `model.predict_probability(df_sem_kredit)`; a coluna `kredit_0` é a probabilidade de ruim |
@@ -76,11 +76,11 @@ Cuidados com a base:
 | Estrutura 3 (opcional) | Busca hill climbing com BIC | Estrutura livre, aprendida dos dados |
 | Probabilidades | Estimação bayesiana com prior BDeu | Evita probabilidade zero em combinações raras |
 | Inferência | Eliminação de variáveis, exata | A rede é pequena |
-| Calibração | Medir; se ruim, corrigir com regressão isotônica | Naive Bayes costuma exagerar a confiança |
+| Calibração | Medir. Corrigir com regressão isotônica é decisão do autor depois de ver `metricas_dev.csv`; se entrar, é issue nova | Naive Bayes costuma exagerar a confiança; a escolha não pode ser do agente |
 | Decisão | Utilidade esperada de cada ação; escolhe a maior | Núcleo do trabalho |
-| Comparação | Tabela 2×2: {rede bayesiana, regressão logística} × {limiares derivados da utilidade, limiar fixo de 0,5} | Separa o efeito do modelo do efeito da regra |
+| Comparação | {Naive Bayes, TAN, regressão logística} × {limiares derivados da utilidade, limiar fixo de 0,5}. O autor escolhe qual rede vai para a tabela 2×2 do texto antes do commit de congelamento | Separa o efeito do modelo do efeito da regra |
 | Validação | Cruzada estratificada em 5 partes, só no dev | Não gasta o teste |
-| Evidência incompleta | Esconder uma variável por vez na inferência e medir a queda de ROC-AUC e Brier | A rede infere sem a variável; na regressão logística a variável escondida é preenchida com a moda do treino, para haver comparação |
+| Evidência incompleta | Esconder uma variável por vez na inferência e medir a queda de ROC-AUC e Brier | A rede infere sem a variável; na regressão logística a variável escondida é preenchida com a mediana do treino (3 contínuas) ou a moda do treino (17 categóricas), para haver comparação |
 
 Utilidade esperada de uma ação `a`, com risco `p` de o caso ser ruim:
 
@@ -98,7 +98,7 @@ Proposta de matriz para levar ao orientador, com os valores da apresentação de
 | Rejeitar | 0 | 0 |
 | Análise manual | 100 − c | −c |
 
-Com essa matriz, a análise manual é escolhida quando `c/400 ≤ p ≤ 1 − c/100`. Com c = 40, a faixa vai de 0,10 a 0,60; com c ≥ 80, nunca é escolhida.
+Com essa matriz, a análise manual é escolhida quando `c/400 ≤ p ≤ 1 − c/100`. Com c = 40, a faixa vai de 0,10 a 0,60; com c > 80, nunca é escolhida. Em caso de empate, a prioridade é análise manual, depois rejeitar, depois aprovar (tolerância 1e-9).
 
 **O que o trabalho afirma e o que não afirma.** Como a utilidade esperada de cada ação é uma reta em `p`, a política resultante equivale a uma regra de limiares sobre `p`. A contribuição não é uma regra de outro tipo: é **derivar os limiares dos custos, de forma explícita, e mostrar que isso exige probabilidade calibrada**. Por isso a comparação é a tabela 2×2 acima, e não "utilidade esperada contra limiar".
 
@@ -141,7 +141,8 @@ São 7 scripts. Nenhum script fora dessa lista; ideia nova vai para o item 12.
 
 - Não há `discretizar.py`: a proposta promete aprender os cortes só no treino de cada parte, então a discretização é uma função dentro de `modelos.py`.
 - `baseline_logreg.py` (copiado do projeto antigo) sai depois que a função `build()` dele for levada para `modelos.py`. A regressão logística precisa usar as mesmas partições que as redes.
-- `demo.py` treina de novo ao abrir (segundos); não existe arquivo de modelo salvo.
+- `demo.py` treina de novo ao abrir (segundos), nas 4 partições que não contêm o caso pedido, para mostrar o mesmo risco de `predicoes_dev.csv`; não existe arquivo de modelo salvo. Modelo padrão: TAN.
+- Autotestes ficam no modo `--verificar` de cada script; não há arquivo de teste além de `test_decisao.py`.
 
 Arquivos passados entre scripts:
 
@@ -149,6 +150,8 @@ Arquivos passados entre scripts:
 |---|---|
 | `resultados/predicoes_dev.csv` | Uma linha por caso: `record_id, kredit, fold, p_nb, p_tan, p_logreg` |
 | `resultados/predicoes_dev_oculta.csv` | Formato longo: `record_id, modelo, variavel_oculta, p_ruim` |
+| `resultados/resumo_politicas_dev.csv` | Seis linhas (modelo × regra): utilidade média e contagem de cada ação |
+| `resultados/sensibilidade.csv` | Fronteiras para perda em {200, 400, 600, 800} × custo da análise em {0, 5, …, 100} |
 | `resultados/cortes.json` | Cortes das 3 variáveis contínuas, aprendidos no dev inteiro; usados pelo `demo.py` e pelo teste final |
 | `config/utilidade.json` | `{"acoes": {"aprovar": {"bom": 100, "ruim": -400}, ...}, "hipoteses": "..."}` |
 
@@ -159,19 +162,21 @@ Arquivos passados entre scripts:
 | 0 | Mensagem ao orientador | — | Respostas no item 11 | Enviada | — |
 | 1 | Ambiente, primeiro commit e nova divisão | `preparar_sgc.py` | `dev.csv`, `teste.csv`, hashes em `dados/processados/SHA256SUMS` | 800/200, 240/60 ruins, nenhum `record_id` nos dois; toda categoria do teste existe no dev | Não |
 | 2 | Teste de fumaça do `pgmpy` | começo de `modelos.py` | Nada | Naive Bayes e TAN treinam; `predict_probability` bate com `VariableElimination` em 5 linhas | Não |
-| 3 | Predições no dev, validação cruzada em 5 partes | `modelos.py` | `predicoes_dev.csv`, `cortes.json` | 800 linhas, sem vazio, valores entre 0 e 1 | Não |
-| 4 | Métricas e calibração | `avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | Brier abaixo de 0,21, que é o de chutar sempre 0,30 | Não |
-| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `evidencia_incompleta.csv` | Esconder `laufkont` piora mais do que esconder `telef` | Não |
-| 6 | Camada de decisão | `decisao.py`, `test_decisao.py` | `politicas_dev.csv` | Testes passam; as três ações aparecem | Código não; números finais sim (matriz) |
+| 3 | Predições no dev, validação cruzada em 5 partes | `modelos.py` | `predicoes_dev.csv`, `cortes.json` | 800 linhas, sem vazio, valores entre 0 e 1; autoteste `--verificar` passa | Não |
+| 4 | Métricas e calibração | `avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | Linha `taxa_base` dá Brier 0,21 exato. Brier de um modelo acima disso gera aviso, não falha | Não |
+| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `evidencia_incompleta.csv` | Para cada modelo e variável, ao menos uma predição muda. A comparação `laufkont` × `telef` é só aviso | Não |
+| 6 | Camada de decisão | `decisao.py`, `test_decisao.py` | `politicas_dev.csv` | Testes passam; contagens somam 800. Ação ausente gera aviso | Código não; números finais sim (matriz) |
 | 7 | Sensibilidade | `sensibilidade.py` | `sensibilidade.png` | Fronteiras batem com a conta à mão | Código não; valores sim |
 | 8 | Demonstração | `demo.py` | Texto no terminal | Mesmo risco de `predicoes_dev.csv` para o mesmo caso | Não |
 | 9 | Hill climbing (opcional) | `modelos.py` | Coluna a mais nas predições | Treina em poucos minutos | Não |
-| 10 | Teste final | `modelos.py --final`, `avaliar.py`, `decisao.py` | `predicoes_teste.csv`, `metricas_teste.csv`, `politicas_teste.csv` | Commit de congelamento antes; roda uma vez; hash do commit anotado | Sim (matriz aprovada) |
+| 10 | Teste final | `modelos.py --final`, `avaliar.py`, `decisao.py` | `predicoes_teste.csv`, `metricas_teste.csv`, `politicas_teste.csv` | Commit de congelamento antes; **rodado pelo autor, à mão, uma vez**; hash do commit anotado. O caminho `--final` é escrito pela factory (issue 07) e testado só com linhas do dev | Sim (matriz aprovada) |
 | 11 | Monografia | — | Texto | Todo número aponta para um arquivo de `resultados/` | Formatação sim (modelo) |
 
 Os capítulos de fundamentação e de método podem ser escritos em paralelo desde o passo 1.
 
 Se o prazo apertar, cortar nesta ordem: passo 9, depois passo 5. A terceira ação não sai. Os passos 3, 6 e 11 não saem.
+
+Na coluna "Como conferir", nada exige valor de resultado: critério restringe a forma, e resultado ruim é resultado (ver `docs/criterios-de-aceite.md`).
 
 `test_decisao.py` inclui o exemplo da apresentação: com p = 0,20, +100 e −400, UE(aprovar) = 0; com perda de 600, UE(aprovar) = −40.
 
@@ -200,6 +205,15 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 - **Ações:** três (item 5).
 - **Evidência incompleta:** entra em versão pequena, uma variável escondida por vez (item 5).
 
+### Decidido em 15/11/2026
+
+- **Quem escreve o código:** a software factory, uma issue por PR. A sessão interativa define critérios e escreve os `.md`.
+- **Critério de aceite restringe a forma, nunca o resultado.**
+- **Todo PR para no autor:** não há merge automático.
+- **Dados proibidos para o código:** `teste.csv`, `sgc.csv` e `dados/brutos/` (os três contêm as linhas do teste). Só `preparar_sgc.py` os lê.
+- **Teste final:** rodado pelo autor; a factory só escreve o caminho.
+- As demais decisões do dia (D1 a D11) estão em `docs/criterios-de-aceite.md`.
+
 ## 11. Em aberto, depende do orientador
 
 1. **Prazo:** datas de entrega e de defesa.
@@ -207,6 +221,8 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 3. **Monografia:** modelo de documento exigido pelo curso (LaTeX, Word, normas ABNT da UFU).
 4. **Avisos a dar:** a base passou a ser a South German Credit, versão corrigida da citada na proposta; o protótipo previsto na proposta virou demonstração em terminal.
 
-## 12. Depois da defesa
+## 12. Para depois
 
 Ideias que surgirem no caminho entram aqui, não no código.
+
+- **Interface de uma tela** (15/11/2026): página única que mostra caso, risco, ação recomendada e controles de custo. Cumpriria o "protótipo" da proposta melhor que o terminal. Decidir só depois de o experimento estar pronto; até lá vale a demonstração de terminal. Se entrar: última issue, um arquivo, só mostra e não calcula, e é a única exceção à regra de não acrescentar dependência.
