@@ -50,7 +50,7 @@ Não conferido por execução: hill climbing (`pgmpy.causal_discovery.HillClimbS
 
 ## 4. Dados
 
-South German Credit, 1000 registros, 20 variáveis, alvo `kredit` (0 = ruim, 300 casos; 1 = bom, 700 casos). É a versão corrigida do German Credit Data citado na proposta.
+South German Credit, 1000 registros, 20 variáveis preditoras mais o alvo `kredit` (0 = ruim, 300 casos; 1 = bom, 700 casos). É a versão corrigida do German Credit Data citado na proposta.
 
 - `dados/brutos/`: original da UCI e dicionário (`codetable.txt`).
 - `dados/processados/sgc.csv`: base limpa.
@@ -106,7 +106,7 @@ Como os termos da pergunta são observados: *consistência* é a ação só muda
 
 ## 6. Métricas
 
-- **Modelo de risco:** ROC-AUC, Brier, log loss, erro de calibração, diagrama de calibração. No dev, média e desvio da validação cruzada; no teste, intervalo por bootstrap. Com 60 casos ruins no teste, diferença de AUC de 0,02 a 0,03 é ruído e não define vencedor.
+- **Modelo de risco:** ROC-AUC, Brier, log loss, erro de calibração, diagrama de calibração. No dev, média e desvio da validação cruzada; no teste, intervalo por bootstrap para ROC-AUC e Brier. Com 60 casos ruins no teste, diferença de AUC de 0,02 a 0,03 é ruído e não define vencedor.
 - **Política:** utilidade média, distribuição das ações, casos que mudam de ação entre as políticas.
 - **Sensibilidade:** ação recomendada em função do risco, da perda por inadimplência e do custo da análise manual.
 
@@ -152,7 +152,7 @@ Arquivos passados entre scripts:
 | `resultados/predicoes_dev_oculta.csv` | Formato longo: `record_id, modelo, variavel_oculta, p_ruim` |
 | `resultados/resumo_politicas_dev.csv` | Seis linhas (modelo × regra): utilidade média e contagem de cada ação |
 | `resultados/sensibilidade.csv` | Fronteiras para perda em {200, 400, 600, 800} × custo da análise em {0, 5, …, 100} |
-| `resultados/cortes.json` | Cortes das 3 variáveis contínuas, aprendidos no dev inteiro; usados pelo `demo.py` e pelo teste final |
+| `resultados/cortes.json` | Cortes das 3 variáveis contínuas, aprendidos no dev inteiro; usados só pelo teste final (o `demo.py` aprende os cortes nas 4 partições, via `prever`) |
 | `config/utilidade.json` | `{"acoes": {"aprovar": {"bom": 100, "ruim": -400}, ...}, "hipoteses": "..."}` |
 
 ## 8. Passos, em ordem
@@ -163,13 +163,13 @@ Arquivos passados entre scripts:
 | 1 | Ambiente, primeiro commit e nova divisão | `preparar_sgc.py` | `dev.csv`, `teste.csv`, hashes em `dados/processados/SHA256SUMS` | 800/200, 240/60 ruins, nenhum `record_id` nos dois; toda categoria do teste existe no dev | Não |
 | 2 | Teste de fumaça do `pgmpy` | começo de `modelos.py` | Nada | Naive Bayes e TAN treinam; `predict_probability` bate com `VariableElimination` em 5 linhas | Não |
 | 3 | Predições no dev, validação cruzada em 5 partes | `modelos.py` | `predicoes_dev.csv`, `cortes.json` | 800 linhas, sem vazio, valores entre 0 e 1; autoteste `--verificar` passa | Não |
-| 4 | Métricas e calibração | `avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | Linha `taxa_base` dá Brier 0,21 exato. Brier de um modelo acima disso gera aviso, não falha | Não |
-| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `evidencia_incompleta.csv` | Para cada modelo e variável, ao menos uma predição muda. A comparação `laufkont` × `telef` é só aviso | Não |
-| 6 | Camada de decisão | `decisao.py`, `test_decisao.py` | `politicas_dev.csv` | Testes passam; contagens somam 800. Ação ausente gera aviso | Código não; números finais sim (matriz) |
-| 7 | Sensibilidade | `sensibilidade.py` | `sensibilidade.png` | Fronteiras batem com a conta à mão | Código não; valores sim |
+| 4 | Métricas e calibração | `avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | Linha `taxa_base` dá Brier 0,21 exato. Brier de um modelo igual ou acima disso gera aviso, não falha | Não |
+| 5 | Evidência incompleta | `modelos.py --ocultar`, `avaliar.py` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` | Para cada modelo e variável, ao menos uma predição muda. A comparação `laufkont` × `telef` é só aviso | Não |
+| 6 | Camada de decisão | `decisao.py`, `test_decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` | Testes passam; contagens somam 800. Ação ausente gera aviso | Código não; números finais sim (matriz) |
+| 7 | Sensibilidade | `sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` | Fronteiras batem com a conta à mão | Código não; valores sim |
 | 8 | Demonstração | `demo.py` | Texto no terminal | Mesmo risco de `predicoes_dev.csv` para o mesmo caso | Não |
 | 9 | Hill climbing (opcional) | `modelos.py` | Coluna a mais nas predições | Treina em poucos minutos | Não |
-| 10 | Teste final | `modelos.py --final`, `avaliar.py`, `decisao.py` | `predicoes_teste.csv`, `metricas_teste.csv`, `politicas_teste.csv` | Commit de congelamento antes; **rodado pelo autor, à mão, uma vez**; hash do commit anotado. O caminho `--final` é escrito pela factory (issue 07) e testado só com linhas do dev | Sim (matriz aprovada) |
+| 10 | Teste final | `modelos.py --final`, `avaliar.py`, `decisao.py` | `predicoes_teste.csv`, `metricas_teste.csv`, `calibracao_teste.png`, `politicas_teste.csv`, `resumo_politicas_teste.csv` | Commit de congelamento antes; **rodado pelo autor, à mão, uma vez**; hash do commit anotado. O caminho `--final` é escrito pela factory (issue 07) e testado só com linhas do dev | Sim (matriz aprovada) |
 | 11 | Monografia | — | Texto | Todo número aponta para um arquivo de `resultados/` | Formatação sim (modelo) |
 
 Os capítulos de fundamentação e de método podem ser escritos em paralelo desde o passo 1.
@@ -193,7 +193,7 @@ Na coluna "Como conferir", nada exige valor de resultado: critério restringe a 
 | 4.4 Sensibilidade | Gráfico das fronteiras | Passo 7 |
 | 5 Discussão e limitações | Simulação, não política real; base pequena; utilidades demonstrativas | — |
 | 6 Conclusão | Resposta à pergunta | Capítulo 4 |
-| Apêndices | Como reproduzir; declaração de uso de IA | README e `docs/uso-de-ia.md` |
+| Apêndices | Como reproduzir; declaração de uso de IA | `docs/reproduzir.md` e `docs/uso-de-ia.md` |
 
 A estrutura é a usual; o modelo exigido pela UFU ainda não foi conferido.
 
