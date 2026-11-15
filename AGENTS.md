@@ -14,6 +14,15 @@ O código será defendido pelo autor diante de uma banca. Ele precisa conseguir 
 2. [docs/criterios-de-aceite.md](docs/criterios-de-aceite.md): critérios da sua issue e o que está fora do escopo dela.
 3. A issue.
 
+Para consulta, sem obrigação de ler tudo:
+
+- [docs/arquitetura.md](docs/arquitetura.md): scripts, arquivos trocados e fluxo, em diagramas.
+- [docs/decisoes.md](docs/decisoes.md): o que foi decidido, por quê e por quem. Antes de propor mudança em algo, veja se já foi decidido.
+- [docs/glossario.md](docs/glossario.md): termos e dicionário das variáveis em alemão.
+- [docs/reproduzir.md](docs/reproduzir.md): ordem dos comandos e como conferir os resultados.
+
+Esses quatro arquivos são do autor: não os edite, a menos que a issue peça. Se o seu código contrariar o que eles dizem, pare e diga qual trecho.
+
 Se o que você precisa fazer contraria uma decisão do plano, não troque em silêncio: pare e diga qual decisão e por quê.
 
 ## Comandos
