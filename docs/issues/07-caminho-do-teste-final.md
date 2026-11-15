@@ -29,9 +29,10 @@ Acrescentar o modo `--final` a `modelos.py`, `avaliar.py` e `decisao.py`, para o
 | Arquivo | Conteúdo |
 |---|---|
 | `resultados/predicoes_teste.csv` | `record_id,kredit,p_nb,p_tan,p_logreg` |
-| `resultados/metricas_teste.csv` | Uma linha por modelo e `taxa_base`: métricas com intervalo por bootstrap para ROC-AUC e Brier |
+| `resultados/metricas_teste.csv` | Uma linha por modelo e `taxa_base`: métricas com intervalo por bootstrap para ROC-AUC, PR-AUC e Brier |
 | `resultados/calibracao_teste.png` | Diagrama de calibração |
 | `resultados/politicas_teste.csv`, `resultados/resumo_politicas_teste.csv` | Mesmo formato dos arquivos do dev; o resumo ganha `utilidade_media_ic_inf` e `utilidade_media_ic_sup`, do bootstrap de 2000 reamostras (semente 2026, percentis 2,5 e 97,5), as mesmas para todos os modelos e regras |
+| `resultados/diferenca_politicas_teste.csv` | 3 linhas (`modelo,dif_utilidade_media,dif_ic_inf,dif_ic_sup`): diferença pareada de utilidade média entre a regra de utilidade e o limiar fixo, nas mesmas reamostras |
 
 ## Comportamento
 

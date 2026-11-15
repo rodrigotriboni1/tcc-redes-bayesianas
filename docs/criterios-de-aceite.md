@@ -71,7 +71,7 @@ Vão para o `AGENTS.md`; não se repetem em cada issue.
 
 ### 01. Predições no dev (`modelos.py`)
 
-1. `uv run python codigo/modelos.py` grava só `resultados/predicoes_dev.csv` e `resultados/cortes.json`, em menos de 60 s.
+1. `uv run python codigo/modelos.py` grava só `resultados/predicoes_dev.csv`, `resultados/cortes.json` e `resultados/tan_arestas.csv`, em menos de 60 s.
 2. `predicoes_dev.csv`: colunas exatas `record_id,kredit,fold,p_nb,p_tan,p_logreg`; 800 linhas na ordem do `dev.csv`; `record_id` único; `fold` inteiro de 0 a 4; `p_*` finito, estritamente entre 0 e 1, sem vazio.
 3. Partições: uma única chamada `StratifiedKFold(5, shuffle=True, random_state=2026)` sobre o dev na ordem do arquivo, usada pelos três modelos. Cada partição tem 160 linhas e 48 ruins (conferido).
 4. Existe `prever(treino, alvo, modelo, ocultar=None)` que devolve P(ruim) por linha de `alvo`. `alvo` não carrega `kredit`. Cortes, estrutura do TAN, parâmetros e escalonamento da regressão são aprendidos só em `treino`.
@@ -90,6 +90,7 @@ Vão para o `AGENTS.md`; não se repetem em cada issue.
 9. `build()` vem de `baseline_logreg.py` sem alteração, e `baseline_logreg.py` é apagado neste PR.
 10. Duas execuções geram arquivos idênticos byte a byte.
 11. Categoria ausente no treino de uma partição não derruba o script.
+12. `tan_arestas.csv`: colunas `fold,origem,destino`; uma linha por aresta do TAN aprendido em cada partição (`fold` de 0 a 4), ordenadas por `fold`, `origem`, `destino`; só nomes de colunas do dev; sem aresta repetida; cada uma das 20 variáveis recebe uma aresta de `kredit`; nenhuma variável tem mais de um pai entre as outras variáveis; o grafo de cada partição é o mesmo que gerou as predições dessa partição. A forma da árvore não é critério: a estrutura aprendida é resultado.
 
 Fora do escopo: `--ocultar`, `--final`, hill climbing, calibração, métricas, gráficos, salvar modelo em arquivo, busca de hiperparâmetros, seleção de variáveis, mexer em `preparar_sgc.py`, opções além de `--verificar`.
 
@@ -97,9 +98,9 @@ Fora do escopo: `--ocultar`, `--final`, hill climbing, calibração, métricas, 
 
 1. `uv run python codigo/avaliar.py` lê só `resultados/predicoes_dev.csv`; grava `metricas_dev.csv` e `calibracao_dev.png`.
 2. Nunca treina: `grep -nE "pgmpy|import modelos|\.fit\(" codigo/avaliar.py` não devolve nada.
-3. `metricas_dev.csv`: 4 linhas (`nb`, `tan`, `logreg`, `taxa_base`) e colunas `modelo,roc_auc_media,roc_auc_desvio,brier_media,brier_desvio,log_loss_media,log_loss_desvio,ece_media,ece_desvio`. Classe positiva = ruim. Métrica por partição; média e desvio amostral das 5.
-4. Linha `taxa_base` (previsão = proporção de ruins nas outras 4 partições, 0,30): Brier 0,21, AUC 0,5, log loss 0,610864, erro de calibração 0, desvios 0. Tolerância 1e-6.
-5. Recalculando com `roc_auc_score`, `brier_score_loss` e `log_loss` por partição, as médias batem com o arquivo a 1e-9.
+3. `metricas_dev.csv`: 4 linhas (`nb`, `tan`, `logreg`, `taxa_base`) e colunas `modelo,roc_auc_media,roc_auc_desvio,pr_auc_media,pr_auc_desvio,brier_media,brier_desvio,log_loss_media,log_loss_desvio,ece_media,ece_desvio`. Classe positiva = ruim. PR-AUC é a precisão média (`average_precision_score`). Métrica por partição; média e desvio amostral das 5.
+4. Linha `taxa_base` (previsão = proporção de ruins nas outras 4 partições, 0,30): Brier 0,21, AUC 0,5, PR-AUC 0,30 (a prevalência da partição, 48/160), log loss 0,610864, erro de calibração 0, desvios 0. Tolerância 1e-6.
+5. Recalculando com `roc_auc_score`, `average_precision_score`, `brier_score_loss` e `log_loss` por partição, as médias batem com o arquivo a 1e-9.
 6. Erro de calibração: 10 faixas de mesma largura sobre P(ruim). `--verificar` confere: tudo 0,8 com nenhum ruim dá 0,8; tudo 0,3 com 30% de ruins dá 0.
 7. AUC, Brier e erro de calibração em [0, 1]; log loss finito e ≥ 0; desvios ≥ 0.
 8. PNG válido, gerado sem tela: diagonal e uma curva por modelo, 800 predições juntas, mesmas 10 faixas, eixos em português.
@@ -135,7 +136,7 @@ Fora do escopo: esconder duas ou mais variáveis, valor ausente no treino, outra
 9. Empate conforme D5.
 10. p < 0, p > 1 ou `NaN` levanta `ValueError`.
 11. Regra de limiar fixo: p < 0,5 aprova, p ≥ 0,5 rejeita.
-12. `uv run python codigo/decisao.py` grava `politicas_dev.csv` (800 linhas: `record_id,kredit` e 6 colunas `acao_<nb|tan|logreg>_<ue|limiar>`) e `resumo_politicas_dev.csv` (6 linhas: `modelo,regra,utilidade_media,n_aprovar,n_rejeitar,n_analise_manual,n_mudam_vs_outra_regra`).
+12. `uv run python codigo/decisao.py` grava `politicas_dev.csv` (800 linhas: `record_id,kredit`, 6 colunas `acao_<nb|tan|logreg>_<ue|limiar>` e, só para a regra de utilidade, 6 colunas `segunda_<nb|tan|logreg>` e `dif_ue_<nb|tan|logreg>`: a ação de segunda maior utilidade esperada, com o desempate da D5, e a diferença de utilidade esperada entre a primeira e a segunda, sempre ≥ 0) e `resumo_politicas_dev.csv` (6 linhas: `modelo,regra,utilidade_media,n_aprovar,n_rejeitar,n_analise_manual,n_mudam_vs_outra_regra`).
 13. Consistência: contagens somam 800; nas linhas `limiar`, `n_analise_manual = 0`; `utilidade_media` recalculável a 1e-9.
 14. Trocar a perda para 600 numa cópia do JSON muda as ações sem mexer no código.
 15. Aviso: `AVISO: a ação <x> não aparece em <modelo>/<regra>`.
@@ -177,9 +178,9 @@ A factory escreve e testa o caminho com linhas do dev. Quem o executa sobre o te
 4. Se `resultados/predicoes_teste.csv` já existe, o script termina com mensagem e saída diferente de 0, sem sobrescrever.
 5. `--final` não altera nenhum arquivo `*_dev*` nem `cortes.json`.
 6. `--verificar` cobre o caminho com um arquivo falso: as 160 linhas da partição 0 do dev, gravadas em pasta temporária. O resultado tem 160 linhas e é igual a `prever(dev, falso)` a 1e-12.
-7. `uv run python codigo/avaliar.py --final` lê `predicoes_teste.csv` e grava `metricas_teste.csv` e `calibracao_teste.png`: uma linha por modelo e a linha `taxa_base` (previsão = proporção de ruins do dev, 0,30), colunas `modelo,roc_auc,roc_auc_ic_inf,roc_auc_ic_sup,brier,brier_ic_inf,brier_ic_sup,log_loss,ece`.
+7. `uv run python codigo/avaliar.py --final` lê `predicoes_teste.csv` e grava `metricas_teste.csv` e `calibracao_teste.png`: uma linha por modelo e a linha `taxa_base` (previsão = proporção de ruins do dev, 0,30), colunas `modelo,roc_auc,roc_auc_ic_inf,roc_auc_ic_sup,pr_auc,pr_auc_ic_inf,pr_auc_ic_sup,brier,brier_ic_inf,brier_ic_sup,log_loss,ece`.
 8. Intervalo por bootstrap: 2000 reamostras das linhas com reposição, semente 2026, percentis 2,5 e 97,5. O valor pontual fica dentro do intervalo.
-9. `uv run python codigo/decisao.py --final` lê `predicoes_teste.csv` e grava `politicas_teste.csv` e `resumo_politicas_teste.csv`, no mesmo formato dos arquivos do dev, mais duas colunas em `resumo_politicas_teste.csv`: `utilidade_media_ic_inf` e `utilidade_media_ic_sup`. Elas usam o bootstrap do item 8 (2000 reamostras, semente 2026, percentis 2,5 e 97,5), com as mesmas reamostras para todos os modelos e regras. A utilidade média fica dentro do intervalo.
+9. `uv run python codigo/decisao.py --final` lê `predicoes_teste.csv` e grava `politicas_teste.csv` e `resumo_politicas_teste.csv`, no mesmo formato dos arquivos do dev, mais duas colunas em `resumo_politicas_teste.csv`: `utilidade_media_ic_inf` e `utilidade_media_ic_sup`. Elas usam o bootstrap do item 8 (2000 reamostras, semente 2026, percentis 2,5 e 97,5), com as mesmas reamostras para todos os modelos e regras. A utilidade média fica dentro do intervalo. Grava também `diferenca_politicas_teste.csv` (3 linhas: `modelo,dif_utilidade_media,dif_ic_inf,dif_ic_sup`), com a diferença pareada de utilidade média entre a regra de utilidade e o limiar fixo, nas mesmas reamostras; a diferença fica dentro do intervalo.
 10. Sem `predicoes_teste.csv`, `avaliar.py --final` e `decisao.py --final` terminam com mensagem e saída diferente de 0.
 11. Nenhum arquivo `*_teste*` é commitado pelo PR; o gate confere que não existem em `resultados/`.
 12. Os comandos sem `--final` geram os mesmos arquivos de antes, idênticos.

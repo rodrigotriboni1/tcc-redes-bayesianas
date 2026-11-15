@@ -14,19 +14,9 @@ P1 a P7 foram decididas e estão registradas em [decisoes.md](decisoes.md), seç
 
 Registradas em [decisoes.md](decisoes.md), na mesma seção.
 
-## 3. Escopo da proposta que o plano não entrega
+## 3. Resolvidas em 15/11/2026 (P12 a P16)
 
-A proposta submetida pede coisas que não têm saída no plano. Para cada uma: entra, ou fica como corte registrado?
-
-| # | Item da proposta | O que o plano tem hoje | Decisão |
-|---|---|---|---|
-| P12 | Etapa B: análise exploratória documentada | Só fatos soltos (categorias raras, 753 valores de `hoehe`); nenhum arquivo em `resultados/` | |
-| P13 | Etapa D: registrar a segunda melhor ação e a diferença de utilidade | O demo imprime as utilidades, mas `politicas_dev.csv` não grava | |
-| P14 | Etapa E: PR-AUC e custo esperado | Não aparecem; com 30% de ruins PR-AUC é pertinente | |
-| P15 | Etapa F: justificativa da recomendação, evidência mais relevante, mudança em relação à prior | A issue 06 põe "explicação textual da decisão" fora do escopo | |
-| P16 | Gravar as arestas do TAN por partição | A issue 01 admite que a estrutura muda entre partições, mas não grava o grafo; num TCC de redes bayesianas o grafo é resultado | |
-
-As etapas B a F da proposta foram lidas pelo opencode no `.docx`; eu não as reconferi.
+Registradas em [decisoes.md](decisoes.md), na seção "Decidido depois da revisão do repositório". As etapas B a F da proposta foram lidas pelo opencode no `.docx`; eu não as reconferi.
 
 ## 4. Mudanças em arquivos que a factory não pode tocar
 

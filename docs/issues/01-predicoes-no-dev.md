@@ -9,7 +9,7 @@ Criar `codigo/modelos.py`, que treina Naive Bayes, TAN e regressão logística c
 ## Contexto
 
 - Ler antes: `AGENTS.md`; `PLANO.md`, itens 3 (nomes do `pgmpy` 1.1.2), 4 (dados) e 5 (algoritmos).
-- Cria: `codigo/modelos.py`, `resultados/predicoes_dev.csv`, `resultados/cortes.json`.
+- Cria: `codigo/modelos.py`, `resultados/predicoes_dev.csv`, `resultados/cortes.json`, `resultados/tan_arestas.csv`.
 - Apaga: `codigo/baseline_logreg.py`, depois de levar a função `build()` para `modelos.py` sem alteração.
 - Tamanho: um PR só. Não dividir e não ampliar.
 
@@ -25,6 +25,7 @@ Criar `codigo/modelos.py`, que treina Naive Bayes, TAN e regressão logística c
 |---|---|
 | `resultados/predicoes_dev.csv` | 800 linhas: `record_id,kredit,fold,p_nb,p_tan,p_logreg`; cada `p_*` é a probabilidade de ruim |
 | `resultados/cortes.json` | Cortes de `laufzeit`, `hoehe` e `alter` aprendidos no dev inteiro |
+| `resultados/tan_arestas.csv` | Arestas do TAN aprendido em cada partição: `fold,origem,destino` |
 
 ## Comportamento
 
@@ -34,7 +35,7 @@ Criar `codigo/modelos.py`, que treina Naive Bayes, TAN e regressão logística c
    - treina o Naive Bayes como rede em estrela e o TAN, ambos com prior BDeu de tamanho equivalente 5 e lista fixa de estados;
    - treina a regressão logística com `build()`;
    - calcula a probabilidade de ruim de cada linha da validação.
-3. Grava as predições na ordem do `dev.csv`.
+3. Grava as predições na ordem do `dev.csv` e, em `tan_arestas.csv`, as arestas do TAN de cada partição.
 4. Aprende os cortes no dev inteiro e grava `cortes.json`.
 5. Expõe a função `prever(treino, alvo, modelo, ocultar=None)`, usada pelas issues 03, 06 e 07. Nesta issue, `ocultar` fica sem implementação além do valor `None`.
 6. No modo `--verificar`, roda os autotestes e não grava nada.
