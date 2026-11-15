@@ -71,7 +71,7 @@ Rodar o mesmo comando duas vezes gera arquivos CSV e JSON idênticos byte a byte
 
 ## Pull request
 
-Todo PR é lido e aprovado pelo autor; não há merge automático. A descrição traz, além do que a factory já põe:
+O merge é automático quando o aprovador da factory aprova. O autor lê cada PR depois do merge, pela descrição, e relê todo o código antes do commit de congelamento. Por isso a descrição precisa se sustentar sozinha. Ela traz, além do que a factory já põe:
 
 - `## O que este script faz`: 5 a 10 linhas, português simples, sem jargão não explicado. O que entra, o que sai, como a conta é feita.
 - `## Como rodar`: os comandos.

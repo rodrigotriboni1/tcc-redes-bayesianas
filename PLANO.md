@@ -209,7 +209,7 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 
 - **Quem escreve o código:** a software factory, uma issue por PR. A sessão interativa define critérios e escreve os `.md`.
 - **Critério de aceite restringe a forma, nunca o resultado.**
-- **Todo PR para no autor:** não há merge automático.
+- **Merge automático:** a factory faz merge quando o aprovador dela aprova (o merge é configurável; o autor optou por deixar automático). O autor lê a descrição de cada PR depois do merge e relê todo o código antes do commit de congelamento do passo 10.
 - **Dados proibidos para o código:** `teste.csv`, `sgc.csv` e `dados/brutos/` (os três contêm as linhas do teste). Só `preparar_sgc.py` os lê.
 - **Teste final:** rodado pelo autor; a factory só escreve o caminho.
 - As demais decisões do dia (D1 a D11) estão em `docs/criterios-de-aceite.md`.
