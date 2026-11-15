@@ -9,7 +9,7 @@ Saídas:
   resultados/tan_arestas.csv    fold,origem,destino (grafo do TAN de cada partição)
   resultados/cortes.json        cortes dos tercis das contínuas no dev inteiro
 
-Uso, a partir da raiz do repositório:
+Uso: a partir da raiz do repositório,
   uv run python codigo/modelos.py              grava as saídas
   uv run python codigo/modelos.py --verificar  roda os autotestes e não grava nada
 """
@@ -104,7 +104,8 @@ def particoes():
     return folds
 
 
-def main():
+def calcular():
+    """Validação cruzada: devolve a tabela de predições e as arestas do TAN de cada partição."""
     folds = particoes()
     saida = dev[["record_id", "kredit"]].copy()
     saida["fold"] = folds
@@ -119,15 +120,20 @@ def main():
         rede, c = preparar_rede(treino, "tan")
         saida.loc[folds == k, "p_tan"] = rede.predict_probability(discretizar(alvo[VARIAVEIS], c))["kredit_0"].to_numpy()
         arestas += [(k, o, d) for o, d in rede.edges()]
+    return saida, pd.DataFrame(sorted(arestas), columns=["fold", "origem", "destino"])
+
+
+def main():
+    saida, arestas = calcular()
     SAIDA.mkdir(exist_ok=True)
     saida.to_csv(SAIDA / "predicoes_dev.csv", index=False)
-    pd.DataFrame(sorted(arestas), columns=["fold", "origem", "destino"]).to_csv(SAIDA / "tan_arestas.csv", index=False)
+    arestas.to_csv(SAIDA / "tan_arestas.csv", index=False)
     (SAIDA / "cortes.json").write_text(json.dumps(cortes(dev)) + "\n")
 
 
 def verificar():
     folds = particoes()
-    gravado = pd.read_csv(SAIDA / "predicoes_dev.csv")
+    gravado, _ = calcular()
     assert (gravado["fold"].to_numpy() == folds).all()
     treino0, alvo0 = dev[folds != 0], dev[folds == 0].drop(columns="kredit")
     linhas = alvo0.iloc[:5]
