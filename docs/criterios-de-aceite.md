@@ -139,7 +139,7 @@ Fora do escopo: esconder duas ou mais variáveis, valor ausente no treino, outra
 12. `uv run python codigo/decisao.py` grava `politicas_dev.csv` (800 linhas: `record_id,kredit`, 6 colunas `acao_<nb|tan|logreg>_<ue|limiar>` e, só para a regra de utilidade, 6 colunas `segunda_<nb|tan|logreg>` e `dif_ue_<nb|tan|logreg>`: a ação de segunda maior utilidade esperada, com o desempate da D5, e a diferença de utilidade esperada entre a primeira e a segunda, sempre ≥ 0) e `resumo_politicas_dev.csv` (6 linhas: `modelo,regra,utilidade_media,n_aprovar,n_rejeitar,n_analise_manual,n_mudam_vs_outra_regra`).
 13. Consistência: contagens somam 800; nas linhas `limiar`, `n_analise_manual = 0`; `utilidade_media` recalculável a 1e-9.
 14. Trocar a perda para 600 numa cópia do JSON muda as ações sem mexer no código.
-15. Aviso: `AVISO: a ação <x> não aparece em <modelo>/<regra>`.
+15. Aviso, só para a regra de utilidade: `AVISO: a ação <x> não aparece em <modelo>/ue`. Para o limiar fixo de 0,5 não há aviso, porque a regra nunca usa a análise manual.
 16. Arquivos idênticos ao repetir.
 
 Fora do escopo: escolher modelo ou "melhor política", mudar valores da matriz, sensibilidade, gráficos, quarta ação, analista que erra, conjunto de teste, calibrar probabilidades.
