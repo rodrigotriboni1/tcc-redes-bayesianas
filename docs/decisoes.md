@@ -86,6 +86,9 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | 15/11/2026 | O placeholder "[Supervisor's Name]" só existe na cópia local da proposta; a versão submetida está correta (P24) | Informação do autor | Autor |
 | 15/11/2026 | As contagens de categorias raras do plano e do glossário passam a ser rotuladas "da base completa, a conferir pelo autor no `sgc.csv`" (P25) | Não batem com o dev e o agente não pode abrir a base completa | Autor |
 | 15/11/2026 | A interface de uma tela só será construída no fim, depois do experimento pronto. Esboço escolhido: layout "mapa de sensibilidade do caso" (grade perda × custo colorida pela ação), que só mostra e lê `sensibilidade.csv` e `predicoes_dev.csv` por `fetch` com servidor local, sem script novo | Cumpre o item 12 do plano sem quebrar os 7 scripts. Até lá vale a demonstração de terminal | Autor |
+| 15/11/2026 | `russell2010` passa a ser o original em inglês (3ª ed., Prentice Hall, 2010), não a tradução brasileira (P26) | O `.bib` misturava título e editora da tradução com o ano do original. A entrada ganha `% VERIFICAR`: os dados foram escritos de memória de um assistente de IA | Autor |
+| 15/11/2026 | Na seção 2.5 do mapa, Platt (sigmoide) e regressão isotônica são métodos da literatura citados sem aplicar; o trabalho só mede a calibração (P27) | Evita sugerir que a isotônica é de Platt e fica coerente com a P1 | Autor |
+| 15/11/2026 | O mapa de referências ganha a coluna "Verificar" com o que falta conferir em cada entrada; o plano passa a dizer 15 entradas a conferir, não 9 (P28) | Cinco marcas `% VERIFICAR` do `.bib` não apareciam no mapa. A conferência no original continua sendo do autor | Autor |
 
 ## 5. Processo
 
