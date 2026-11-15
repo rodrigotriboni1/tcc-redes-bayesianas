@@ -99,7 +99,7 @@ flowchart LR
 
 Os valores da matriz vêm de `config/utilidade.json`; os números acima são os da proposta demonstrativa do plano e não ficam escritos no código. Empate (tolerância 1e-9): análise manual, depois rejeitar, depois aprovar.
 
-Como cada UE é uma reta em `p`, a política equivale a limiares sobre `p`. A contribuição do trabalho é **derivar esses limiares dos custos de forma explícita** e mostrar que isso exige probabilidade calibrada. Por isso a comparação é a tabela 2×2 (modelo × regra), e não "utilidade esperada contra limiar".
+Como cada UE é uma reta em `p`, a política equivale a limiares sobre `p`. A contribuição do trabalho é **derivar esses limiares dos custos de forma explícita** e medir a calibração das probabilidades (que a política exige probabilidade calibrada vem da literatura). A tabela 2×2 compara uma política de três ações por utilidade esperada com um corte 0,5 de duas ações; é descritiva, e a diferença mistura modelo, representação e conjunto de ações.
 
 ## 5. Como o código é construído
 

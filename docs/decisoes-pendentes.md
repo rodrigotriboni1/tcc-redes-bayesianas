@@ -10,14 +10,9 @@ Cada item diz se a afirmação foi **conferida** por mim no repositório ou **s�
 
 P1 a P7 foram decididas e estão registradas em [decisoes.md](decisoes.md), seção "Decidido depois da revisão do repositório". Ficam aqui só as demais.
 
-## 2. Redação e método, sem código novo
+## 2. Resolvidas em 15/11/2026 (P8 a P11)
 
-| # | Questão | Sugestão da revisão | Conferido | Decisão |
-|---|---|---|---|---|
-| P8 | A tabela 2×2 chama a diferença de "efeito do modelo" e "efeito da regra", mas a regra fixa (0,5) só tem duas ações e a de utilidade tem três | Descrever como "política de três ações por utilidade esperada contra corte 0,5 de duas ações", sem linguagem causal. Vale também para `docs/arquitetura.md` | Conferido | |
-| P9 | Evidência incompleta: as redes removem a variável; a logística imputa mediana ou moda. A queda por variável não é comparável entre famílias | Separar a tabela por família ou escrever a ressalva na legenda | Só da revisão | |
-| P10 | Os estados das variáveis são fixados no dev inteiro (critério 01.8), inclusive categorias que só aparecem na partição de validação | Dizer na seção de materiais e métodos que foi uma simplificação por estabilidade | Conferido | |
-| P11 | O ECE do `baseline_logreg.py` é top-label; o novo é sobre P(ruim) | Se a monografia citar o ECE antigo, rotular como "top-label, protocolo anterior" ou recalcular | Conferido | |
+Registradas em [decisoes.md](decisoes.md), na mesma seção.
 
 ## 3. Escopo da proposta que o plano não entrega
 
