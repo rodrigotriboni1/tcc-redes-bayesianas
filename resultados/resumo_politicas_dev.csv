@@ -1,0 +1,7 @@
+modelo,regra,utilidade_media,n_aprovar,n_rejeitar,n_analise_manual,n_mudam_vs_outra_regra
+nb,ue,32.625,274,171,355,355
+nb,limiar,4.5,581,219,0,355
+tan,ue,22.275,361,177,262,262
+tan,limiar,-3.125,590,210,0,262
+logreg,ue,30.875,243,142,415,415
+logreg,limiar,3.625,599,201,0,415
