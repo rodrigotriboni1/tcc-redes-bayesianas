@@ -20,13 +20,11 @@ Registradas em [decisoes.md](decisoes.md), na seção "Decidido depois da revis�
 
 ## 4. Mudanças em arquivos que a factory não pode tocar
 
+P17, P19, P20 e P21 foram decididas e aplicadas em 15/11/2026 (registro em [decisoes.md](decisoes.md)). Resta a P18.
+
 | # | Questão | Onde | Conferido | Decisão |
 |---|---|---|---|---|
-| P17 | O gate não busca `clip`, que o `AGENTS.md` proíbe sobre probabilidades | `factory/checks.sh:55` | Só da revisão | |
 | P18 | Depois da issue 04, incluir `config/utilidade.json` e `codigo/test_decisao.py` em `protected_paths`. Antes disso a issue 04 não consegue criá-los | `factory/config.json` | Só da revisão | |
-| P19 | O critério 03.5 ("ao menos uma predição muda") é de presença de efeito, que os próprios critérios proíbem; o verificador o trata como falha | `docs/criterios-de-aceite.md:118`, `factory/verificar_saidas.py:146` | Só da revisão | |
-| P20 | O verificador não cobre os valores das utilidades do demo nem as falhas esperadas do caminho `--final` (07.1 e 07.10) | `factory/verificar_saidas.py` | Só da revisão | |
-| P21 | `AGENTS.md` diz "scripts só gravam em `resultados/`" e "nenhum outro arquivo de teste"; o `preparar_sgc.py` e o `test_decisao.py` são exceções. Editar depois do PR #8, que também mexe no arquivo | `AGENTS.md` | Conferido | |
 
 ## 5. Orientador e entregas
 

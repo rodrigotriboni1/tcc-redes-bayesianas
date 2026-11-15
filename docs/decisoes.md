@@ -76,6 +76,10 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | 15/11/2026 | Justificativa textual da recomendação no demo fica de fora; a monografia diz que o demo mostra a conta (risco, utilidade de cada ação, fronteiras) e não a explicação textual (P15) | Corte registrado da etapa F. Aviso ao orientador junto com a troca de protótipo | Autor |
 | 15/11/2026 | O TAN grava as arestas de cada partição em `resultados/tan_arestas.csv` (P16). Muda a issue 01 e o critério 01.12 | O grafo aprendido é resultado num TCC de redes bayesianas; permite mostrar a estabilidade da estrutura entre partições | Autor |
 | 15/11/2026 | O bootstrap da issue 07 também grava a diferença pareada de utilidade média entre a regra de utilidade e o limiar fixo (`diferenca_politicas_teste.csv`, ressalva da P4). Intervalos por política seguem em `resumo_politicas_teste.csv` | Responde à parte 2 da pergunta sem comparar intervalos que se sobrepõem. Ainda não cobre a variação do treino | Autor |
+| 15/11/2026 | O gate passa a buscar `clip(` em `codigo/` (P17) | Impõe por máquina a regra do `AGENTS.md`; um `clip` legítimo em outro contexto vira falha a explicar | Autor |
+| 15/11/2026 | O critério 03.5 (alguma predição muda ao esconder a variável) vira aviso (P19) | É presença de efeito, que os critérios proíbem. O critério estrutural 03.4 continua | Autor |
+| 15/11/2026 | O verificador passa a conferir as falhas esperadas de `--final` e as utilidades do demo, além dos arquivos novos (P20) | Tudo de forma, não de resultado | Autor |
+| 15/11/2026 | `AGENTS.md` registra as exceções: `preparar_sgc.py` grava em `dados/processados/` e `test_decisao.py` é o único arquivo de teste previsto (P21) | Alinha o `AGENTS.md` ao plano e à G3 | Autor |
 
 ## 5. Processo
 
