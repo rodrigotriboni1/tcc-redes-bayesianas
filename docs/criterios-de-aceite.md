@@ -18,7 +18,7 @@ As onze propostas abaixo foram aceitas em bloco em 15/11/2026.
 | D6 | Dois números da monografia não teriam arquivo | Criar `resumo_politicas_dev.csv` e `sensibilidade.csv` |
 | D7 | Grade da sensibilidade | Perda em {200, 400, 600, 800} × custo da análise em {0, 5, …, 100} |
 | D8 | Modelo padrão da demonstração | `tan` |
-| D9 | O aprovador da factory faz merge sem humano (conferido em `approver.md`) | Todo PR para no autor. Como: opção em `factory/config.json` (por exemplo `"auto_merge": false`) respeitada pelos scripts da factory. Não editar o agente aprovador: o `install.sh` sobrescreve os agentes a cada execução. **Pendente:** a opção ainda não existe na factory |
+| D9 | O aprovador da factory faz merge sem humano (conferido em `approver.md`) | **Revista em 15/11/2026:** o merge fica automático. A factory permite configurar, e o autor optou por não parar cada PR. Em troca: o autor lê a descrição de cada PR depois do merge e relê todo o código antes do commit de congelamento |
 | D10 | Nenhuma issue escreve o caminho do teste final (`--final`, passo 10) | Issue 07 pequena, feita pela factory e testada com um "teste falso" feito de linhas do dev. O autor só executa no dia |
 | D11 | `sgc.csv` e `dados/brutos/` também contêm as 200 linhas do teste | A proibição de leitura cobre os três, não só `teste.csv` |
 
@@ -64,7 +64,7 @@ Vão para o `AGENTS.md`; não se repetem em cada issue.
 | G5 | Sem dependência nova; sem arquivo novo em `codigo/` fora dos 7 do plano | gate |
 | G6 | Sem `try/except` em volta de treino ou inferência; sem `fillna`, `clip` ou `nan_to_num` em probabilidades; entrada inválida termina com saída diferente de 0 e mensagem | gate e revisão |
 | G7 | Cada arquivo abre com docstring em português: o que faz, entradas, saídas, linha `Uso:` | gate |
-| G8 | A descrição do PR tem `## O que este script faz` (5 a 10 linhas, português simples), `## Como rodar` e `## Avisos impressos` | autor, ao aprovar |
+| G8 | A descrição do PR tem `## O que este script faz` (5 a 10 linhas, português simples), `## Como rodar` e `## Avisos impressos` | autor, depois do merge |
 | G9 | Autoteste com `assert` fica no modo `--verificar` do próprio script e não grava nada | gate |
 
 ## 4. Critérios por issue
@@ -167,9 +167,28 @@ Fora do escopo: sensibilidade com dados, variar o ganho, gráfico interativo, co
 
 Fora do escopo: digitar um caso novo, esconder variável, interface web, cores, explicação textual da decisão, casos do teste.
 
+### 07. Caminho do teste final (`--final` em `modelos.py`, `avaliar.py`, `decisao.py`)
+
+A factory escreve e testa o caminho com linhas do dev. Quem o executa sobre o teste é o autor (passo 10 do plano).
+
+1. `uv run python codigo/modelos.py --final <arquivo>` treina os três modelos no dev inteiro e grava só `resultados/predicoes_teste.csv`. O caminho do arquivo é argumento obrigatório; nenhum nome de arquivo de teste aparece no código.
+2. `predicoes_teste.csv`: colunas `record_id,kredit,p_nb,p_tan,p_logreg`; uma linha por linha do arquivo de entrada, na mesma ordem; `p_*` finito, estritamente entre 0 e 1.
+3. Os cortes usados são os de `resultados/cortes.json` (dev inteiro); estados fixos como na issue 01.
+4. Se `resultados/predicoes_teste.csv` já existe, o script termina com mensagem e saída diferente de 0, sem sobrescrever.
+5. `--final` não altera nenhum arquivo `*_dev*` nem `cortes.json`.
+6. `--verificar` cobre o caminho com um arquivo falso: as 160 linhas da partição 0 do dev, gravadas em pasta temporária. O resultado tem 160 linhas e é igual a `prever(dev, falso)` a 1e-12.
+7. `uv run python codigo/avaliar.py --final` lê `predicoes_teste.csv` e grava `metricas_teste.csv` e `calibracao_teste.png`: uma linha por modelo e a linha `taxa_base` (previsão = proporção de ruins do dev, 0,30), colunas `modelo,roc_auc,roc_auc_ic_inf,roc_auc_ic_sup,brier,brier_ic_inf,brier_ic_sup,log_loss,ece`.
+8. Intervalo por bootstrap: 2000 reamostras das linhas com reposição, semente 2026, percentis 2,5 e 97,5. O valor pontual fica dentro do intervalo.
+9. `uv run python codigo/decisao.py --final` lê `predicoes_teste.csv` e grava `politicas_teste.csv` e `resumo_politicas_teste.csv`, no mesmo formato dos arquivos do dev.
+10. Sem `predicoes_teste.csv`, `avaliar.py --final` e `decisao.py --final` terminam com mensagem e saída diferente de 0.
+11. Nenhum arquivo `*_teste*` é commitado pelo PR; o gate confere que não existem em `resultados/`.
+12. Os comandos sem `--final` geram os mesmos arquivos de antes, idênticos.
+
+Fora do escopo: executar sobre o teste de verdade, escolher modelo, calibrar, evidência incompleta no teste, sensibilidade no teste, qualquer mudança no treino dos modelos.
+
 ## 5. `factory/checks.sh`
 
-O gate roda o `checks.sh` da cópia principal com a pasta de trabalho no ramo do job, então o ramo não troca o próprio juiz. Ele e um `factory/verificar_saidas.py` são escritos antes da issue 01, já com os blocos das 6 issues; cada bloco só roda se o script existir.
+O gate roda o `checks.sh` da cópia principal com a pasta de trabalho no ramo do job, então o ramo não troca o próprio juiz. Ele e um `factory/verificar_saidas.py` são escritos antes da issue 01, já com os blocos das 7 issues; cada bloco só roda se o script existir.
 
 | # | Checagem | Tempo |
 |---|---|---|
@@ -198,6 +217,7 @@ Arquivos protegidos contra alteração (`protected_paths`): `dados/*`, `codigo/p
 | 1 | 01 | Tudo lê `predicoes_dev.csv` |
 | 2 | 02 e 04, em paralelo | Arquivos diferentes; só leem a saída da 01 |
 | 3 | 03, 05 e 06, em paralelo | 03 altera `modelos.py` e `avaliar.py`; 05 e 06 só importam |
+| 4 | 07 | Altera `modelos.py`, `avaliar.py` e `decisao.py`; precisa de 03 e 04 já no `main` |
 
 A factory roda até 3 jobs por vez e não controla dependência entre issues: só pôr o rótulo `factory` nas issues da onda atual. Nenhum PR edita `AGENTS.md` nem `README.md`.
 
@@ -206,10 +226,8 @@ Antes da issue 01, nesta ordem:
 1. Criar o repositório no GitHub e enviar o `main`.
 2. Instalar a factory com `factory/install.sh <este repositório>` (script da `triboni_factory`, em construção em 15/11/2026). Ele copia agentes, skill e `factory/bin/`, cria os 3 rótulos e ajusta o `.gitignore`. Sobrescreve os agentes a cada execução; cria `config.json` e `checks.sh` só se faltarem e depois os preserva.
 3. Substituir o `factory/checks.sh` gerado: o modelo da factory procura npm, pytest ou cargo e, neste repositório, falha de propósito. Escrever o da seção 5 e o `factory/verificar_saidas.py`.
-4. Editar `factory/config.json`: `protected_paths` da seção 5 e a opção de não fazer merge automático (D9).
+4. Editar `factory/config.json`: `protected_paths` da seção 5. O merge fica automático (D9).
 5. Só então rotular a issue 01.
-
-Enquanto a opção de D9 não existir na factory, não usar a aprovação automática neste repositório.
 
 ## 7. Riscos de agente escrevendo código de experimento
 
@@ -218,7 +236,7 @@ Enquanto a opção de D9 não existir na factory, não usar a aprovação autom�
 | Ajustar até o resultado ficar bonito | Constantes congeladas (G4); nenhum critério com valor de resultado; regra "nunca justifique uma mudança por uma métrica" |
 | Vazamento sem intenção | Critérios 01.3 a 01.5; caixa de areia |
 | Fazer o teste passar em vez de fazer a conta | Testes com outra matriz (04.8, 04.14); G6; resposta conhecida do prior (01.6a) |
-| Código que o autor não consegue defender | Aprovador sempre encaminha ao autor (D9); G7 e G8 |
+| Código que o autor não consegue defender | G7 e G8; leitura de cada PR depois do merge; releitura completa antes do commit de congelamento |
 | Decisão de pesquisa tomada pelo agente | D3 e D4 fora do escopo; regra "toda escolha que dependa de um número é do autor: pare e pergunte" |
 
 ## 8. Modelo de issue
