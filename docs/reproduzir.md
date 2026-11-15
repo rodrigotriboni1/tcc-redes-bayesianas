@@ -34,12 +34,11 @@ O passo 1 só precisa ser repetido se `dados/brutos/` mudar. Como a divisão é 
 
 ## 3. Autotestes
 
-Cada script tem um modo `--verificar` que confere contas com resposta conhecida e não grava nada:
+Os scripts `modelos.py`, `avaliar.py` e `sensibilidade.py` têm um modo `--verificar` que confere contas com resposta conhecida e não grava nada:
 
 ```bash
 uv run python codigo/modelos.py --verificar
 uv run python codigo/avaliar.py --verificar
-uv run python codigo/decisao.py --verificar
 uv run python codigo/sensibilidade.py --verificar
 uv run python codigo/test_decisao.py
 ```
