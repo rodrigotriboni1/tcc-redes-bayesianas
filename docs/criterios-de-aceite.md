@@ -13,7 +13,7 @@ As onze propostas abaixo foram aceitas em bloco em 15/11/2026.
 | D1 | A demonstração treina no dev inteiro, mas o plano pede "mesmo risco de `predicoes_dev.csv`". Os dois não coincidem | A demonstração treina nas 4 partições que não contêm o caso; reproduz o número da monografia |
 | D2 | Na regressão logística com variável escondida, "moda" não serve para `hoehe` (753 valores distintos em 800 linhas, conferido) | Mediana do treino para as 3 contínuas; moda para as 17 categóricas |
 | D3 | A tabela 2×2 fala em "rede bayesiana", mas há duas (Naive Bayes e TAN) | A factory calcula as políticas para os três modelos; o autor escolhe qual vai para o texto antes do commit de congelamento |
-| D4 | "Calibrar se estiver ruim" depende do resultado | Fica fora das 6 issues; o autor decide depois de ver `metricas_dev.csv`; se entrar, é issue nova |
+| D4 | "Calibrar se estiver ruim" depende do resultado | Fica fora das 7 issues; o autor decide depois de ver `metricas_dev.csv`; se entrar, é issue nova |
 | D5 | Empate entre ações (com c = 80 e p = 0,20 as três empatam) | Prioridade: análise manual > rejeitar > aprovar, tolerância 1e-9 |
 | D6 | Dois números da monografia não teriam arquivo | Criar `resumo_politicas_dev.csv` e `sensibilidade.csv` |
 | D7 | Grade da sensibilidade | Perda em {200, 400, 600, 800} × custo da análise em {0, 5, …, 100} |
@@ -59,7 +59,7 @@ Vão para o `AGENTS.md`; não se repetem em cada issue.
 |---|---|---|
 | G1 | Roda da raiz com `uv run python codigo/<script>.py`, saída 0, sem interação | gate |
 | G2 | Não lê `teste.csv`, `sgc.csv` nem `dados/brutos/`; não lista pastas de dados | gate |
-| G3 | Só grava em `resultados/`; os arquivos gerados são commitados e idênticos ao que o gate regenera | gate |
+| G3 | Só grava em `resultados/` (exceção: `preparar_sgc.py` grava em `dados/processados/`); os arquivos gerados são commitados e idênticos ao que o gate regenera | gate |
 | G4 | Constantes congeladas: semente 2026, 5 partições, 3 faixas por tercis, BDeu com tamanho equivalente 5, `LogisticRegression(max_iter=1000)`, erro de calibração com 10 faixas. Precisar mudar uma delas é motivo para parar e perguntar | revisão |
 | G5 | Sem dependência nova; sem arquivo novo em `codigo/` fora dos 7 do plano | gate |
 | G6 | Sem `try/except` em volta de treino ou inferência; sem `fillna`, `clip` ou `nan_to_num` em probabilidades; entrada inválida termina com saída diferente de 0 e mensagem | gate e revisão |
@@ -219,7 +219,7 @@ Arquivos protegidos contra alteração (`protected_paths`): `dados/*`, `codigo/p
 | 3 | 03, 05 e 06, em paralelo | 03 altera `modelos.py` e `avaliar.py`; 05 e 06 só importam |
 | 4 | 07 | Altera `modelos.py`, `avaliar.py` e `decisao.py`; precisa de 03 e 04 já no `main` |
 
-A factory roda até 3 jobs por vez e não controla dependência entre issues: só pôr o rótulo `factory` nas issues da onda atual. Nenhum PR edita `AGENTS.md` nem `README.md`.
+A factory roda até 3 jobs por vez e não controla dependência entre issues: só pôr o rótulo `factory` nas issues da onda atual. Nenhum PR da factory edita `AGENTS.md` nem `README.md`.
 
 Antes da issue 01, nesta ordem:
 

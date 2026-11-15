@@ -1,6 +1,6 @@
 # 03: Medir o efeito de esconder uma variável por vez
 
-Onda 3. Depende das issues 01 e 02 já no `main`. Pode rodar em paralelo com a 05 e a 06. Primeira a cortar se o prazo apertar.
+Onda 3. Depende das issues 01 e 02 já no `main`. Pode rodar em paralelo com a 05 e a 06. Segunda a cortar se o prazo apertar, depois do hill climbing (passo 9).
 
 ## Objetivo
 
