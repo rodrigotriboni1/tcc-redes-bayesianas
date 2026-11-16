@@ -56,6 +56,8 @@ def main():
     u = decisao.carregar_utilidade()
 
     folds = dev["record_id"].map(fold)
+    if folds.isna().any():
+        sys.exit("ERRO: predicoes_dev.csv não tem o fold de todas as linhas de dev.csv")
     treino = dev[folds != fold[args.record_id]]
     alvo = dev[dev["record_id"] == args.record_id].drop(columns="kredit")
 
