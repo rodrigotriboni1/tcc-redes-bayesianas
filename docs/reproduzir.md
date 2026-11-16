@@ -4,7 +4,7 @@ Passo a passo para gerar de novo todos os arquivos de `resultados/`. Vira o apê
 
 Tudo roda a partir da raiz do repositório, sem interação, com Python 3.12 e as dependências travadas pelo `uv`.
 
-**Situação em 15/11/2026.** Existem hoje `codigo/preparar_sgc.py` e o `codigo/baseline_logreg.py` herdado, que a issue 01 apaga. Os demais scripts nascem das issues em `docs/issues/`, e cada seção abaixo vale só depois do merge da issue correspondente. A coluna "Issue" diz qual.
+**Situação em 16/11/2026.** Os sete scripts estão na `main` (issues 01 a 07 mergeadas). O que ainda não foi feito é o teste final da seção 5, que é só do autor. A coluna "Issue" diz de que issue vem cada passo.
 
 ## 1. Ambiente
 
@@ -21,7 +21,7 @@ Cada script grava só em `resultados/` (o `preparar_sgc.py` grava em `dados/proc
 | # | Passo | Comando | Grava | Issue |
 |---|---|---|---|---|
 | 1 | Divisão dev/teste | `uv run python codigo/preparar_sgc.py` | `dados/processados/sgc.csv`, `dev.csv`, `teste.csv`, `SHA256SUMS` | já existe |
-| 3 | Predições no dev | `uv run python codigo/modelos.py` | `predicoes_dev.csv`, `cortes.json` | 01 |
+| 3 | Predições no dev | `uv run python codigo/modelos.py` | `predicoes_dev.csv`, `cortes.json`, `tan_arestas.csv` | 01 |
 | 4 | Métricas e calibração | `uv run python codigo/avaliar.py` | `metricas_dev.csv`, `calibracao_dev.png` | 02 |
 | 5 | Evidência incompleta | `uv run python codigo/modelos.py --ocultar` e depois `uv run python codigo/avaliar.py --ocultar` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` | 03 |
 | 6 | Camada de decisão | `uv run python codigo/decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` | 04 |
