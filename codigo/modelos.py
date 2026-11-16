@@ -8,10 +8,16 @@ Saídas:
   resultados/predicoes_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg
   resultados/tan_arestas.csv    fold,origem,destino (grafo do TAN de cada partição)
   resultados/cortes.json        cortes dos tercis das contínuas no dev inteiro
+  resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
+
+Com --ocultar, os modelos são treinados com as 20 variáveis e cada variável é escondida,
+uma por vez, só na previsão: as redes ficam sem aquela evidência e a regressão logística
+recebe a mediana (contínuas) ou a moda (categóricas) do treino da partição.
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/modelos.py              grava as saídas
   uv run python codigo/modelos.py --verificar  roda os autotestes e não grava nada
+  uv run python codigo/modelos.py --ocultar    grava só predicoes_dev_oculta.csv
 """
 import json
 import sys
@@ -83,18 +89,40 @@ def preparar_rede(treino, modelo):
     return montar_rede(treino, modelo), c
 
 
+def treinar(treino, modelo):
+    """Regressão logística treinada ou (rede, cortes)."""
+    if modelo == "logreg":
+        return build(CONTINUAS, CATEGORICAS).fit(treino[VARIAVEIS], treino["kredit"])
+    return preparar_rede(treino, modelo)
+
+
+def preencher(treino, alvo, ocultar):
+    """Regra D2: a coluna escondida recebe a mediana (contínua) ou a moda (categórica) do treino; empate na moda fica com o menor valor."""
+    x = alvo[VARIAVEIS].copy()
+    x[ocultar] = treino[ocultar].median() if ocultar in CONTINUAS else treino[ocultar].mode().iloc[0]
+    return x
+
+
+def aplicar(treinado, treino, alvo, modelo, ocultar=None):
+    """P(ruim) de alvo com um modelo já treinado, opcionalmente sem a variável ocultar."""
+    if modelo == "logreg":
+        x = alvo[VARIAVEIS] if ocultar is None else preencher(treino, alvo, ocultar)
+        return treinado.predict_proba(x)[:, list(treinado.classes_).index(0)]
+    rede, c = treinado
+    x = discretizar(alvo[VARIAVEIS], c)
+    if ocultar is not None:
+        # sem a coluna, a rede soma sobre os valores da variável escondida
+        x = x.drop(columns=ocultar)
+    return rede.predict_probability(x)["kredit_0"].to_numpy()
+
+
 def prever(treino, alvo, modelo, ocultar=None):
     """P(ruim) para cada linha de alvo, na ordem de alvo. Tudo é aprendido só em treino."""
-    if ocultar is not None:
-        sys.exit("ERRO: ocultar ainda não é suportado")
     if modelo not in MODELOS:
         sys.exit(f"ERRO: modelo desconhecido: {modelo}")
-    if modelo == "logreg":
-        m = build(CONTINUAS, CATEGORICAS).fit(treino[VARIAVEIS], treino["kredit"])
-        return m.predict_proba(alvo[VARIAVEIS])[:, list(m.classes_).index(0)]
-    rede, c = preparar_rede(treino, modelo)
-    x = discretizar(alvo[VARIAVEIS], c)
-    return rede.predict_probability(x)["kredit_0"].to_numpy()
+    if ocultar is not None and ocultar not in VARIAVEIS:
+        sys.exit(f"ERRO: variável desconhecida para ocultar: {ocultar}")
+    return aplicar(treinar(treino, modelo), treino, alvo, modelo, ocultar)
 
 
 def particoes():
@@ -121,6 +149,32 @@ def calcular():
         saida.loc[folds == k, "p_tan"] = rede.predict_probability(discretizar(alvo[VARIAVEIS], c))["kredit_0"].to_numpy()
         arestas += [(k, o, d) for o, d in rede.edges()]
     return saida, pd.DataFrame(sorted(arestas), columns=["fold", "origem", "destino"])
+
+
+def calcular_oculta():
+    """Validação cruzada com cada variável escondida. Devolve a tabela e os pares em que nada mudou."""
+    folds = particoes()
+    completo = {m: np.zeros(len(dev)) for m in MODELOS}
+    oculta = {(m, v): np.zeros(len(dev)) for m in MODELOS for v in VARIAVEIS}
+    for k in range(5):
+        treino, alvo = dev[folds != k], dev[folds == k].drop(columns="kredit")
+        for m in MODELOS:
+            # um treino por partição e modelo, reaproveitado nas 20 variáveis
+            treinado = treinar(treino, m)
+            completo[m][folds == k] = aplicar(treinado, treino, alvo, m)
+            for v in VARIAVEIS:
+                oculta[(m, v)][folds == k] = aplicar(treinado, treino, alvo, m, v)
+    partes = [pd.DataFrame({"record_id": dev["record_id"], "modelo": m, "variavel_oculta": v, "p_ruim": p}) for (m, v), p in oculta.items()]
+    iguais = [(m, v) for (m, v), p in oculta.items() if np.array_equal(p, completo[m])]
+    return pd.concat(partes, ignore_index=True), iguais
+
+
+def main_oculta():
+    tabela, iguais = calcular_oculta()
+    for m, v in iguais:
+        print(f"AVISO: esconder {v} não mudou nenhuma predição de {m}")
+    SAIDA.mkdir(exist_ok=True)
+    tabela.to_csv(SAIDA / "predicoes_dev_oculta.csv", index=False)
 
 
 def main():
@@ -183,13 +237,40 @@ def verificar():
     m = build(CONTINUAS, CATEGORICAS).fit(treino0[VARIAVEIS], treino0["kredit"])
     assert list(m.classes_) == [0, 1]
     assert np.abs(m.predict_proba(linhas[VARIAVEIS])[:, 0] - prever(treino0, linhas, "logreg")).max() < 1e-12
+
+    for m in ("nb", "tan"):
+        rede, c = preparar_rede(treino0, m)
+        x = discretizar(linhas[VARIAVEIS], c)
+        ve = VariableElimination(rede)
+        cpds = {cpd.variable: cpd for cpd in rede.get_cpds()}
+        for v in VARIAVEIS:
+            p_oculta = prever(treino0, linhas, m, ocultar=v)
+            for i in range(5):
+                # 8b: igual a VariableElimination.query com a evidência sem a variável escondida
+                evid = {u: int(x.iloc[i][u]) for u in VARIAVEIS if u != v}
+                assert abs(p_oculta[i] - ve.query(["kredit"], evidence=evid).values[0]) < 1e-9, (m, v, i)
+                # 8a: no NB, produto normalizado das tabelas sem o fator da variável escondida
+                if m == "nb":
+                    p = cpds["kredit"].values.copy()
+                    for u in VARIAVEIS:
+                        if u != v:
+                            p = p * cpds[u].values[cpds[u].state_names[u].index(int(x.iloc[i][u]))]
+                    assert abs(p[0] / p.sum() - p_oculta[i]) < 1e-9, (v, i)
+
+    # 8c: na regressão, ocultar é igual a prever sem ocultar com a coluna preenchida pela regra D2
+    for v in VARIAVEIS:
+        preenchido = linhas.copy()
+        preenchido[v] = treino0[v].median() if v in CONTINUAS else treino0[v].mode().iloc[0]
+        assert np.abs(prever(treino0, linhas, "logreg", ocultar=v) - prever(treino0, preenchido, "logreg")).max() < 1e-12, v
     print("verificar: ok")
 
 
 if __name__ == "__main__":
     if sys.argv[1:] == ["--verificar"]:
         verificar()
+    elif sys.argv[1:] == ["--ocultar"]:
+        main_oculta()
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/modelos.py [--verificar]")
+        sys.exit("Uso: uv run python codigo/modelos.py [--verificar | --ocultar]")
     else:
         main()
