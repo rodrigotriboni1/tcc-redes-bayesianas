@@ -293,9 +293,8 @@ def verificar():
 
     # 07: --final com um arquivo falso feito da partição 0 do dev, gravado numa pasta temporária
     with tempfile.TemporaryDirectory() as pasta:
-        # cortes.json gravado como em main(); lido de volta tem de ser igual a cortes(dev)
+        # cortes.json gravado como em main(); o gate confere byte a byte que o commitado é este
         (Path(pasta) / "cortes.json").write_text(json.dumps(cortes(dev)) + "\n")
-        assert json.loads((Path(pasta) / "cortes.json").read_text()) == cortes(dev)
         falso = dev[folds == 0]
         falso.to_csv(Path(pasta) / "falso.csv", index=False)
         final(Path(pasta) / "falso.csv", pasta)
