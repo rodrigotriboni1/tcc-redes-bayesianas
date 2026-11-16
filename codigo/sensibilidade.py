@@ -6,7 +6,7 @@ Pela forma fechada, se c < G·L/(G + L) aprova-se com p < c/L, rejeita-se com
 p > 1 - c/G e entre os dois vai para análise manual; senão os dois limiares
 valem G/(G + L) e a análise manual nunca é escolhida. Não lê dados nem predições.
 
-Entrada: config/utilidade.json  só o ganho G = acoes.aprovar.bom
+Entrada: config/utilidade.json  o ganho G = acoes.aprovar.bom e a linha acoes.rejeitar
 Saídas:
   resultados/sensibilidade.csv  perda,custo_analise,limiar_inferior,limiar_superior (84 linhas)
   resultados/sensibilidade.png  um painel por perda com as regiões de cada ação
@@ -33,8 +33,8 @@ PERDAS = [200, 400, 600, 800]
 CUSTOS = list(range(0, 101, 5))
 
 
-def matriz(g, perda, custo):
-    return {"aprovar": {"bom": g, "ruim": -perda}, "rejeitar": {"bom": 0, "ruim": 0}, "analise_manual": {"bom": g - custo, "ruim": -custo}}
+def matriz(g, rejeitar, perda, custo):
+    return {"aprovar": {"bom": g, "ruim": -perda}, "rejeitar": rejeitar, "analise_manual": {"bom": g - custo, "ruim": -custo}}
 
 
 def limiares(g, perda, custo):
@@ -80,11 +80,12 @@ def main():
 
 
 def verificar():
-    g = decisao.carregar_utilidade()["aprovar"]["bom"]
+    acoes = decisao.carregar_utilidade()
+    g = acoes["aprovar"]["bom"]
     for l in PERDAS:
         for c in CUSTOS:
             inf, sup = limiares(g, l, c)
-            u = matriz(g, l, c)
+            u = matriz(g, acoes["rejeitar"], l, c)
             if inf > 0:
                 assert decisao.ordenar(inf - 1e-6, u)[0] == "aprovar", (l, c)
             if inf < sup:
