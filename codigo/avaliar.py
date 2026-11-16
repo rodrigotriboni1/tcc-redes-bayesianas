@@ -5,14 +5,22 @@ ROC-AUC, PR-AUC, Brier, log loss e erro de calibração (10 faixas de P(ruim)).
 A linha taxa_base prevê, em cada partição, a proporção de ruins nas outras 4.
 Classe positiva: ruim (kredit == 0). Não treina nenhum modelo.
 
-Entrada: resultados/predicoes_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg
+Com --ocultar, calcula ROC-AUC e Brier de cada modelo com cada variável escondida
+(média das 5 partições) e a diferença para o desempenho com todas as variáveis.
+
+Entradas:
+  resultados/predicoes_dev.csv         record_id,kredit,fold,p_nb,p_tan,p_logreg
+  resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
+  resultados/metricas_dev.csv          desempenho com todas as variáveis (só com --ocultar)
 Saídas:
   resultados/metricas_dev.csv   média e desvio amostral, entre as 5 partições, de cada métrica
   resultados/calibracao_dev.png diagrama de calibração com as 800 predições juntas
+  resultados/evidencia_incompleta.csv  modelo,variavel_oculta,roc_auc,brier,delta_roc_auc,delta_brier (só com --ocultar)
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/avaliar.py              grava as saídas
   uv run python codigo/avaliar.py --verificar  roda os autotestes e não grava nada
+  uv run python codigo/avaliar.py --ocultar    grava só evidencia_incompleta.csv
 """
 import sys
 from pathlib import Path
@@ -28,6 +36,7 @@ from sklearn.metrics import average_precision_score, brier_score_loss, log_loss,
 RAIZ = Path(__file__).resolve().parent.parent
 SAIDA = RAIZ / "resultados"
 PREDICOES = SAIDA / "predicoes_dev.csv"
+OCULTA = SAIDA / "predicoes_dev_oculta.csv"
 MODELOS = ["nb", "tan", "logreg"]
 COLUNAS = ["kredit", "fold"] + [f"p_{m}" for m in MODELOS]
 METRICAS = ["roc_auc", "pr_auc", "brier", "log_loss", "ece"]
@@ -48,14 +57,22 @@ def metricas(y, p):
     return [roc_auc_score(y, p), average_precision_score(y, p), brier_score_loss(y, p), log_loss(y, p, labels=[0, 1]), ece(y, p)]
 
 
+def ler_csv(caminho, colunas):
+    """Lê um CSV e termina com erro se o arquivo não existir, faltar coluna ou houver vazio."""
+    if not caminho.exists():
+        sys.exit(f"ERRO: arquivo ausente: {caminho.name}")
+    df = pd.read_csv(caminho)
+    faltando = [c for c in colunas if c not in df.columns]
+    if faltando:
+        sys.exit(f"ERRO: colunas ausentes em {caminho.name}: {', '.join(faltando)}")
+    if df[colunas].isna().any().any():
+        sys.exit(f"ERRO: valor vazio em {caminho.name}")
+    return df
+
+
 def ler():
     """Lê predicoes_dev.csv e termina com erro se faltar coluna, houver vazio ou p fora de [0, 1]."""
-    pred = pd.read_csv(PREDICOES)
-    faltando = [c for c in COLUNAS if c not in pred.columns]
-    if faltando:
-        sys.exit(f"ERRO: colunas ausentes em {PREDICOES.name}: {', '.join(faltando)}")
-    if pred[COLUNAS].isna().any().any():
-        sys.exit(f"ERRO: valor vazio em {PREDICOES.name}")
+    pred = ler_csv(PREDICOES, COLUNAS)
     for m in MODELOS:
         if not pred[f"p_{m}"].between(0, 1).all():
             sys.exit(f"ERRO: p_{m} fora de [0, 1] em {PREDICOES.name}")
@@ -113,6 +130,38 @@ def main():
     desenhar(pred)
 
 
+def calcular_oculta(oculta, pred, completo):
+    """ROC-AUC e Brier médios de cada par (modelo, variável) e a diferença para o modelo completo."""
+    if not oculta["p_ruim"].between(0, 1).all():
+        sys.exit(f"ERRO: p_ruim fora de [0, 1] em {OCULTA.name}")
+    y, fold = (pred["kredit"] == 0).to_numpy().astype(int), pred["fold"].to_numpy()
+    ids = list(pred["record_id"])
+    linhas = []
+    for m in MODELOS:
+        for v in oculta["variavel_oculta"].unique():
+            parte = oculta[(oculta["modelo"] == m) & (oculta["variavel_oculta"] == v)]
+            if sorted(parte["record_id"]) != sorted(ids):
+                sys.exit(f"ERRO: par ({m}, {v}) não tem os {len(ids)} casos uma vez em {OCULTA.name}")
+            p = parte.set_index("record_id").loc[ids, "p_ruim"].to_numpy()
+            por_fold = np.array([metricas(y[fold == k], p[fold == k]) for k in np.unique(fold)])
+            roc, brier = por_fold[:, METRICAS.index("roc_auc")].mean(), por_fold[:, METRICAS.index("brier")].mean()
+            linhas.append({"modelo": m, "variavel_oculta": v, "roc_auc": roc, "brier": brier,
+                           "delta_roc_auc": roc - completo.loc[m, "roc_auc_media"], "delta_brier": brier - completo.loc[m, "brier_media"]})
+    return pd.DataFrame(linhas)
+
+
+def main_oculta():
+    pred = ler()
+    oculta = ler_csv(OCULTA, ["record_id", "modelo", "variavel_oculta", "p_ruim"])
+    completo = ler_csv(SAIDA / "metricas_dev.csv", ["modelo", "roc_auc_media", "brier_media"]).set_index("modelo")
+    tabela = calcular_oculta(oculta, pred, completo)
+    delta = tabela.set_index(["modelo", "variavel_oculta"])["delta_brier"]
+    for m in MODELOS:
+        if delta[(m, "laufkont")] <= delta[(m, "telef")]:
+            print(f"AVISO: ocultar laufkont não piorou mais que ocultar telef em {m}")
+    tabela.to_csv(SAIDA / "evidencia_incompleta.csv", index=False)
+
+
 def verificar():
     # tudo 0,8 sem nenhum ruim: erro de calibração 0,8
     assert abs(ece(np.zeros(10), np.full(10, 0.8)) - 0.8) < 1e-12
@@ -124,7 +173,9 @@ def verificar():
 if __name__ == "__main__":
     if sys.argv[1:] == ["--verificar"]:
         verificar()
+    elif sys.argv[1:] == ["--ocultar"]:
+        main_oculta()
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/avaliar.py [--verificar]")
+        sys.exit("Uso: uv run python codigo/avaliar.py [--verificar | --ocultar]")
     else:
         main()
