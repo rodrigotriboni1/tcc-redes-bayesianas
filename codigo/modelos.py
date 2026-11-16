@@ -9,18 +9,25 @@ Saídas:
   resultados/tan_arestas.csv    fold,origem,destino (grafo do TAN de cada partição)
   resultados/cortes.json        cortes dos tercis das contínuas no dev inteiro
   resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
+  resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg (só com --final)
 
 Com --ocultar, os modelos são treinados com as 20 variáveis e cada variável é escondida,
 uma por vez, só na previsão: as redes ficam sem aquela evidência e a regressão logística
 recebe a mediana (contínuas) ou a moda (categóricas) do treino da partição.
 
+Com --final <arquivo>, os três modelos são treinados no dev inteiro (redes com os cortes de
+resultados/cortes.json) e preveem cada linha do arquivo, que precisa ter as colunas do dev.
+Recusa sobrescrever predicoes_teste.csv. Esse modo é rodado só pelo autor, uma única vez.
+
 Uso: a partir da raiz do repositório,
   uv run python codigo/modelos.py              grava as saídas
   uv run python codigo/modelos.py --verificar  roda os autotestes e não grava nada
   uv run python codigo/modelos.py --ocultar    grava só predicoes_dev_oculta.csv
+  uv run python codigo/modelos.py --final <arquivo>  grava só predicoes_teste.csv
 """
 import json
 import sys
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -185,6 +192,27 @@ def main():
     (SAIDA / "cortes.json").write_text(json.dumps(cortes(dev)) + "\n")
 
 
+def final(entrada, pasta):
+    """Treina no dev inteiro com os cortes de pasta/cortes.json e grava pasta/predicoes_teste.csv."""
+    entrada, destino = Path(entrada), Path(pasta) / "predicoes_teste.csv"
+    if not entrada.exists():
+        sys.exit(f"ERRO: arquivo ausente: {entrada}")
+    alvo = pd.read_csv(entrada)
+    faltando = [c for c in dev.columns if c not in alvo.columns]
+    if faltando:
+        sys.exit(f"ERRO: colunas ausentes em {entrada.name}: {', '.join(faltando)}")
+    if destino.exists():
+        sys.exit(f"ERRO: {destino.name} já existe; não sobrescrevo")
+    c = json.loads((Path(pasta) / "cortes.json").read_text())
+    treino = discretizar(dev.drop(columns="record_id"), c)
+    x = alvo.drop(columns="kredit")
+    saida = alvo[["record_id", "kredit"]].copy()
+    for m in ("nb", "tan"):
+        saida[f"p_{m}"] = montar_rede(treino, m).predict_probability(discretizar(x[VARIAVEIS], c))["kredit_0"].to_numpy()
+    saida["p_logreg"] = prever(dev, x, "logreg")
+    saida.to_csv(destino, index=False)
+
+
 def verificar():
     folds = particoes()
     gravado, _ = calcular()
@@ -262,6 +290,24 @@ def verificar():
         preenchido = linhas.copy()
         preenchido[v] = treino0[v].median() if v in CONTINUAS else treino0[v].mode().iloc[0]
         assert np.abs(prever(treino0, linhas, "logreg", ocultar=v) - prever(treino0, preenchido, "logreg")).max() < 1e-12, v
+
+    # 07: --final com um arquivo falso feito da partição 0 do dev, gravado numa pasta temporária
+    with tempfile.TemporaryDirectory() as pasta:
+        # cortes.json gravado como em main(); o gate confere byte a byte que o commitado é este
+        (Path(pasta) / "cortes.json").write_text(json.dumps(cortes(dev)) + "\n")
+        falso = dev[folds == 0]
+        falso.to_csv(Path(pasta) / "falso.csv", index=False)
+        final(Path(pasta) / "falso.csv", pasta)
+        teste = pd.read_csv(Path(pasta) / "predicoes_teste.csv")
+        assert len(teste) == 160 and list(teste["record_id"]) == list(falso["record_id"])
+        for m in MODELOS:
+            assert np.abs(teste[f"p_{m}"].to_numpy() - prever(dev, falso.drop(columns="kredit"), m)).max() < 1e-12, m
+        # a recusa acontece antes de qualquer treino
+        try:
+            final(Path(pasta) / "falso.csv", pasta)
+            assert False, "--final sobrescreveu predicoes_teste.csv"
+        except SystemExit:
+            pass
     print("verificar: ok")
 
 
@@ -270,7 +316,9 @@ if __name__ == "__main__":
         verificar()
     elif sys.argv[1:] == ["--ocultar"]:
         main_oculta()
+    elif sys.argv[1:2] == ["--final"] and len(sys.argv) == 3:
+        final(sys.argv[2], SAIDA)
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/modelos.py [--verificar | --ocultar]")
+        sys.exit("Uso: uv run python codigo/modelos.py [--verificar | --ocultar | --final <arquivo>]")
     else:
         main()
