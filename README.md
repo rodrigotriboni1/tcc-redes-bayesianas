@@ -29,7 +29,7 @@ uv sync --frozen
 uv run python codigo/<script>.py
 ```
 
-A ordem dos scripts e o que cada um grava estão em [docs/reproduzir.md](docs/reproduzir.md). Os scripts do experimento ainda estão sendo escritos; o que existe hoje é o `codigo/preparar_sgc.py`.
+A ordem dos scripts e o que cada um grava estão em [docs/reproduzir.md](docs/reproduzir.md). Os sete scripts do experimento estão na `main` (issues 01 a 07 mergeadas em 16/11/2026). Falta rodar o teste final, que é só do autor.
 
 ## Pastas
 

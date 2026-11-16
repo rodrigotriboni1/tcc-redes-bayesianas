@@ -16,7 +16,7 @@ flowchart LR
 
 ## 2. Scripts e arquivos trocados
 
-Sete scripts depois das issues 01 a 07 (hoje existem `preparar_sgc.py` e o `baseline_logreg.py` herdado, que a issue 01 apaga). Cada seta é um arquivo em disco; nenhum modelo é salvo (sem `pickle` nem `joblib`).
+Sete scripts, todos na `main` desde 16/11/2026 (`modelos.py`, `avaliar.py`, `decisao.py`, `sensibilidade.py`, `demo.py`, `test_decisao.py` e `preparar_sgc.py`); o `baseline_logreg.py` herdado foi apagado na issue 01. Cada seta é um arquivo em disco; nenhum modelo é salvo (sem `pickle` nem `joblib`).
 
 ```mermaid
 flowchart TD
