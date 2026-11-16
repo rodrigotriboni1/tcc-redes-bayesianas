@@ -43,7 +43,7 @@ Os da seção 4, issue 04, de `docs/criterios-de-aceite.md` (itens 1 a 16), sem 
 
 ## Avisos (não são critérios)
 
-- `AVISO: a ação <x> não aparece em <modelo>/<regra>`
+- `AVISO: a ação <x> não aparece em <modelo>/ue` (só para a regra de utilidade; o limiar fixo nunca usa a análise manual)
 
 ## Fora do escopo
 
