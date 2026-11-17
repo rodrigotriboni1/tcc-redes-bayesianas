@@ -141,7 +141,7 @@ Usa-se validação cruzada aninhada. As partições externas são as 5 já descr
 
 Relatam-se obrigatoriamente as 8 configurações, o número de comparações (8) e a linha "aninhado", qualquer que seja o resultado. O texto não se refere a um "melhor modelo": informa qual configuração a regra escolheu e quanto ela difere da configuração de base [fonte: docs/plano-de-analise.md §9].
 
-**Declaração de viés.** A grade foi definida depois da observação das métricas de desenvolvimento e motivada por elas (TAN com desempenho inferior ao Naive Bayes; hipótese relativa à variável `verw`). O aninhamento corrige o viés de escolher entre as 8 configurações, mas não o de ter desenhado a grade com base no mesmo conjunto de desenvolvimento [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção].
+**Declaração de viés.** A grade foi definida depois da observação das métricas de desenvolvimento e motivada por elas (ver cap. 4). O aninhamento corrige o viés de escolher entre as 8 configurações, mas não o de ter desenhado a grade com base no mesmo conjunto de desenvolvimento [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção].
 
 ## 3.11 Ambiente e reprodutibilidade
 
