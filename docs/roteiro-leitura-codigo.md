@@ -209,7 +209,7 @@ O maior e o mais importante. Leia com calma.
 ### (c) Perguntas da banca
 
 1. De onde vêm `c/L` e `1 - c/G`? Igualando UE(aprovar) = UE(análise manual) e UE(análise manual) = UE(rejeitar); com G=100 e L=400 dão `c/400` e `1 - c/100` (`:44` e a docstring).
-2. Quando a análise manual nunca é escolhida? Quando `c >= G·L/(G+L)` (`:42`); então os dois limiares coincidem em `G/(G+L)` (`:44`). Com G=100 e L=400, isso é c >= 80.
+2. Quando a análise manual nunca é escolhida? Quando `c > G·L/(G+L)` (`:42`); então os dois limiares coincidem em `G/(G+L)` (`:44`). Com G=100 e L=400, isso é c > 80; em c = 80 só no ponto de empate p = 0,20 (três ações empatam e a prioridade, `decisao.py:45`, dá análise manual).
 3. Como a forma fechada é testada? Contra `decisao.ordenar`, em cada ponto da grade, logo abaixo, no meio e logo acima dos limiares (`:87-94`).
 4. Por que não usa dados? A fronteira só depende da matriz e não do modelo; a página do plano compara o risco de cada caso contra estes limiares.
 5. Por que essa grade? É a decisão D7 (`:31`); valores da grade são decisão do autor, não do código.
