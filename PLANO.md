@@ -154,6 +154,9 @@ Arquivos passados entre scripts:
 | `resultados/sensibilidade.csv` | Fronteiras para perda em {200, 400, 600, 800} × custo da análise em {0, 5, …, 100} |
 | `resultados/tan_arestas.csv` | Arestas do TAN aprendido em cada partição: `fold, origem, destino` |
 | `resultados/cortes.json` | Cortes das 3 variáveis contínuas, aprendidos no dev inteiro; usados só pelo teste final (o `demo.py` aprende os cortes nas 4 partições, via `prever`) |
+| `resultados/predicoes_selecao.csv` | Estudo de seleção (`modelos.py --selecao`): `record_id, kredit, fold, config, p_sel` |
+| `resultados/selecao_dev.csv` | Estudo de seleção (`avaliar.py --selecao`): as 8 configurações, a linha `aninhado` e a linha `dev` |
+| `resultados/selecao_escolha.csv` | Configuração escolhida em cada partição externa e no dev inteiro |
 | `config/utilidade.json` | `{"acoes": {"aprovar": {"bom": 100, "ruim": -400}, ...}, "hipoteses": "..."}` |
 
 ## 8. Passos, em ordem
@@ -170,6 +173,7 @@ Arquivos passados entre scripts:
 | 7 | Sensibilidade | `sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` | Fronteiras batem com a conta à mão | Código não; valores sim |
 | 8 | Demonstração | `demo.py` | Texto no terminal | Mesmo risco de `predicoes_dev.csv` para o mesmo caso | Não |
 | 9 | Hill climbing (opcional) | `modelos.py` | Coluna a mais nas predições | Treina em poucos minutos | Não |
+| 9b | Estudo de seleção, secundário (`docs/plano-de-analise.md` §9; decidido por delegação em 16/11/2026, a rever pelo autor) | `modelos.py --selecao`, `avaliar.py --selecao` | `predicoes_selecao.csv`, `selecao_dev.csv`, `selecao_escolha.csv` | 8 configurações e linha `aninhado` presentes; tempo medido e registrado | Não |
 | 10 | Teste final | `modelos.py --final`, `avaliar.py`, `decisao.py` | `predicoes_teste.csv`, `metricas_teste.csv`, `calibracao_teste.png`, `politicas_teste.csv`, `resumo_politicas_teste.csv`, `diferenca_politicas_teste.csv` | Commit de congelamento antes; **rodado pelo autor, à mão, uma vez**; hash do commit anotado. O caminho `--final` é escrito pela factory (issue 07) e testado só com linhas do dev | Sim (matriz aprovada) |
 | 11 | Monografia | — | Texto | Todo número aponta para um arquivo de `resultados/` | Formatação sim (modelo) |
 

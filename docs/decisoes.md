@@ -101,6 +101,23 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | 15/11/2026 | Merge automático quando o aprovador da factory aprova (D9). O autor lê a descrição de cada PR depois do merge e relê todo o código antes do commit de congelamento | O autor optou por não parar cada PR. Substitui a decisão anterior, que parava o merge para revisão humana | Autor |
 | 15/11/2026 | Dois arquivos de resultado a mais: `resumo_politicas_dev.csv` e `sensibilidade.csv` (D6) | Dois números da monografia não teriam arquivo de origem | Autor (proposta do levantamento) |
 
+## Estudo de seleção
+
+Decidido por delegação em 16/11/2026, a rever pelo autor. Detalhe em [plano-de-analise.md](plano-de-analise.md), §9.
+
+| Data | Questão | Decisão | Motivo | Quem |
+|---|---|---|---|---|
+| 16/11/2026 | Q1 | B: estudo secundário; a análise primária não muda | Preserva a comparação pré-definida (P5) e ainda testa a hipótese levantada no dev | Por delegação, a rever pelo autor |
+| 16/11/2026 | Q2 | Grade fechada {NB, TAN} × BDeu {1, 5, 10, 50}: `nb_ess1`, `nb_ess5`, `nb_ess10`, `nb_ess50`, `tan_ess1`, `tan_ess5`, `tan_ess10`, `tan_ess50` | Grade pequena e fechada limita as comparações a 8 | Por delegação, a rever pelo autor |
+| 16/11/2026 | Q3 | Escolha pelo menor log loss médio interno; empate (< 1e-9) pela ordem da grade | Regra fixada antes de rodar; log loss mede a probabilidade, que é o que a decisão usa | Por delegação, a rever pelo autor |
+| 16/11/2026 | Q4 | Não reverter P1 | O estudo é secundário; nada da análise primária muda | Por delegação, a rever pelo autor |
+| 16/11/2026 | Q5 | Exceção às regras 3 e 4 do `AGENTS.md` só no modo `--selecao` | Fora desse modo as constantes seguem congeladas | Por delegação, a rever pelo autor |
+| 16/11/2026 | Q6 | Medir o tempo da execução e registrar, sem limite fixado | Não há base para fixar limite antes de medir | Por delegação, a rever pelo autor |
+| 16/11/2026 | Q7 | Em aberto; não bloqueia o estudo | Fica para o autor | Em aberto |
+| 16/11/2026 | Q8 | Em aberto; não bloqueia o estudo | Fica para o autor | Em aberto |
+
+Viés declarado: a grade foi desenhada depois de ver `metricas_dev.csv`; o aninhamento não corrige isso.
+
 ## 6. Em aberto
 
 | Questão | Depende de |

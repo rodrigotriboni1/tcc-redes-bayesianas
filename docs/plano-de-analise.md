@@ -58,6 +58,8 @@ Regras de leitura definidas agora. Nenhuma depende do valor observado.
 4. Abrir `teste.csv`, `sgc.csv` ou `dados/brutos/` fora do `preparar_sgc.py` e do teste final.
 5. Remover casos, trocar a divisão ou mudar a matriz de utilidade porque o resultado incomodou.
 
+Tudo acima vale exceto o estudo da §9, que é secundário, pré-registrado e roda só no modo `--selecao`.
+
 ## 6. Limitações a declarar
 
 1. A base não traz o resultado das ações que não foram tomadas: não há efeito causal nem lucro real, só simulação.
@@ -76,3 +78,36 @@ Qualquer mudança neste plano depois de existirem resultados vira uma linha em [
 
 - Se o intervalo de 95% é o critério de leitura da diferença (seção 4) ou se prefere outro nível. Hoje está escrito 95%, o mesmo do bootstrap das métricas.
 - Se o limite de 0,03 de AUC, que vem do plano, vale também para PR-AUC.
+
+## 9. Estudo de seleção (secundário, pré-registrado)
+
+Status: decidido por delegação em 16/11/2026, a rever pelo autor.
+
+**Grade fechada, 8 configurações** ({NB, TAN} × tamanho equivalente BDeu {1, 5, 10, 50}):
+
+| id | Modelo | Tamanho equivalente |
+|---|---|---|
+| `nb_ess1` | NB | 1 |
+| `nb_ess5` | NB | 5 (baseline) |
+| `nb_ess10` | NB | 10 |
+| `nb_ess50` | NB | 50 |
+| `tan_ess1` | TAN | 1 |
+| `tan_ess5` | TAN | 5 (baseline) |
+| `tan_ess10` | TAN | 10 |
+| `tan_ess50` | TAN | 50 |
+
+A ordem da tabela é a ordem da grade. Fora da grade: K2, outras faixas, seleção de variáveis, hill climbing, Platt/isotônica e reponderação.
+
+**Validação cruzada aninhada.** Partições externas = as 5 atuais. Em cada externa, as 640 linhas de treino são divididas por `StratifiedKFold(5, shuffle=True, random_state=2026)`; cada configuração é treinada e avaliada nas partições internas.
+
+**Regra de escolha.** Menor log loss médio nas partições internas. Empate (diferença < 1e-9) resolvido pela ordem da grade. A configuração escolhida em cada externa prevê as 160 linhas dela; daí saem a coluna `p_sel` e a linha "aninhado". A escolha também é recalculada no dev inteiro (linha `dev`), só para relato.
+
+**Relato obrigatório.** As 8 linhas da grade, o número de comparações (8) e a linha "aninhado", qualquer que seja o resultado.
+
+**Declaração obrigatória de viés.** A grade foi definida depois de ver `metricas_dev.csv` e motivada por ele (TAN pior que NB; hipótese `verw` em [resultados-dev.md](resultados-dev.md)). O aninhamento corrige o viés de escolher entre as 8 configurações, mas não o de ter desenhado a grade olhando o mesmo dev. O texto da monografia declara isso.
+
+**Leitura dos desfechos.** Diferença de ROC-AUC menor que 0,03 é ruído, como na §4. Não se fala em "melhor modelo": relata-se qual configuração a regra escolheu e quanto ela difere do baseline.
+
+**O que não muda.** A tabela 2×2 e a análise primária continuam com NB e TAN de BDeu 5 (P5 intacta). `p_sel` é análise secundária e aparece rotulada como tal.
+
+Saídas: `resultados/predicoes_selecao.csv`, `resultados/selecao_dev.csv`, `resultados/selecao_escolha.csv`.
