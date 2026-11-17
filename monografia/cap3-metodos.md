@@ -31,13 +31,13 @@ O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os m
 
 ## 3.3 Validação cruzada
 
-No conjunto de desenvolvimento, adota-se validação cruzada estratificada em 5 partições, com semente 2026 \cite{kaufman2012} [fonte: PLANO.md §5; docs/decisoes.md §2]. Cada partição é usada uma vez como validação enquanto as outras quatro compõem o treino, de modo que cada caso recebe uma predição de um modelo que não o viu [fonte: docs/glossario.md §2]. As métricas de desenvolvimento são reportadas como média e desvio entre as 5 partições [fonte: docs/plano-de-analise.md §2].
+No conjunto de desenvolvimento, adota-se validação cruzada estratificada em 5 partições, com semente 2026 [fonte: PLANO.md §5; docs/decisoes.md §2]. Cada partição é usada uma vez como validação enquanto as outras quatro compõem o treino, de modo que cada caso recebe uma predição de um modelo que não o viu [fonte: docs/glossario.md §2]. As métricas de desenvolvimento são reportadas como média e desvio entre as 5 partições [fonte: docs/plano-de-analise.md §2].
 
 <!-- LACUNA: motivo da escolha de 5 (e não 10) partições não registrado (docs/decisoes.md §2). -->
 
 ## 3.4 Discretização
 
-As redes bayesianas utilizadas exigem variáveis discretas. As três variáveis contínuas são discretizadas em 3 faixas por tercis, com cortes aprendidos apenas no treino de cada partição, para evitar vazamento de informação da partição de validação [fonte: PLANO.md §5; docs/decisoes.md §2]. Para o teste final, os cortes são aprendidos no conjunto de desenvolvimento inteiro e gravados em `resultados/cortes.json` [fonte: PLANO.md §7].
+As redes bayesianas utilizadas exigem variáveis discretas. As três variáveis contínuas são discretizadas em 3 faixas por tercis, com cortes aprendidos apenas no treino de cada partição, para evitar vazamento de informação da partição de validação \cite{kaufman2012} [fonte: PLANO.md §5; docs/decisoes.md §2]. Para o teste final, os cortes são aprendidos no conjunto de desenvolvimento inteiro e gravados em `resultados/cortes.json` [fonte: PLANO.md §7].
 
 <!-- LACUNA: motivo de 3 faixas (e não 4 ou 5) não registrado (docs/decisoes.md §2). -->
 
@@ -45,15 +45,15 @@ As redes bayesianas utilizadas exigem variáveis discretas. As três variáveis 
 
 São comparados três modelos que estimam a probabilidade de um crédito ser ruim [fonte: docs/decisoes.md §3]:
 
-1. **Naive Bayes**, rede em que a variável-alvo é pai de cada preditora, tratadas como condicionalmente independentes dado o alvo \cite{friedman1997};
-2. **TAN** (Naive Bayes aumentado por árvore), que acrescenta ao Naive Bayes uma árvore de dependências entre as preditoras \cite{friedman1997,chowliu1968};
+1. **Naive Bayes**, rede em que a variável-alvo é pai de cada preditora, tratadas como condicionalmente independentes dado o alvo \cite{friedman1997}; <!-- LACUNA: referência a conferir no original -->
+2. **TAN** (Naive Bayes aumentado por árvore), que acrescenta ao Naive Bayes uma árvore de dependências entre as preditoras \cite{friedman1997,chowliu1968}. A árvore é a de máximo peso no grafo completo das preditoras, em que o peso de cada aresta é a informação mútua entre as duas preditoras condicional à classe, $I(X_i; X_j \mid C)$; a árvore é então orientada a partir de uma raiz, e a classe é acrescentada como pai de todas as preditoras \cite{friedman1997,chowliu1968}; <!-- LACUNA: referência a conferir no original -->
 3. **Regressão logística**, como modelo de referência \cite{pedregosa2011}.
 
-As redes são implementadas com a biblioteca `pgmpy`, na versão fixa 1.1.2 \cite{ankan2015} [fonte: PLANO.md §3; docs/decisoes.md §3]. O Naive Bayes é montado como rede em estrela, pois a classe específica da biblioteca falha no cálculo de probabilidades nessa versão [fonte: docs/decisoes.md §3]. A estrutura do TAN é aprendida em cada partição, e as arestas resultantes são registradas em `resultados/tan_arestas.csv` para descrever a estabilidade da estrutura entre partições [fonte: docs/decisoes.md §4, P16].
+As redes são implementadas com a biblioteca `pgmpy`, na versão fixa 1.1.2 \cite{ankan2015} [fonte: PLANO.md §3; docs/decisoes.md §3]. <!-- LACUNA: referência a conferir no original --> O Naive Bayes é montado como rede em estrela, pois a classe específica da biblioteca falha no cálculo de probabilidades nessa versão [fonte: docs/decisoes.md §3]. A estrutura do TAN é aprendida em cada partição, e as arestas resultantes são registradas em `resultados/tan_arestas.csv` para descrever a estabilidade da estrutura entre partições [fonte: docs/decisoes.md §4, P16].
 
 <!-- LACUNA: ankan2015 está marcada "VERIFICAR: todos os campos" no .bib; conferir antes de citar. -->
 
-Os parâmetros das redes são estimados por estimação bayesiana com prior BDeu de tamanho equivalente 5 \cite{heckerman1995}, para evitar probabilidade zero em combinações raras [fonte: PLANO.md §5; docs/decisoes.md §2]. O espaço de estados de cada variável é fixado com todos os valores que aparecem no conjunto de desenvolvimento inteiro, para que uma categoria rara ausente do treino de uma partição não interrompa a inferência. Essa escolha não usa o rótulo, mas constitui um vazamento brando de informação, aqui declarado [fonte: docs/decisoes.md §4, P10; docs/plano-de-analise.md §6, item 6].
+Os parâmetros das redes são estimados por estimação bayesiana com prior BDeu de tamanho equivalente 5 \cite{heckerman1995}, para evitar probabilidade zero em combinações raras [fonte: PLANO.md §5; docs/decisoes.md §2]. <!-- LACUNA: referência a conferir no original --> O prior BDeu é uma distribuição de Dirichlet uniforme sobre cada tabela de probabilidade condicional: o tamanho equivalente $N'$ é repartido igualmente entre as células, de modo que cada combinação de valor $x_i$ do nó e configuração $\mathrm{pa}_i$ dos pais recebe a pseudocontagem $N'/(r_i q_i)$, em que $r_i$ é o número de estados do nó e $q_i$ o número de configurações dos pais \cite{heckerman1995}. <!-- LACUNA: referência a conferir no original --> O espaço de estados de cada variável é fixado com todos os valores que aparecem no conjunto de desenvolvimento inteiro, para que uma categoria rara ausente do treino de uma partição não interrompa a inferência. Essa escolha não usa o rótulo, mas constitui um vazamento brando de informação, aqui declarado [fonte: docs/decisoes.md §4, P10; docs/plano-de-analise.md §6, item 6].
 
 <!-- LACUNA: motivo do tamanho equivalente 5 não registrado (docs/decisoes.md §2). -->
 
@@ -72,6 +72,14 @@ Para avaliar o comportamento com evidência incompleta, cada variável é oculta
 O desempenho dos modelos de risco é medido por ROC-AUC, PR-AUC, escore de Brier \cite{brier1950}, log loss e erro esperado de calibração (ECE) \cite{naeini2015}, acompanhados de diagrama de calibração [fonte: PLANO.md §6; docs/decisoes.md §4, P14]. A PR-AUC é incluída porque a classe positiva corresponde a 30% dos casos [fonte: docs/decisoes.md §4, P14]. Como referência, reporta-se também um preditor que atribui a todo caso a taxa base de ruins [fonte: docs/plano-de-analise.md §2].
 
 O ECE é calculado com 10 faixas de mesma largura sobre P(ruim), comparando a probabilidade média prevista com a taxa observada de ruins em cada faixa. Essa definição difere da versão *top-label* usada no baseline anterior; os dois valores não são comparáveis, e apenas a definição atual é usada [fonte: docs/decisoes.md §2; docs/decisoes.md §4, P11].
+
+Para $n$ casos com rótulo $y_k \in \{0, 1\}$ (1 = ruim) e probabilidade prevista $p_k$ de ruim, as duas métricas são
+
+$$\text{log loss} = -\frac{1}{n}\sum_{k=1}^{n}\left[y_k \ln p_k + (1-y_k)\ln(1-p_k)\right],$$
+
+$$\text{ECE} = \sum_{b=1}^{10}\frac{|B_b|}{n}\left|\bar{y}_b - \bar{p}_b\right|,$$
+
+em que $B_b$ é o conjunto de casos cuja $p_k$ cai na faixa $b$, e $\bar{y}_b$ e $\bar{p}_b$ são a taxa observada de ruins e a probabilidade média prevista nessa faixa \cite{naeini2015} [fonte: docs/decisoes.md §2].
 
 No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por bootstrap com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993} [fonte: docs/decisoes.md §4, P4; docs/plano-de-analise.md §3]. O intervalo não cobre a variação devida ao treino [fonte: docs/plano-de-analise.md §6, item 5].
 
@@ -103,7 +111,7 @@ As hipóteses da matriz são: valores demonstrativos, não calibrados com dados 
 
 <!-- LACUNA: aprovação da matriz (c = 40) pelo orientador ainda em aberto (PLANO.md §11, item 2). -->
 
-Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida [fonte: PLANO.md §5]. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar [fonte: docs/decisoes.md §4, D5]. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento [fonte: PLANO.md §5; docs/decisoes.md §4, P2].
+Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. <!-- LACUNA: referência a conferir no original --> Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida [fonte: PLANO.md §5]. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar [fonte: docs/decisoes.md §4, D5]. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento [fonte: PLANO.md §5; docs/decisoes.md §4, P2].
 
 <!-- LACUNA: escolher a fonte da literatura para a exigência de calibração (P2 pede "fonte conferida no original"). -->
 
@@ -125,7 +133,7 @@ Um script de terminal recebe o identificador de um caso, treina novamente o mode
 
 ## 3.10 Estudo de seleção aninhado (secundário)
 
-Como análise secundária, pré-registrada e decidida por delegação, a rever pelo autor, realiza-se um estudo de seleção de configuração [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção]. A análise primária, incluindo a tabela 2×2 com NB e TAN de BDeu 5, não muda [fonte: docs/plano-de-analise.md §9].
+Como análise secundária, pré-registrada em relação ao teste final e decidida por delegação, a rever pelo autor, realiza-se um estudo de seleção de configuração [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção]. A análise primária, incluindo a tabela 2×2 com NB e TAN de BDeu 5, não muda [fonte: docs/plano-de-analise.md §9].
 
 A grade é fechada, com 8 configurações: {Naive Bayes, TAN} × tamanho equivalente BDeu {1, 5, 10, 50} [fonte: docs/plano-de-analise.md §9]. Ficam fora da grade K2, outras faixas, seleção de variáveis, hill climbing, métodos de calibração e reponderação [fonte: docs/plano-de-analise.md §9].
 
@@ -137,6 +145,6 @@ Relatam-se obrigatoriamente as 8 configurações, o número de comparações (8)
 
 ## 3.11 Ambiente e reprodutibilidade
 
-O experimento é composto por sete scripts Python 3.12 que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo [fonte: PLANO.md §3, §7; docs/arquitetura.md §2]. As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências travadas pelo gerenciador `uv` [fonte: PLANO.md §3]. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte [fonte: AGENTS.md, Reprodutibilidade; docs/reproduzir.md §2]. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão commitada [fonte: docs/reproduzir.md §4]. As figuras PNG não são comparadas byte a byte [fonte: docs/reproduzir.md §4]. O passo a passo completo está no Apêndice A [fonte: docs/reproduzir.md].
+O experimento é composto por sete scripts Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo [fonte: PLANO.md §3, §7; docs/arquitetura.md §2]. O projeto exige Python 3.12 ou superior [fonte: pyproject.toml, `requires-python`]. <!-- LACUNA: versão exata do interpretador usado (PLANO.md §3 diz 3.12; não há .python-version) --> As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências travadas pelo gerenciador `uv` [fonte: PLANO.md §3]. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte [fonte: AGENTS.md, Reprodutibilidade; docs/reproduzir.md §2]. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão commitada [fonte: docs/reproduzir.md §4]. As figuras PNG não são comparadas byte a byte [fonte: docs/reproduzir.md §4]. O passo a passo completo está no Apêndice A [fonte: docs/reproduzir.md].
 
 <!-- LACUNA: hash do commit de congelamento, a anotar pelo autor no passo 10 (PLANO.md §8). -->
