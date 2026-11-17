@@ -187,6 +187,39 @@ A factory escreve e testa o caminho com linhas do dev. Quem o executa sobre o te
 
 Fora do escopo: executar sobre o teste de verdade, escolher modelo, calibrar, evidência incompleta no teste, sensibilidade no teste, qualquer mudança no treino dos modelos.
 
+Depois da issue 10, os itens 2, 7 e 9 valem com `p_sel`: `predicoes_teste.csv` ganha a coluna `p_sel` (mesmas condições dos outros `p_*`), e `metricas_teste.csv`, `politicas_teste.csv`, `resumo_politicas_teste.csv` e `diferenca_politicas_teste.csv` ganham o modelo `sel`, rotulado secundário, nas mesmas reamostras.
+
+### 08. Seleção aninhada (`modelos.py --selecao`, `avaliar.py --selecao`)
+
+Grade e regra de escolha: §9 de `docs/plano-de-analise.md`. Os critérios tratam de forma, nunca de resultado.
+
+1. `modelos.py --selecao` grava só `predicoes_selecao.csv`, colunas `config,record_id,fold_externo,fold_interno,p_ruim`; `fold_interno = -1` marca a predição externa. 8 × (800 + 5 × 640) = 32.000 linhas; `p_ruim` estritamente entre 0 e 1.
+2. A lista de configurações no código é idêntica à da §9 (`nb_ess1`, `nb_ess5`, `nb_ess10`, `nb_ess50`, `tan_ess1`, `tan_ess5`, `tan_ess10`, `tan_ess50`); nenhum outro valor de prior aparece no código.
+3. As predições externas de `nb_ess5` e `tan_ess5` são iguais a `p_nb` e `p_tan` de `predicoes_dev.csv` a 1e-12.
+4. `--verificar`: P(ruim) sem evidência na partição 0, com tamanho equivalente s, é (192 + s/2)/(640 + s) a 1e-9, para os 4 valores de s.
+5. Guarda de vazamento: em 5 linhas, a predição interna é igual a `prever` treinado só no treino interno, com cortes aprendidos nele.
+6. `avaliar.py --selecao` não treina (sem `.fit(`) e grava `selecao_dev.csv` (8 linhas mais `aninhado`, colunas de `metricas_dev.csv`) e `selecao_escolha.csv` (`fold_externo` de 0 a 4 e `dev`, × config; colunas `fold_externo,config,log_loss_interno,escolhida`; 48 linhas; exatamente uma escolhida por bloco).
+7. A escolha é recalculável pelo menor `log_loss_interno` de cada bloco.
+8. As linhas `nb_ess5` e `tan_ess5` de `selecao_dev.csv` batem com `metricas_dev.csv` a 1e-9.
+9. Os demais arquivos de `resultados/` ficam idênticos byte a byte; duas execuções geram arquivos iguais.
+10. O tempo de `modelos.py --selecao` é medido e registrado no PR, sem limite fixo.
+11. A descrição do PR não usa "melhor" nem comenta valores.
+
+Fora do escopo: `--final`, calibração, faixas, seleção de variáveis, K2, hill climbing.
+
+### 10. Teste final com a configuração selecionada (`p_sel` em `--final`)
+
+Depende da issue 08 mergeada.
+
+1. `modelos.py --final` lê a configuração do bloco `dev` de `selecao_escolha.csv`; nenhum id de configuração fica fixo no caminho `--final`.
+2. Com o arquivo falso da partição 0 (07.6), `p_sel` é igual a `prever` com a configuração do arquivo a 1e-12.
+3. Trocar a linha escolhida numa cópia de `selecao_escolha.csv` muda `p_sel` sem mexer no código.
+4. `p_nb`, `p_tan` e `p_logreg` do arquivo falso ficam idênticos aos de antes.
+5. Nenhum arquivo `*_teste*` no PR.
+6. Nada lê `teste.csv`.
+
+Fora do escopo: executar sobre o teste de verdade, refazer a seleção, escolher entre `p_sel` e os modelos principais, calibrar.
+
 ## 5. `factory/checks.sh`
 
 O gate roda o `checks.sh` da cópia principal com a pasta de trabalho no ramo do job, então o ramo não troca o próprio juiz. Ele e um `factory/verificar_saidas.py` são escritos antes da issue 01, já com os blocos das 7 issues; cada bloco só roda se o script existir.
