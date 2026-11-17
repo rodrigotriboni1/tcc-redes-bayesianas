@@ -4,7 +4,7 @@ Passo a passo para gerar de novo todos os arquivos de `resultados/`. Vira o apê
 
 Tudo roda a partir da raiz do repositório, sem interação, com Python 3.12 e as dependências travadas pelo `uv`.
 
-**Situação em 16/11/2026.** Os sete scripts estão na `main` (issues 01 a 07 mergeadas). O que ainda não foi feito é o teste final da seção 5, que é só do autor. A coluna "Issue" diz de que issue vem cada passo.
+**Situação em 17/11/2026.** Os sete scripts estão na `main` (issues 01 a 07 mergeadas), mais o estudo de seleção (issues 08, 10 e 11, mergeadas em 17/11/2026 pela factory). O que ainda não foi feito é o teste final da seção 5, que é só do autor. A coluna "Issue" diz de que issue vem cada passo.
 
 ## 1. Ambiente
 
@@ -26,9 +26,10 @@ Cada script grava só em `resultados/` (o `preparar_sgc.py` grava em `dados/proc
 | 5 | Evidência incompleta | `uv run python codigo/modelos.py --ocultar` e depois `uv run python codigo/avaliar.py --ocultar` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` | 03 |
 | 6 | Camada de decisão | `uv run python codigo/decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` | 04 |
 | 7 | Sensibilidade | `uv run python codigo/sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` | 05 |
+| 7b | Estudo de seleção (secundário) | `uv run python codigo/modelos.py --selecao` e depois `uv run python codigo/avaliar.py --selecao` | `predicoes_selecao.csv`, `selecao_dev.csv`, `selecao_escolha.csv` | 08 |
 | 8 | Demonstração | `uv run python codigo/demo.py <record_id> [--modelo nb\|tan\|logreg]` | nada, imprime no terminal | 06 |
 
-O passo 4 lê `predicoes_dev.csv` e o 6 também; por isso a ordem acima. Os passos 2, 9 e 10 do plano não aparecem aqui: o 2 é um teste de fumaça que abre o `modelos.py`, o 9 (hill climbing) é opcional, e o 10 está na seção 5.
+O passo 7b é o estudo da §9 do [plano de análise](plano-de-analise.md): 8 configurações em validação cruzada aninhada. O builder mediu cerca de 34 s só para o `modelos.py --selecao` (medição do builder, não repetida pelo autor). O passo 4 lê `predicoes_dev.csv` e o 6 também; por isso a ordem acima. Os passos 2, 9 e 10 do plano não aparecem aqui: o 2 é um teste de fumaça que abre o `modelos.py`, o 9 (hill climbing) é opcional, e o 10 está na seção 5.
 
 O passo 1 só precisa ser repetido se `dados/brutos/` mudar. Como a divisão é determinística, rodá-lo de novo deve reproduzir os mesmos hashes de `dados/processados/SHA256SUMS`.
 
@@ -70,7 +71,8 @@ Este passo **não** é para agentes nem para reproduzir à toa. É feito pelo au
 
 1. Reler todo o código antes do congelamento. O modelo e a calibração não se escolhem aqui: seguem o que a monografia já fixou (ver P1 e P5 em [decisoes.md](decisoes.md)).
 2. Fazer o commit de congelamento e anotar o hash.
-3. Rodar, nesta ordem:
+3. Conferir que o passo 7b (`--selecao`) já foi rodado e que `resultados/selecao_escolha.csv` existe: o `modelos.py --final` lê dele a configuração da linha `dev` e grava `p_sel`, o modelo secundário `sel`. Sem esse arquivo o `--final` não roda.
+4. Rodar, nesta ordem:
 
 ```bash
 uv run python codigo/modelos.py --final <arquivo do teste>

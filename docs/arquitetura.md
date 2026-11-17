@@ -16,7 +16,7 @@ flowchart LR
 
 ## 2. Scripts e arquivos trocados
 
-Sete scripts, todos na `main` desde 16/11/2026 (`modelos.py`, `avaliar.py`, `decisao.py`, `sensibilidade.py`, `demo.py`, `test_decisao.py` e `preparar_sgc.py`); o `baseline_logreg.py` herdado foi apagado na issue 01. Cada seta é um arquivo em disco; nenhum modelo é salvo (sem `pickle` nem `joblib`).
+Sete scripts, todos na `main` desde 16/11/2026 (o estudo de seleção, modos `--selecao` de `modelos.py` e `avaliar.py`, entrou em 17/11/2026 sem script novo) (`modelos.py`, `avaliar.py`, `decisao.py`, `sensibilidade.py`, `demo.py`, `test_decisao.py` e `preparar_sgc.py`); o `baseline_logreg.py` herdado foi apagado na issue 01. Cada seta é um arquivo em disco; nenhum modelo é salvo (sem `pickle` nem `joblib`).
 
 ```mermaid
 flowchart TD
@@ -47,6 +47,12 @@ flowchart TD
     UTIL --> DEMO
     DEMO --> TERM[/texto no terminal/]
 
+    DEV --> SELM[modelos.py --selecao]
+    SELM --> PSEL[predicoes_selecao.csv<br/>selecao_escolha.csv]
+    PSEL --> SELA[avaliar.py --selecao]
+    SELA --> SELD[selecao_dev.csv]
+    PSEL -. config dev .-> FINAL
+
     TESTE -. só o autor, uma vez .-> FINAL[modelos.py --final]
 ```
 
@@ -55,6 +61,7 @@ Regras que o desenho impõe:
 - `avaliar.py` nunca treina; só lê predições.
 - `demo.py` treina de novo ao abrir, nas 4 partições que não contêm o caso pedido, para mostrar o mesmo risco de `predicoes_dev.csv`.
 - O único arquivo de dados que o código lê é `dev.csv`. `teste.csv`, `sgc.csv` e `dados/brutos/` só são tocados por `preparar_sgc.py`.
+- O estudo de seleção (`--selecao`) é secundário: usa só o dev, grava `predicoes_selecao.csv`, `selecao_dev.csv` e `selecao_escolha.csv`. O `modelos.py --final` lê a configuração da linha `dev` de `selecao_escolha.csv` e grava `p_sel`; `avaliar.py --final` e `decisao.py --final` tratam `sel` como modelo secundário. O `decisao.py` ganhou `--verificar`.
 - A linha pontilhada do teste final não é executada por agente: o caminho `--final` é escrito pela factory e testado com linhas do dev; quem roda sobre o teste é o autor, à mão, uma vez.
 
 ## 3. Dentro de `modelos.py`
@@ -132,6 +139,8 @@ flowchart LR
     P3 --> P6[6 decisão]
     P6 --> P7[7 sensibilidade]
     P3 --> P8[8 demo]
+    P3 --> P9S[7b seleção<br/>secundário]
+    P9S --> P10
     P4 --> P10
     P6 --> P10[10 teste final<br/>autor, à mão, uma vez]
     P10 --> P11[11 monografia]
