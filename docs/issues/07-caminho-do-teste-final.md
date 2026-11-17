@@ -64,7 +64,7 @@ Executar sobre o teste de verdade, escolher modelo, calibrar, evidência incompl
 
 - Bootstrap com 2000 reamostras e intervalo percentil de 95%. Esses valores não estavam no plano; foram definidos nesta issue.
 - A linha `taxa_base` usa a proporção de ruins do dev (0,30).
-- Intervalo só para ROC-AUC e Brier.
+- Intervalo para ROC-AUC, PR-AUC e Brier.
 
 ## Descrição do PR deve conter
 

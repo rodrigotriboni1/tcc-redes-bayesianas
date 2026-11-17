@@ -68,7 +68,7 @@ Estimativa de cerca de 1 minuto. Não foi medido.
 
 Este passo **não** é para agentes nem para reproduzir à toa. É feito pelo autor, à mão, uma única vez, depois do commit de congelamento.
 
-1. Reler todo o código e escolher, antes do congelamento, o modelo da tabela 2×2 e se a calibração entra (ver [decisoes.md](decisoes.md), seção 6).
+1. Reler todo o código antes do congelamento. O modelo e a calibração não se escolhem aqui: seguem o que a monografia já fixou (ver P1 e P5 em [decisoes.md](decisoes.md)).
 2. Fazer o commit de congelamento e anotar o hash.
 3. Rodar, nesta ordem:
 
@@ -80,7 +80,7 @@ uv run python codigo/decisao.py --final
 
 O caminho do arquivo é argumento obrigatório de `modelos.py --final`; nenhum nome de arquivo de teste está no código. Se `resultados/predicoes_teste.csv` já existir, o script recusa e não sobrescreve.
 
-Saídas: `predicoes_teste.csv`, `metricas_teste.csv`, `calibracao_teste.png`, `politicas_teste.csv`, `resumo_politicas_teste.csv`. Os intervalos usam bootstrap com 2000 reamostras e semente 2026.
+Saídas: `predicoes_teste.csv`, `metricas_teste.csv`, `calibracao_teste.png`, `politicas_teste.csv`, `resumo_politicas_teste.csv` e `diferenca_politicas_teste.csv`. Os intervalos usam bootstrap com 2000 reamostras e semente 2026.
 
 ## 6. O que a reprodução não cobre
 
