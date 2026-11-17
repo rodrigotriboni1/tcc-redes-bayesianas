@@ -27,7 +27,10 @@
     "AGENTS.md",
     "README.md",
     "pyproject.toml",
-    "uv.lock"
+    "uv.lock",
+    "docs/plano-de-analise.md",
+    "docs/decisoes.md",
+    "docs/criterios-de-aceite.md"
   ],
   "ports": { "base": 5100, "step": 10 },
   "prices_usd_per_mtok": {

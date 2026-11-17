@@ -264,6 +264,55 @@ if (RAIZ / "codigo/demo.py").exists() and pred is not None and politicas is not 
     exigir(rodar("codigo/demo.py").returncode == 2, "demo.py sem argumento deve sair com 2")
     exigir(not list(RES.glob("*.pkl")) and not list(RES.glob("*.joblib")), "demo.py salvou modelo em arquivo")
 
+# --- Issue 08 -------------------------------------------------------------
+# Só forma e consistência interna da seleção aninhada; nenhum valor de resultado.
+CONFIGS = [f"{m}_ess{e}" for m in ("nb", "tan") for e in (1, 5, 10, 50)]
+selecao = None
+if (RES / "predicoes_selecao.csv").exists() and pred is not None:
+    selecao = pd.read_csv(RES / "predicoes_selecao.csv")
+    n = "predicoes_selecao.csv"
+    if colunas(selecao, ["config", "record_id", "fold_externo", "fold_interno", "p_ruim"], n) and exigir(len(selecao) == 32000, f"{n}: {len(selecao)} linhas, esperado 32000"):
+        exigir(sorted(selecao["config"].unique()) == sorted(CONFIGS), f"{n}: configs {sorted(selecao['config'].unique())}, esperado {CONFIGS}")
+        for c, parte in selecao.groupby("config"):
+            fora = parte[parte["fold_interno"] == -1]
+            exigir(len(fora) == 800 and sorted(fora["record_id"]) == sorted(pred["record_id"]), f"{n}: {c} deve ter os 800 casos com fold_interno=-1")
+            for k in range(5):
+                exigir(((parte["fold_externo"] == k) & (parte["fold_interno"] >= 0)).sum() == 640, f"{n}: {c} partição externa {k} não tem 640 linhas internas")
+        probabilidades(selecao["p_ruim"], n)
+        for m in ("nb", "tan"):
+            fora = selecao[(selecao["config"] == f"{m}_ess5") & (selecao["fold_interno"] == -1)].set_index("record_id")
+            if len(fora) == 800:
+                exigir(perto(fora.loc[pred["record_id"], "p_ruim"], pred[f"p_{m}"], 1e-12), f"{n}: {m}_ess5 com fold_interno=-1 difere de p_{m} em predicoes_dev.csv")
+    else:
+        selecao = None
+    if exigir((RES / "selecao_dev.csv").exists(), "selecao_dev.csv ausente"):
+        sd = pd.read_csv(RES / "selecao_dev.csv")
+        exigir(sorted(sd.iloc[:, 0].astype(str)) == sorted(CONFIGS + ["aninhado"]), "selecao_dev.csv: esperado uma linha por config mais aninhado")
+    if exigir((RES / "selecao_escolha.csv").exists(), "selecao_escolha.csv ausente") and selecao is not None:
+        se = pd.read_csv(RES / "selecao_escolha.csv")
+        n = "selecao_escolha.csv"
+        blocos = [str(k) for k in range(5)] + ["dev"]
+        se["fold_externo"] = se["fold_externo"].astype(str)
+        if exigir({"fold_externo", "config", "log_loss_interno", "escolhida"} <= set(se.columns), f"{n}: faltam colunas fold_externo, config, log_loss_interno, escolhida") and exigir(len(se) == 48 and sorted(zip(se["fold_externo"], se["config"])) == sorted((b, c) for b in blocos for c in CONFIGS), f"{n}: esperado 48 linhas (0..4 e dev × 8 configs)"):
+            y = selecao.merge(pred[["record_id", "kredit"]], on="record_id")
+            y["ruim"] = (y["kredit"] == 0).astype(int)
+            for b in blocos:
+                parte = se[se["fold_externo"] == b].set_index("config")
+                exigir(parte["escolhida"].astype(int).sum() == 1, f"{n}: bloco {b} deve ter exatamente uma escolhida")
+                m = y["fold_interno"] == -1 if b == "dev" else (y["fold_externo"] == int(b)) & (y["fold_interno"] >= 0)
+                ll = {}
+                for c in CONFIGS:
+                    q = y[m & (y["config"] == c)]
+                    # dev: agrupado das 800 externas; partição externa: média das 5 partições internas.
+                    if b == "dev":
+                        esperado = log_loss(q["ruim"], q["p_ruim"], labels=[0, 1])
+                    else:
+                        esperado = np.mean([log_loss(g["ruim"], g["p_ruim"], labels=[0, 1]) for _, g in q.groupby("fold_interno")])
+                    exigir(perto(parte.loc[c, "log_loss_interno"], esperado), f"{n}: log_loss_interno de {c} no bloco {b} não bate com as predições")
+                    ll[c] = parte.loc[c, "log_loss_interno"]
+                melhor = next(c for c in CONFIGS if ll[c] <= min(ll.values()) + 1e-9)
+                exigir(bool(parte.loc[melhor, "escolhida"]) and parte["escolhida"].astype(int).sum() == 1, f"{n}: bloco {b} deveria escolher {melhor}")
+
 # --- Issue 07 -------------------------------------------------------------
 if (RAIZ / "codigo/modelos.py").exists() and "--final" in (RAIZ / "codigo/modelos.py").read_text() and pred is not None:
     antes = {f.name: f.read_bytes() for f in RES.iterdir()}
@@ -278,9 +327,11 @@ if (RAIZ / "codigo/modelos.py").exists() and "--final" in (RAIZ / "codigo/modelo
         if exigir(r.returncode == 0 and (RES / "predicoes_teste.csv").exists(), f"modelos.py --final falhou\n{r.stderr[-500:]}"):
             teste = pd.read_csv(RES / "predicoes_teste.csv")
             n = "predicoes_teste.csv"
-            if colunas(teste, ["record_id", "kredit", "p_nb", "p_tan", "p_logreg"], n):
+            # Issue 10: p_sel só é exigida quando o script já a grava.
+            com_sel = MODELOS + ["sel"] if "p_sel" in teste.columns else MODELOS
+            if colunas(teste, ["record_id", "kredit"] + [f"p_{m}" for m in com_sel], n):
                 exigir(list(teste["record_id"]) == list(pd.read_csv(falso)["record_id"]), f"{n}: linhas diferem do arquivo de entrada")
-                for m in MODELOS:
+                for m in com_sel:
                     probabilidades(teste[f"p_{m}"], f"{n} p_{m}")
             conteudo = (RES / "predicoes_teste.csv").read_bytes()
             r = rodar("codigo/modelos.py", "--final", str(falso))

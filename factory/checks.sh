@@ -104,6 +104,10 @@ if tem '--ocultar' modelos.py; then
   rodar codigo/modelos.py --ocultar
   tem '--ocultar' avaliar.py && rodar codigo/avaliar.py --ocultar
 fi
+if tem '--selecao' modelos.py; then
+  rodar codigo/modelos.py --selecao
+  tem '--selecao' avaliar.py && rodar codigo/avaliar.py --selecao
+fi
 if [ -f codigo/decisao.py ]; then
   rodar codigo/test_decisao.py
   rodar codigo/decisao.py
