@@ -11,33 +11,33 @@ Utiliza-se a base South German Credit \cite{gromping2019}, versão corrigida da 
 
 Das 20 variáveis preditoras, três são contínuas — duração do crédito (`laufzeit`), valor do crédito (`hoehe`) e idade (`alter`) — e as 17 restantes já são categóricas [fonte: PLANO.md §4]. Os nomes originais, em alemão, são mantidos no código; a tradução é usada apenas no texto [fonte: PLANO.md §4]. O identificador `record_id` é removido antes de qualquer etapa de modelagem [fonte: PLANO.md §4].
 
-Tabela 3.1 — Dicionário das variáveis [fonte: docs/glossario.md §1]. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n=800), calculado a partir de `dados/processados/dev.csv`; o significado de cada código não consta do glossário.
+Tabela 3.1 — Dicionário das variáveis [fonte: docs/glossario.md §1]. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n=800), calculado a partir de `dados/processados/dev.csv`; os códigos e seus significados seguem o codetable.txt da UCI (South German Credit (UPDATE), https://archive.ics.uci.edu/dataset/573/south+german+credit+update), traduzidos para o português.
 
 | Variável | Tradução | Tipo | Categorias |
 |---|---|---|---|
-| `kredit` | Risco do crédito (0 = ruim, 1 = bom; alvo) | Binária | 2 |
+| `kredit` | Risco do crédito (alvo) | Binária | 2: 0 = ruim; 1 = bom |
 | `laufzeit` | Duração do crédito (meses) | Contínua, 3 faixas por tercis | — |
 | `hoehe` | Valor do crédito | Contínua, 3 faixas por tercis | — |
 | `alter` | Idade | Contínua, 3 faixas por tercis | — |
-| `laufkont` | Situação da conta corrente | Categórica | 4 |
-| `verw` | Finalidade do crédito | Categórica | 10 |
-| `bishkred` | Número de créditos já existentes no banco | Categórica | 4 |
-| `telef` | Tem telefone registrado | Categórica | 2 |
-| `moral` | Histórico de crédito | Categórica | 5 |
-| `sparkont` | Poupança | Categórica | 5 |
-| `beszeit` | Tempo no emprego atual | Categórica | 5 |
-| `rate` | Taxa da parcela em relação à renda | Categórica | 4 |
-| `famges` | Estado civil e sexo | Categórica | 4 |
-| `buerge` | Outros devedores ou fiadores | Categórica | 3 |
-| `wohnzeit` | Tempo na residência atual | Categórica | 4 |
-| `verm` | Patrimônio mais valioso | Categórica | 4 |
-| `weitkred` | Outros planos de parcelamento | Categórica | 3 |
-| `wohn` | Tipo de moradia | Categórica | 3 |
-| `beruf` | Tipo de ocupação | Categórica | 4 |
-| `pers` | Pessoas dependentes | Categórica | 2 |
-| `gastarb` | Trabalhador estrangeiro | Categórica | 2 |
+| `laufkont` | Situação da conta corrente | Categórica | 4: 1 = sem conta; 2 = saldo < 0 DM; 3 = 0 a < 200 DM; 4 = >= 200 DM ou salário por pelo menos 1 ano |
+| `verw` | Finalidade do crédito | Categórica | 10 observados (a fonte define 0 a 10): 0 = outros; 1 = carro novo; 2 = carro usado; 3 = móveis/equipamentos; 4 = rádio/televisão; 5 = eletrodomésticos; 6 = reformas; 7 = educação; 8 = férias; 9 = requalificação; 10 = negócios |
+| `bishkred` | Número de créditos neste banco, incluindo o atual | Categórica | 4: 1 = 1; 2 = 2 a 3; 3 = 4 a 5; 4 = >= 6 |
+| `telef` | Telefone fixo no nome do cliente | Categórica | 2: 1 = não; 2 = sim |
+| `moral` | Histórico de crédito | Categórica | 5: 0 = atraso no pagamento no passado; 1 = conta crítica/outros créditos em outro lugar; 2 = nenhum crédito tomado/todos pagos em dia; 3 = créditos existentes pagos em dia até agora; 4 = todos os créditos neste banco pagos em dia |
+| `sparkont` | Poupança | Categórica | 5: 1 = desconhecida/sem poupança; 2 = < 100 DM; 3 = 100 a < 500 DM; 4 = 500 a < 1000 DM; 5 = >= 1000 DM |
+| `beszeit` | Tempo no emprego atual | Categórica | 5: 1 = desempregado; 2 = < 1 ano; 3 = 1 a < 4 anos; 4 = 4 a < 7 anos; 5 = >= 7 anos |
+| `rate` | Parcela em relação à renda disponível | Categórica | 4: 1 = >= 35; 2 = 25 a < 35; 3 = 20 a < 25; 4 = < 20 (em %) |
+| `famges` | Estado civil e sexo (`personal_status_sex`) | Categórica | 4: 1 = homem divorciado/separado; 2 = mulher não solteira ou homem solteiro; 3 = homem casado/viúvo; 4 = mulher solteira |
+| `buerge` | Outros devedores ou fiadores | Categórica | 3: 1 = nenhum; 2 = co-solicitante; 3 = fiador |
+| `wohnzeit` | Tempo na residência atual | Categórica | 4: 1 = < 1 ano; 2 = 1 a < 4 anos; 3 = 4 a < 7 anos; 4 = >= 7 anos |
+| `verm` | Bem mais valioso | Categórica | 4: 1 = desconhecido/sem bens; 2 = carro ou outro; 3 = poupança habitacional/seguro de vida; 4 = imóvel |
+| `weitkred` | Outros planos de parcelamento | Categórica | 3: 1 = banco; 2 = lojas; 3 = nenhum |
+| `wohn` | Tipo de moradia | Categórica | 3: 1 = sem pagar; 2 = aluguel; 3 = própria |
+| `beruf` | Qualificação da ocupação | Categórica | 4: 1 = desempregado/não qualificado, não residente; 2 = não qualificado, residente; 3 = empregado qualificado/funcionário; 4 = gerente/autônomo/empregado altamente qualificado |
+| `pers` | Pessoas dependentes (`people_liable`) | Categórica | 2: 1 = 3 ou mais; 2 = 0 a 2 |
+| `gastarb` | Trabalhador estrangeiro | Categórica | 2: 1 = sim; 2 = não |
 
-<!-- LACUNA: só `kredit`, `laufzeit`, `hoehe` e `alter` têm tradução conferida; as demais (e o nome de `famges`) devem ser conferidas pelo autor no codetable.txt. -->
+Traduções e códigos conferidos, variável a variável, no codetable.txt do conjunto South German Credit (UPDATE), UCI, https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Na fonte, `verw` tem 11 códigos (0 a 10); 10 aparecem no conjunto de desenvolvimento.
 
 A base apresenta categorias raras, por exemplo `bishkred` = 4 e `verw` = 8 [fonte: PLANO.md §4]. Essa característica motiva o uso de prior bayesiano na estimação dos parâmetros (Seção 3.5).
 
@@ -87,7 +87,6 @@ São comparados três modelos que estimam a probabilidade de um crédito ser rui
 
 As redes são implementadas com a biblioteca `pgmpy`, na versão fixa 1.1.2 \cite{ankan2024} [fonte: PLANO.md §3; docs/decisoes.md §3; CITATION.cff do pgmpy]. O Naive Bayes é montado como rede em estrela, pois a classe específica da biblioteca falha no cálculo de probabilidades nessa versão [fonte: docs/decisoes.md §3]. A estrutura do TAN é aprendida em cada partição, e as arestas resultantes são registradas em `resultados/tan_arestas.csv` para descrever a estabilidade da estrutura entre partições [fonte: docs/decisoes.md §4, P16].
 
-<!-- LACUNA: número do artigo de ankan2024 no JMLR não confirmado. -->
 
 Os parâmetros das redes são estimados por estimação bayesiana com prior BDeu de tamanho equivalente 5 \cite{heckerman1995}, para evitar probabilidade zero em combinações raras [fonte: PLANO.md §5; docs/decisoes.md §2]. <!-- LACUNA: referência a conferir no original --> O prior BDeu é uma distribuição de Dirichlet uniforme sobre cada tabela de probabilidade condicional: o tamanho equivalente $N'$ é repartido igualmente entre as células, de modo que cada combinação de valor $x_i$ do nó e configuração $\mathrm{pa}_i$ dos pais recebe a pseudocontagem $N'/(r_i q_i)$, em que $r_i$ é o número de estados do nó e $q_i$ o número de configurações dos pais \cite{heckerman1995}. <!-- LACUNA: referência a conferir no original --> O espaço de estados de cada variável é fixado com todos os valores que aparecem no conjunto de desenvolvimento inteiro, para que uma categoria rara ausente do treino de uma partição não interrompa a inferência. Essa escolha não usa o rótulo, mas constitui um vazamento brando de informação, aqui declarado [fonte: docs/decisoes.md §4, P10; docs/plano-de-analise.md §6, item 6].
 
@@ -149,7 +148,7 @@ As hipóteses da matriz são: valores demonstrativos, não calibrados com dados 
 
 Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida [fonte: PLANO.md §5]. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar [fonte: docs/decisoes.md §4, D5]. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento [fonte: PLANO.md §5; docs/decisoes.md §4, P2].
 
-<!-- LACUNA: escolher a fonte da literatura para a exigência de calibração (P2 pede "fonte conferida no original"). Candidata: zadrozny2001, cujo resumo diz "Accurate, well-calibrated estimates of class membership probabilities are needed [...] when a cost-sensitive decision must be made" (conferido no PDF dos autores); faltam anais e páginas no .bib e a escolha do autor. -->
+Estimativas de probabilidade bem calibradas são necessárias quando a decisão leva em conta custos \cite{zadrozny2001}.
 
 ### 3.7.1 Comparação de políticas
 

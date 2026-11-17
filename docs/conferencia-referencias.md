@@ -56,3 +56,15 @@ Conferida em 17/11/2026, abrindo a fonte e checando também se o conteúdo suste
 | heckerman1995 | MANTIDA. Só a versão UAI 1994 (arXiv) foi lida: ela menciona o caso uniforme de Buntine, mas não traz a fórmula $N'/(r_i q_i)$. O artigo de periódico não foi aberto | https://arxiv.org/abs/1302.6815 |
 | ankan2015 | MANTIDA, COM DIVERGÊNCIA. A página da SciPy confirma autores, título, 2015 e o DOI 10.25080/Majora-7b98e3ed-001 (as páginas não aparecem nela). Mas o `CITATION.cff` do pgmpy pede outra citação: Ankan & Textor, "pgmpy: A Python Toolkit for Bayesian Networks", JMLR 25, 2024, pp. 1--8. Fica com o autor decidir qual citar | https://proceedings.scipy.org/articles/Majora-7b98e3ed-001 ; https://raw.githubusercontent.com/pgmpy/pgmpy/dev/CITATION.cff |
 | calibração (P2) | MANTIDA, COM CANDIDATA. Zadrozny & Elkan (2001), ICML: o resumo diz que "accurate, well-calibrated estimates ... are needed ... when a cost-sensitive decision must be made". Entrada `zadrozny2001` adicionada ao .bib com `% VERIFICAR`, porque os anais e as páginas (609--616) não foram conferidos na fonte primária. Niculescu-Mizil & Caruana: só o artigo de 2005 sobre boosting foi aberto, e ele não sustenta a frase | https://cseweb.ucsd.edu/~elkan/calibrated.pdf |
+
+## Terceira conferência
+
+Conferida em 17/11/2026. Os textos de friedman1997 e heckerman1995 (periódico) continuaram fechados (Springer com login; cópias em huji, technion, academia.edu, scispace e Wayback deram 404/403/vazio/bloqueio). Metadados conferidos; o conteúdo das frases do cap. 3 não, e as LACUNAs dessas linhas ficam.
+
+| chave | resultado | URL |
+|---|---|---|
+| friedman1997 | METADADOS CONFIRMADOS (autores, título, Machine Learning 29(2--3):131--163, 1997). Texto não lido: LACUNAs das linhas de NB/TAN mantidas | https://api.openalex.org/works/doi:10.1023/A:1007465528199 |
+| chowliu1968 | METADADOS CONFIRMADOS (IEEE Trans. Inf. Theory 14(3):462--467, 1968). Resumo (via OpenAlex): aproximação por árvore de dependência de 1ª ordem, ótima em informação. Não trata da versão condicional à classe (que é de friedman1997): LACUNA mantida | https://api.openalex.org/works/doi:10.1109/TIT.1968.1054142 |
+| heckerman1995 | METADADOS CONFIRMADOS (Machine Learning 20(3):197--243; DOI 10.1007/BF00994016; a página da MSR dá "March 1994", o volume é de 1995). Fórmula $N'/(r_i q_i)$ não vista: LACUNAs mantidas. MSR-TR-94-09 não encontrado | https://www.microsoft.com/en-us/research/?p=147888 |
+| zadrozny2001 | RESOLVIDA. ICML 2001, pp. 609--616 conferidos. `% VERIFICAR` retirado; LACUNA de calibração trocada por frase com \cite{zadrozny2001}, sustentada pelo resumo (2ª conferência) | https://mlanthology.org/icml/2001/zadrozny2001icml-obtaining |
+| ankan2024 | RESOLVIDA. JMLR 25(265):1--8, 2024. `number = {265}` acrescentado; LACUNA removida | https://www.jmlr.org/papers/v25/23-0487.html |
