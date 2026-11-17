@@ -12,11 +12,19 @@ Com --final, calcula as métricas sobre predicoes_teste.csv (todas as linhas jun
 intervalo de 95% por bootstrap (2000 reamostras, semente 2026) para ROC-AUC, PR-AUC e Brier.
 A taxa_base prevê para toda linha a proporção de ruins do dev. Rodado só pelo autor.
 
+Com --selecao, resume a validação cruzada aninhada da grade de redes. Em cada partição externa,
+o log_loss_interno de cada configuração é a média do log loss das 5 partições internas; no bloco
+dev, é o log loss das 800 predições externas juntas. A escolhida de cada bloco é a primeira, na
+ordem da grade, com log_loss_interno até 1e-9 acima do menor. Em selecao_dev.csv, cada configuração
+e a linha aninhado (em cada partição externa, a configuração escolhida naquele bloco) têm as
+métricas das partições externas resumidas como em metricas_dev.csv.
+
 Entradas:
   resultados/predicoes_dev.csv         record_id,kredit,fold,p_nb,p_tan,p_logreg
   resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
   resultados/metricas_dev.csv          desempenho com todas as variáveis (só com --ocultar)
   resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg (só com --final)
+  resultados/predicoes_selecao.csv     config,record_id,fold_externo,fold_interno,p_ruim (só com --selecao)
   dados/processados/dev.csv            proporção de ruins do dev para a taxa_base (só com --final)
 Saídas:
   resultados/metricas_dev.csv   média e desvio amostral, entre as 5 partições, de cada métrica
@@ -24,12 +32,15 @@ Saídas:
   resultados/evidencia_incompleta.csv  modelo,variavel_oculta,roc_auc,brier,delta_roc_auc,delta_brier (só com --ocultar)
   resultados/metricas_teste.csv   valor e intervalo de cada métrica no teste (só com --final)
   resultados/calibracao_teste.png diagrama de calibração no teste (só com --final)
+  resultados/selecao_escolha.csv  fold_externo,config,log_loss_interno,escolhida (só com --selecao)
+  resultados/selecao_dev.csv      métricas de cada configuração e do aninhado, colunas de metricas_dev.csv (só com --selecao)
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/avaliar.py              grava as saídas
   uv run python codigo/avaliar.py --verificar  roda os autotestes e não grava nada
   uv run python codigo/avaliar.py --ocultar    grava só evidencia_incompleta.csv
   uv run python codigo/avaliar.py --final      grava só metricas_teste.csv e calibracao_teste.png
+  uv run python codigo/avaliar.py --selecao    grava só selecao_escolha.csv e selecao_dev.csv
 """
 import sys
 from pathlib import Path
@@ -47,6 +58,9 @@ SAIDA = RAIZ / "resultados"
 PREDICOES = SAIDA / "predicoes_dev.csv"
 OCULTA = SAIDA / "predicoes_dev_oculta.csv"
 TESTE = SAIDA / "predicoes_teste.csv"
+SELECAO = SAIDA / "predicoes_selecao.csv"
+# mesma grade e ordem de desempate de modelos.py
+CONFIGS = ["nb_ess1", "nb_ess5", "nb_ess10", "nb_ess50", "tan_ess1", "tan_ess5", "tan_ess10", "tan_ess50"]
 DEV = RAIZ / "dados/processados/dev.csv"
 MODELOS = ["nb", "tan", "logreg"]
 COLUNAS = ["kredit", "fold"] + [f"p_{m}" for m in MODELOS]
@@ -204,11 +218,75 @@ def main_oculta():
     tabela.to_csv(SAIDA / "evidencia_incompleta.csv", index=False)
 
 
+def resumo(nome, y, p, fold):
+    """Linha com média e desvio (ddof=1) de cada métrica entre as partições, como em calcular."""
+    por_fold = np.array([metricas(y[fold == k], p[fold == k]) for k in np.unique(fold)])
+    linha = {"modelo": nome}
+    for i, met in enumerate(METRICAS):
+        linha[f"{met}_media"] = por_fold[:, i].mean()
+        linha[f"{met}_desvio"] = por_fold[:, i].std(ddof=1)
+    return linha
+
+
+def escolher(perdas):
+    """Índice da primeira perda, na ordem dada, até 1e-9 acima da menor."""
+    return next(i for i, v in enumerate(perdas) if v <= min(perdas) + 1e-9)
+
+
+def calcular_selecao(sel, pred):
+    """Devolve (selecao_escolha, selecao_dev)."""
+    if not sel["p_ruim"].between(0, 1).all():
+        sys.exit(f"ERRO: p_ruim fora de [0, 1] em {SELECAO.name}")
+    sel = sel.merge(pred[["record_id", "kredit"]], on="record_id", how="left")
+    if sel["kredit"].isna().any():
+        sys.exit(f"ERRO: record_id de {SELECAO.name} ausente em {PREDICOES.name}")
+    sel["ruim"] = (sel["kredit"] == 0).astype(int)
+    externas = sel[sel["fold_interno"] == -1]
+    escolha, escolhidas = [], {}
+    for b in [0, 1, 2, 3, 4, "dev"]:
+        perdas = []
+        for c in CONFIGS:
+            if b == "dev":
+                q = externas[externas["config"] == c]
+                perdas.append(log_loss(q["ruim"], q["p_ruim"], labels=[0, 1]))
+            else:
+                q = sel[(sel["config"] == c) & (sel["fold_externo"] == b) & (sel["fold_interno"] >= 0)]
+                perdas.append(np.mean([log_loss(g["ruim"], g["p_ruim"], labels=[0, 1]) for _, g in q.groupby("fold_interno")]))
+        i = escolher(perdas)
+        escolhidas[b] = CONFIGS[i]
+        escolha += [{"fold_externo": b, "config": c, "log_loss_interno": v, "escolhida": j == i} for j, (c, v) in enumerate(zip(CONFIGS, perdas))]
+    linhas = []
+    for c in CONFIGS:
+        q = externas[externas["config"] == c].sort_values(["fold_externo", "record_id"])
+        linhas.append(resumo(c, q["ruim"].to_numpy(), q["p_ruim"].to_numpy(), q["fold_externo"].to_numpy()))
+    q = pd.concat([externas[(externas["config"] == escolhidas[k]) & (externas["fold_externo"] == k)] for k in range(5)])
+    linhas.append(resumo("aninhado", q["ruim"].to_numpy(), q["p_ruim"].to_numpy(), q["fold_externo"].to_numpy()))
+    return pd.DataFrame(escolha), pd.DataFrame(linhas)
+
+
+def main_selecao():
+    pred = ler()
+    sel = ler_csv(SELECAO, ["config", "record_id", "fold_externo", "fold_interno", "p_ruim"])
+    escolha, tabela = calcular_selecao(sel, pred)
+    escolha.to_csv(SAIDA / "selecao_escolha.csv", index=False)
+    tabela.to_csv(SAIDA / "selecao_dev.csv", index=False)
+
+
 def verificar():
     # tudo 0,8 sem nenhum ruim: erro de calibração 0,8
     assert abs(ece(np.zeros(10), np.full(10, 0.8)) - 0.8) < 1e-12
     # tudo 0,3 com 30% de ruins: erro de calibração 0
     assert abs(ece(np.array([1] * 3 + [0] * 7), np.full(10, 0.3))) < 1e-12
+    # 08.8: desempate pela ordem da grade, num caso feito à mão
+    assert escolher([0.6, 0.5, 0.5 + 1e-10, 0.7]) == 1
+    assert escolher([0.5 + 1e-10, 0.5, 0.7]) == 0
+    # 08.8: nb_ess5 e tan_ess5 batem com nb e tan de metricas_dev.csv; numa execução do zero
+    # (factory/checks.sh) este autoteste roda antes de --selecao, então só confere se os arquivos já existem
+    if SELECAO.exists() and (SAIDA / "metricas_dev.csv").exists():
+        _, tabela = calcular_selecao(ler_csv(SELECAO, ["config", "record_id", "fold_externo", "fold_interno", "p_ruim"]), ler())
+        tabela, dev = tabela.set_index("modelo"), ler_csv(SAIDA / "metricas_dev.csv", ["modelo"]).set_index("modelo")
+        for m in ("nb", "tan"):
+            assert np.abs(tabela.loc[f"{m}_ess5", dev.columns].to_numpy() - dev.loc[m].to_numpy()).max() < 1e-9, m
     print("verificar: ok")
 
 
@@ -217,9 +295,11 @@ if __name__ == "__main__":
         verificar()
     elif sys.argv[1:] == ["--ocultar"]:
         main_oculta()
+    elif sys.argv[1:] == ["--selecao"]:
+        main_selecao()
     elif sys.argv[1:] == ["--final"]:
         main_final()
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/avaliar.py [--verificar | --ocultar | --final]")
+        sys.exit("Uso: uv run python codigo/avaliar.py [--verificar | --ocultar | --selecao | --final]")
     else:
         main()
