@@ -28,7 +28,7 @@ Regra do trabalho (`uso-de-ia.md`): toda citação sai do original lido, com pá
 | 2.9 Escore de crédito e next best action | Regressão logística e scorecard como referência da indústria | `thomas2000`, `siddiqi2012`, `hand1997` |
 | 3.1 Base de dados | Origem e correção da base | `hofmann1994`, `gromping2019`, `uci573` |
 | 3.2 Divisão e validação | Vazamento de informação; validação cruzada | `kaufman2012` |
-| 3.3 Modelos e ferramentas | Bibliotecas usadas | `ankan2015`, `pedregosa2011` |
+| 3.3 Modelos e ferramentas | Bibliotecas usadas | `ankan2024`, `pedregosa2011` |
 | 3.4 Métricas e intervalos | Brier, calibração, bootstrap | `brier1950`, `naeini2015`, `efron1993` |
 | Formatação | Normas | `abnt14724`, `abnt6023`, `abnt10520` |
 
@@ -61,7 +61,7 @@ As seções 2.7 e 2.8 sustentam a afirmação central do trabalho (item 5 do `PL
 | `chow1970` | Opção de rejeição | A conferir | tudo: título, ano, volume e páginas | Artigo | 2.8 |
 | `zadrozny2002`, `niculescu2005` | Calibração por regressão isotônica | A conferir | tudo: título, ano, volume e páginas | Seções de método | 2.5 |
 | `hand1997` | Revisão de métodos de escore de crédito | A conferir | tudo: título, ano, volume e páginas | Artigo | 2.9 |
-| `ankan2015` | pgmpy | A conferir | tudo: título, ano, volume e páginas | Ver na documentação do pgmpy qual publicação citar | 3.3 |
+| `ankan2024` | pgmpy (Ankan & Textor) | Conferido no CITATION.cff do pgmpy | número do artigo no JMLR | Autor decidiu citar esta em 17/11/2026 | 3.3 |
 
 ## Ordem de leitura sugerida
 
