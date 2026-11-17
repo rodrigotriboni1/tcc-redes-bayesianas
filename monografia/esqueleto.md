@@ -95,6 +95,12 @@ Estrutura exigida pela FEELT: capa, folha de rosto, sumário, listas, resumo e a
 <!-- fonte: saída de codigo/demo.py para um caso -->
 <!-- feito: issue 06 (codigo/demo.py) -->
 
+### 4.6 Estudo de seleção (secundário)
+<!-- fonte: resultados/selecao_dev.csv (8 configurações, linha "aninhado"), resultados/selecao_escolha.csv (escolha por externa e linha dev) -->
+<!-- relatar as 8 linhas, o número de comparações (8) e a linha "aninhado", qualquer que seja o resultado (plano de análise §9) -->
+<!-- declaração obrigatória de viés (§9): a grade foi definida depois de ver metricas_dev.csv e motivada por ele (TAN pior que NB; hipótese verw). O aninhamento corrige o viés de escolher entre as 8 configurações, não o de desenhar a grade olhando o mesmo dev -->
+<!-- feito: issues 08, 10 e 11 (resultados/selecao_dev.csv etc.). Falta: p_sel no teste, só o autor -->
+
 ---
 
 ## 5 Discussão e limitações
