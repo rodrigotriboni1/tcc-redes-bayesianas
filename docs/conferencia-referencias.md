@@ -43,3 +43,16 @@ Resumo: 26 BATE, 2 DIVERGE, 1 NÃO ACHEI.
 - **platt1999**: páginas 61--74 e ano 1999 não foram confirmados; fontes dão 1999 e 2000. Conferir no capítulo 5 do livro.
 
 Observações sem divergência: pearl1988 (San Francisco ou San Mateo conforme o catálogo), hofmann1994 (URL antigo; o atual é https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data), ankan2015 (acrescentar `pages = {6--11}`), kaufman2012 (título do Crossref sem o subtítulo; número 15 do artigo não confirmado), jensen2007 (número da edição não confirmado), ABNT (conferi título e ano, não a vigência de cada edição).
+
+## Segunda conferência
+
+Conferida em 17/11/2026, abrindo a fonte e checando também se o conteúdo sustenta a frase do cap. 3. Os PDFs da Springer (Machine Learning) e o do IEEE ficaram fechados ao acesso automático.
+
+| chave | resultado | URL |
+|---|---|---|
+| elkan2001 | RESOLVIDA. O PDF do autor confirma título, autor e IJCAI-01; a §2 dá o limiar ótimo derivado da matriz de custos e a conclusão recomenda usá-lo direto sobre as probabilidades. `% VERIFICAR` retirado; LACUNA removida | https://cseweb.ucsd.edu/~elkan/rescale.pdf |
+| friedman1997 | MANTIDA. Os metadados batem (1ª conferência), mas o texto não foi aberto: o PDF da Springer pede login e as cópias dos autores deram 404 | https://link.springer.com/content/pdf/10.1023/A:1007465528199.pdf |
+| chowliu1968 | MANTIDA. Citada junto com friedman1997 nas mesmas frases; o texto não foi aberto | http://www.cs.iastate.edu/~honavar/chou-liu.pdf (não lido) |
+| heckerman1995 | MANTIDA. Só a versão UAI 1994 (arXiv) foi lida: ela menciona o caso uniforme de Buntine, mas não traz a fórmula $N'/(r_i q_i)$. O artigo de periódico não foi aberto | https://arxiv.org/abs/1302.6815 |
+| ankan2015 | MANTIDA, COM DIVERGÊNCIA. A página da SciPy confirma autores, título, 2015 e o DOI 10.25080/Majora-7b98e3ed-001 (as páginas não aparecem nela). Mas o `CITATION.cff` do pgmpy pede outra citação: Ankan & Textor, "pgmpy: A Python Toolkit for Bayesian Networks", JMLR 25, 2024, pp. 1--8. Fica com o autor decidir qual citar | https://proceedings.scipy.org/articles/Majora-7b98e3ed-001 ; https://raw.githubusercontent.com/pgmpy/pgmpy/dev/CITATION.cff |
+| calibração (P2) | MANTIDA, COM CANDIDATA. Zadrozny & Elkan (2001), ICML: o resumo diz que "accurate, well-calibrated estimates ... are needed ... when a cost-sensitive decision must be made". Entrada `zadrozny2001` adicionada ao .bib com `% VERIFICAR`, porque os anais e as páginas (609--616) não foram conferidos na fonte primária. Niculescu-Mizil & Caruana: só o artigo de 2005 sobre boosting foi aberto, e ele não sustenta a frase | https://cseweb.ucsd.edu/~elkan/calibrated.pdf |

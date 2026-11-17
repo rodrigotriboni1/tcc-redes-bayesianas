@@ -11,17 +11,53 @@ Utiliza-se a base South German Credit \cite{gromping2019}, versão corrigida da 
 
 Das 20 variáveis preditoras, três são contínuas — duração do crédito (`laufzeit`), valor do crédito (`hoehe`) e idade (`alter`) — e as 17 restantes já são categóricas [fonte: PLANO.md §4]. Os nomes originais, em alemão, são mantidos no código; a tradução é usada apenas no texto [fonte: PLANO.md §4]. O identificador `record_id` é removido antes de qualquer etapa de modelagem [fonte: PLANO.md §4].
 
-<!-- LACUNA: tabela de dicionário das variáveis. A tradução em docs/glossario.md §1 foi escrita de memória e só 4 linhas estão conferidas; o autor precisa conferir no codetable.txt antes de publicar. -->
+Tabela 3.1 — Dicionário das variáveis [fonte: docs/glossario.md §1]. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n=800), calculado a partir de `dados/processados/dev.csv`; o significado de cada código não consta do glossário.
+
+| Variável | Tradução | Tipo | Categorias |
+|---|---|---|---|
+| `kredit` | Risco do crédito (0 = ruim, 1 = bom; alvo) | Binária | 2 |
+| `laufzeit` | Duração do crédito (meses) | Contínua, 3 faixas por tercis | — |
+| `hoehe` | Valor do crédito | Contínua, 3 faixas por tercis | — |
+| `alter` | Idade | Contínua, 3 faixas por tercis | — |
+| `laufkont` | Situação da conta corrente | Categórica | 4 |
+| `verw` | Finalidade do crédito | Categórica | 10 |
+| `bishkred` | Número de créditos já existentes no banco | Categórica | 4 |
+| `telef` | Tem telefone registrado | Categórica | 2 |
+| `moral` | Histórico de crédito | Categórica | 5 |
+| `sparkont` | Poupança | Categórica | 5 |
+| `beszeit` | Tempo no emprego atual | Categórica | 5 |
+| `rate` | Taxa da parcela em relação à renda | Categórica | 4 |
+| `famges` | Estado civil e sexo | Categórica | 4 |
+| `buerge` | Outros devedores ou fiadores | Categórica | 3 |
+| `wohnzeit` | Tempo na residência atual | Categórica | 4 |
+| `verm` | Patrimônio mais valioso | Categórica | 4 |
+| `weitkred` | Outros planos de parcelamento | Categórica | 3 |
+| `wohn` | Tipo de moradia | Categórica | 3 |
+| `beruf` | Tipo de ocupação | Categórica | 4 |
+| `pers` | Pessoas dependentes | Categórica | 2 |
+| `gastarb` | Trabalhador estrangeiro | Categórica | 2 |
+
+<!-- LACUNA: só `kredit`, `laufzeit`, `hoehe` e `alter` têm tradução conferida; as demais (e o nome de `famges`) devem ser conferidas pelo autor no codetable.txt. -->
 
 A base apresenta categorias raras, por exemplo `bishkred` = 4 e `verw` = 8 [fonte: PLANO.md §4]. Essa característica motiva o uso de prior bayesiano na estimação dos parâmetros (Seção 3.5).
 
-<!-- LACUNA: contagens das categorias raras são "da base completa, a conferir pelo autor no sgc.csv" (docs/decisoes.md §4, P25); não reproduzidas aqui até a conferência. -->
+No conjunto de desenvolvimento (n=800), `bishkred` = 4 tem 5 casos e `verw` = 8 tem 7 casos; outras categorias pequenas são `verw` = 4 e `verw` = 10 (9 casos cada), `buerge` = 2 (35 casos) e `beruf` = 1 (16 casos). <!-- LACUNA: a contagem na base completa (n=1000) é do autor, a conferir no sgc.csv (docs/decisoes.md §4, P25). -->
 
 ### 3.1.1 Análise exploratória
 
 A análise exploratória limita-se a uma tabela de descrição da base (contagens, categorias raras e as três variáveis contínuas), elaborada a partir do conjunto de desenvolvimento e do dicionário, sem script dedicado [fonte: docs/decisoes.md §4, P12].
 
-<!-- LACUNA: tabela descritiva ainda não elaborada (esqueleto.md §3.2, pendente). -->
+Tabela 3.2 — Descrição do conjunto de desenvolvimento (n=800), calculada a partir de `dados/processados/dev.csv`.
+
+| Item | Valor |
+|---|---|
+| Linhas | 800 |
+| Casos ruins (`kredit` = 0) | 240 (30,0%) |
+| `laufzeit` (meses) | mínimo 4; cortes dos tercis 12 e 24; máximo 72 |
+| `hoehe` | mínimo 250; cortes dos tercis 1553 e 3384; máximo 18424 |
+| `alter` (anos) | mínimo 19; cortes dos tercis 28 e 38; máximo 75 |
+
+Os tercis acima são calculados sobre todo o conjunto de desenvolvimento, apenas para descrição; no experimento os cortes são aprendidos só no treino de cada partição.
 
 ## 3.2 Divisão em desenvolvimento e teste
 
@@ -33,13 +69,13 @@ O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os m
 
 No conjunto de desenvolvimento, adota-se validação cruzada estratificada em 5 partições, com semente 2026 [fonte: PLANO.md §5; docs/decisoes.md §2]. Cada partição é usada uma vez como validação enquanto as outras quatro compõem o treino, de modo que cada caso recebe uma predição de um modelo que não o viu [fonte: docs/glossario.md §2]. As métricas de desenvolvimento são reportadas como média e desvio entre as 5 partições [fonte: docs/plano-de-analise.md §2].
 
-<!-- LACUNA: motivo da escolha de 5 (e não 10) partições não registrado (docs/decisoes.md §2). -->
+O número de partições (5) foi escolhido por convenção, e não por desempenho [fonte: decisão do autor, 17/11/2026].
 
 ## 3.4 Discretização
 
 As redes bayesianas utilizadas exigem variáveis discretas. As três variáveis contínuas são discretizadas em 3 faixas por tercis, com cortes aprendidos apenas no treino de cada partição, para evitar vazamento de informação da partição de validação \cite{kaufman2012} [fonte: PLANO.md §5; docs/decisoes.md §2]. Para o teste final, os cortes são aprendidos no conjunto de desenvolvimento inteiro e gravados em `resultados/cortes.json` [fonte: PLANO.md §7].
 
-<!-- LACUNA: motivo de 3 faixas (e não 4 ou 5) não registrado (docs/decisoes.md §2). -->
+O número de faixas (3, por tercis) foi escolhido por convenção, e não por desempenho [fonte: decisão do autor, 17/11/2026].
 
 ## 3.5 Modelos de risco
 
@@ -55,7 +91,7 @@ As redes são implementadas com a biblioteca `pgmpy`, na versão fixa 1.1.2 \cit
 
 Os parâmetros das redes são estimados por estimação bayesiana com prior BDeu de tamanho equivalente 5 \cite{heckerman1995}, para evitar probabilidade zero em combinações raras [fonte: PLANO.md §5; docs/decisoes.md §2]. <!-- LACUNA: referência a conferir no original --> O prior BDeu é uma distribuição de Dirichlet uniforme sobre cada tabela de probabilidade condicional: o tamanho equivalente $N'$ é repartido igualmente entre as células, de modo que cada combinação de valor $x_i$ do nó e configuração $\mathrm{pa}_i$ dos pais recebe a pseudocontagem $N'/(r_i q_i)$, em que $r_i$ é o número de estados do nó e $q_i$ o número de configurações dos pais \cite{heckerman1995}. <!-- LACUNA: referência a conferir no original --> O espaço de estados de cada variável é fixado com todos os valores que aparecem no conjunto de desenvolvimento inteiro, para que uma categoria rara ausente do treino de uma partição não interrompa a inferência. Essa escolha não usa o rótulo, mas constitui um vazamento brando de informação, aqui declarado [fonte: docs/decisoes.md §4, P10; docs/plano-de-analise.md §6, item 6].
 
-<!-- LACUNA: motivo do tamanho equivalente 5 não registrado (docs/decisoes.md §2). -->
+O tamanho equivalente 5 foi escolhido por convenção, e não por desempenho; outros valores só aparecem no estudo de seleção secundário [fonte: decisão do autor, 17/11/2026; docs/plano-de-analise.md §9].
 
 A inferência é exata, por eliminação de variáveis, viável porque as redes são pequenas \cite{koller2009} [fonte: PLANO.md §5].
 
@@ -111,9 +147,9 @@ As hipóteses da matriz são: valores demonstrativos, não calibrados com dados 
 
 <!-- LACUNA: aprovação da matriz (c = 40) pelo orientador ainda em aberto (PLANO.md §11, item 2). -->
 
-Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. <!-- LACUNA: referência a conferir no original --> Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida [fonte: PLANO.md §5]. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar [fonte: docs/decisoes.md §4, D5]. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento [fonte: PLANO.md §5; docs/decisoes.md §4, P2].
+Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida [fonte: PLANO.md §5]. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar [fonte: docs/decisoes.md §4, D5]. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento [fonte: PLANO.md §5; docs/decisoes.md §4, P2].
 
-<!-- LACUNA: escolher a fonte da literatura para a exigência de calibração (P2 pede "fonte conferida no original"). -->
+<!-- LACUNA: escolher a fonte da literatura para a exigência de calibração (P2 pede "fonte conferida no original"). Candidata: zadrozny2001, cujo resumo diz "Accurate, well-calibrated estimates of class membership probabilities are needed [...] when a cost-sensitive decision must be made" (conferido no PDF dos autores); faltam anais e páginas no .bib e a escolha do autor. -->
 
 ### 3.7.1 Comparação de políticas
 
@@ -125,7 +161,7 @@ São medidas a utilidade média, a distribuição das ações e o número de cas
 
 A sensibilidade da política aos custos é avaliada calculando-se as fronteiras de decisão em uma grade de perda por inadimplência em {200, 400, 600, 800} e custo da análise manual em {0, 5, …, 100} [fonte: PLANO.md §7; docs/decisoes.md §4, D7]. A análise mostra a ação recomendada em função do risco, da perda e do custo da análise manual [fonte: PLANO.md §6].
 
-<!-- LACUNA: motivo da grade da sensibilidade não registrado (docs/decisoes.md §4, D7). -->
+Os valores da grade da análise de sensibilidade foram escolhidos por convenção, e não por desempenho [fonte: decisão do autor, 17/11/2026; docs/decisoes.md §4, D7].
 
 ## 3.9 Demonstração
 
@@ -145,6 +181,6 @@ Relatam-se obrigatoriamente as 8 configurações, o número de comparações (8)
 
 ## 3.11 Ambiente e reprodutibilidade
 
-O experimento é composto por sete scripts Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo [fonte: PLANO.md §3, §7; docs/arquitetura.md §2]. O projeto exige Python 3.12 ou superior [fonte: pyproject.toml, `requires-python`]. <!-- LACUNA: versão exata do interpretador usado (PLANO.md §3 diz 3.12; não há .python-version) --> As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências travadas pelo gerenciador `uv` [fonte: PLANO.md §3]. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte [fonte: AGENTS.md, Reprodutibilidade; docs/reproduzir.md §2]. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão commitada [fonte: docs/reproduzir.md §4]. As figuras PNG não são comparadas byte a byte [fonte: docs/reproduzir.md §4]. O passo a passo completo está no Apêndice A [fonte: docs/reproduzir.md].
+O experimento é composto por sete scripts Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo [fonte: PLANO.md §3, §7; docs/arquitetura.md §2]. O projeto exige Python 3.12 ou superior [fonte: pyproject.toml, `requires-python`]. A execução local usou Python 3.12.13 (saída de `uv run python --version`); `uv.lock` e `pyproject.toml` fixam apenas `requires-python = ">=3.12"`, e não há `.python-version`. As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências travadas pelo gerenciador `uv` [fonte: PLANO.md §3]. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte [fonte: AGENTS.md, Reprodutibilidade; docs/reproduzir.md §2]. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão commitada [fonte: docs/reproduzir.md §4]. As figuras PNG não são comparadas byte a byte [fonte: docs/reproduzir.md §4]. O passo a passo completo está no Apêndice A [fonte: docs/reproduzir.md].
 
 <!-- LACUNA: hash do commit de congelamento, a anotar pelo autor no passo 10 (PLANO.md §8). -->
