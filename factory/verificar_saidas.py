@@ -303,11 +303,12 @@ if (RES / "predicoes_selecao.csv").exists() and pred is not None:
                 ll = {}
                 for c in CONFIGS:
                     q = y[m & (y["config"] == c)]
-                    agrupado = log_loss(q["ruim"], q["p_ruim"], labels=[0, 1])
-                    chave = "fold_externo" if b == "dev" else "fold_interno"
-                    media = np.mean([log_loss(g["ruim"], g["p_ruim"], labels=[0, 1]) for _, g in q.groupby(chave)])
-                    # shortcut: aceita log loss agrupado ou média por partição, a issue 08 não fixa qual; travar quando o script existir.
-                    exigir(perto(parte.loc[c, "log_loss_interno"], agrupado) or perto(parte.loc[c, "log_loss_interno"], media), f"{n}: log_loss_interno de {c} no bloco {b} não bate com as predições")
+                    # dev: agrupado das 800 externas; partição externa: média das 5 partições internas.
+                    if b == "dev":
+                        esperado = log_loss(q["ruim"], q["p_ruim"], labels=[0, 1])
+                    else:
+                        esperado = np.mean([log_loss(g["ruim"], g["p_ruim"], labels=[0, 1]) for _, g in q.groupby("fold_interno")])
+                    exigir(perto(parte.loc[c, "log_loss_interno"], esperado), f"{n}: log_loss_interno de {c} no bloco {b} não bate com as predições")
                     ll[c] = parte.loc[c, "log_loss_interno"]
                 melhor = next(c for c in CONFIGS if ll[c] <= min(ll.values()) + 1e-9)
                 exigir(bool(parte.loc[melhor, "escolhida"]) and parte["escolhida"].astype(int).sum() == 1, f"{n}: bloco {b} deveria escolher {melhor}")
