@@ -344,7 +344,9 @@ if (RAIZ / "codigo/modelos.py").exists() and "--final" in (RAIZ / "codigo/modelo
                 mt = pd.read_csv(RES / "metricas_teste.csv")
                 n = "metricas_teste.csv"
                 if colunas(mt, ["modelo", "roc_auc", "roc_auc_ic_inf", "roc_auc_ic_sup", "pr_auc", "pr_auc_ic_inf", "pr_auc_ic_sup", "brier", "brier_ic_inf", "brier_ic_sup", "log_loss", "ece"], n):
-                    exigir(list(mt["modelo"]) == MODELOS + ["taxa_base"], f"{n}: linhas devem ser nb, tan, logreg, taxa_base")
+                    # Issue 11: a linha sel é opcional; quando existe, vem por último e completa.
+                    exigir(list(mt["modelo"]) in (MODELOS + ["taxa_base"], MODELOS + ["taxa_base", "sel"]), f"{n}: linhas devem ser nb, tan, logreg, taxa_base e, opcionalmente, sel")
+                    exigir(mt[mt["modelo"] == "sel"].notna().all().all(), f"{n}: linha sel incompleta")
                     for nome in ("roc_auc", "pr_auc", "brier"):
                         dentro = (mt[f"{nome}_ic_inf"] <= mt[nome] + 1e-9) & (mt[nome] <= mt[f"{nome}_ic_sup"] + 1e-9)
                         exigir(dentro.all(), f"{n}: {nome} fora do próprio intervalo")
@@ -357,14 +359,18 @@ if (RAIZ / "codigo/modelos.py").exists() and "--final" in (RAIZ / "codigo/modelo
                     if (RES / "diferenca_politicas_teste.csv").exists():
                         dif = pd.read_csv(RES / "diferenca_politicas_teste.csv")
                         n = "diferenca_politicas_teste.csv"
-                        if colunas(dif, ["modelo", "dif_utilidade_media", "dif_ic_inf", "dif_ic_sup"], n) and exigir(sorted(dif["modelo"]) == sorted(MODELOS), f"{n}: uma linha por modelo"):
+                        if colunas(dif, ["modelo", "dif_utilidade_media", "dif_ic_inf", "dif_ic_sup"], n) and exigir(sorted(dif["modelo"]) in (sorted(MODELOS), sorted(MODELOS + ["sel"])), f"{n}: uma linha por modelo (sel opcional)"):
                             dentro = (dif["dif_ic_inf"] <= dif["dif_utilidade_media"] + 1e-9) & (dif["dif_utilidade_media"] <= dif["dif_ic_sup"] + 1e-9)
                             exigir(dentro.all(), f"{n}: diferença fora do próprio intervalo")
                             for _, r in dif.iterrows():
                                 u = rt.set_index(["modelo", "regra"])["utilidade_media"]
                                 exigir(perto(r["dif_utilidade_media"], u[(r["modelo"], "ue")] - u[(r["modelo"], "limiar")]), f"{n}: diferença de {r['modelo']} não bate com resumo_politicas_teste.csv")
             if (RES / "politicas_teste.csv").exists() and politicas is not None:
-                exigir(list(pd.read_csv(RES / "politicas_teste.csv").columns) == list(politicas.columns), "politicas_teste.csv: colunas diferem de politicas_dev.csv")
+                pt = pd.read_csv(RES / "politicas_teste.csv")
+                # Issue 11: com p_sel, as colunas de sel vêm depois das de politicas_dev.csv.
+                extra = ["acao_sel_ue", "acao_sel_limiar", "segunda_sel", "dif_ue_sel"] if "p_sel" in teste.columns else []
+                base = list(politicas.columns)
+                exigir(list(pt.columns[: len(base)]) == base and set(pt.columns[len(base):]) == set(extra) and len(pt.columns) == len(base) + len(extra), f"politicas_teste.csv: colunas {list(pt.columns)}, esperado as de politicas_dev.csv mais {extra}")
     exigir(all(not f.exists() or f.read_bytes() == antes[f.name] for f in (RES / nome for nome in antes)), "--final alterou arquivo do dev")
 
 if erros:
