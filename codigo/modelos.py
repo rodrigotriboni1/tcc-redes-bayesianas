@@ -10,6 +10,7 @@ Saídas:
   resultados/cortes.json        cortes dos tercis das contínuas no dev inteiro
   resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
   resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg (só com --final)
+  resultados/predicoes_selecao.csv     config,record_id,fold_externo,fold_interno,p_ruim (só com --selecao)
 
 Com --ocultar, os modelos são treinados com as 20 variáveis e cada variável é escondida,
 uma por vez, só na previsão: as redes ficam sem aquela evidência e a regressão logística
@@ -19,15 +20,23 @@ Com --final <arquivo>, os três modelos são treinados no dev inteiro (redes com
 resultados/cortes.json) e preveem cada linha do arquivo, que precisa ter as colunas do dev.
 Recusa sobrescrever predicoes_teste.csv. Esse modo é rodado só pelo autor, uma única vez.
 
+Com --selecao, faz a validação cruzada aninhada da grade de redes (NB e TAN com prior BDeu de
+tamanho equivalente 1, 5, 10 e 50). Em cada partição externa, cada rede é treinada no treino
+externo e prevê a partição (fold_interno = -1); o treino externo é dividido de novo em 5
+partições internas, e cada rede treinada no treino interno prevê a validação interna.
+Imprime o tempo total, em segundos.
+
 Uso: a partir da raiz do repositório,
   uv run python codigo/modelos.py              grava as saídas
   uv run python codigo/modelos.py --verificar  roda os autotestes e não grava nada
   uv run python codigo/modelos.py --ocultar    grava só predicoes_dev_oculta.csv
   uv run python codigo/modelos.py --final <arquivo>  grava só predicoes_teste.csv
+  uv run python codigo/modelos.py --selecao    grava só predicoes_selecao.csv
 """
 import json
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 import numpy as np
@@ -47,6 +56,11 @@ DEV = RAIZ / "dados/processados/dev.csv"
 SAIDA = RAIZ / "resultados"
 CONTINUAS = ["laufzeit", "hoehe", "alter"]
 MODELOS = ["nb", "tan", "logreg"]
+# grade da seleção aninhada (§9 do plano de análise), na ordem de desempate
+GRADE = {
+    "nb_ess1": ("nb", 1), "nb_ess5": ("nb", 5), "nb_ess10": ("nb", 10), "nb_ess50": ("nb", 50),
+    "tan_ess1": ("tan", 1), "tan_ess5": ("tan", 5), "tan_ess10": ("tan", 10), "tan_ess50": ("tan", 50),
+}
 
 # kredit: 0 = ruim, 1 = bom
 dev = pd.read_csv(DEV)
@@ -77,30 +91,30 @@ def discretizar(df, cortes_treino):
     return df
 
 
-def montar_rede(treino, modelo):
+def montar_rede(treino, modelo, ess=5):
     """Rede treinada (com BDeu) sobre o treino já discretizado e sem record_id."""
     if modelo == "nb":
         rede = DiscreteBayesianNetwork([("kredit", f) for f in VARIAVEIS])
     else:
         dag = TreeSearch(treino).estimate(estimator_type="tan", class_node="kredit", show_progress=False)
         rede = DiscreteBayesianNetwork(dag.edges())
-    estimador = DiscreteBayesianEstimator(state_names=ESTADOS, prior_type="BDeu", equivalent_sample_size=5)
+    estimador = DiscreteBayesianEstimator(state_names=ESTADOS, prior_type="BDeu", equivalent_sample_size=ess)
     rede.fit(treino, estimator=estimador)
     return rede
 
 
-def preparar_rede(treino, modelo):
+def preparar_rede(treino, modelo, ess=5):
     """Discretiza com cortes do treino e treina a rede. Devolve (rede, cortes)."""
     c = cortes(treino)
     treino = discretizar(treino.drop(columns="record_id"), c)
-    return montar_rede(treino, modelo), c
+    return montar_rede(treino, modelo, ess), c
 
 
-def treinar(treino, modelo):
+def treinar(treino, modelo, ess=5):
     """Regressão logística treinada ou (rede, cortes)."""
     if modelo == "logreg":
         return build(CONTINUAS, CATEGORICAS).fit(treino[VARIAVEIS], treino["kredit"])
-    return preparar_rede(treino, modelo)
+    return preparar_rede(treino, modelo, ess)
 
 
 def preencher(treino, alvo, ocultar):
@@ -123,13 +137,13 @@ def aplicar(treinado, treino, alvo, modelo, ocultar=None):
     return rede.predict_probability(x)["kredit_0"].to_numpy()
 
 
-def prever(treino, alvo, modelo, ocultar=None):
+def prever(treino, alvo, modelo, ocultar=None, ess=5):
     """P(ruim) para cada linha de alvo, na ordem de alvo. Tudo é aprendido só em treino."""
     if modelo not in MODELOS:
         sys.exit(f"ERRO: modelo desconhecido: {modelo}")
     if ocultar is not None and ocultar not in VARIAVEIS:
         sys.exit(f"ERRO: variável desconhecida para ocultar: {ocultar}")
-    return aplicar(treinar(treino, modelo), treino, alvo, modelo, ocultar)
+    return aplicar(treinar(treino, modelo, ess), treino, alvo, modelo, ocultar)
 
 
 def particoes():
@@ -182,6 +196,30 @@ def main_oculta():
         print(f"AVISO: esconder {v} não mudou nenhuma predição de {m}")
     SAIDA.mkdir(exist_ok=True)
     tabela.to_csv(SAIDA / "predicoes_dev_oculta.csv", index=False)
+
+
+def selecao_particao(k, folds):
+    """Predições da grade na partição externa k (fold_interno = -1) e nas 5 validações internas do treino externo."""
+    treino, alvo = dev[folds != k], dev[folds == k]
+    internos = np.zeros(len(treino), dtype=int)
+    for j, (_, va) in enumerate(StratifiedKFold(5, shuffle=True, random_state=2026).split(treino, treino["kredit"])):
+        internos[va] = j
+    partes = []
+    for config, (m, ess) in GRADE.items():
+        pares = [(-1, treino, alvo)] + [(j, treino[internos != j], treino[internos == j]) for j in range(5)]
+        for j, tr, va in pares:
+            partes.append(pd.DataFrame({"config": config, "record_id": va["record_id"].to_numpy(), "fold_externo": k,
+                                        "fold_interno": j, "p_ruim": prever(tr, va, m, ess=ess)}))
+    return pd.concat(partes, ignore_index=True)
+
+
+def main_selecao():
+    inicio = time.perf_counter()
+    folds = particoes()
+    tabela = pd.concat([selecao_particao(k, folds) for k in range(5)], ignore_index=True)
+    SAIDA.mkdir(exist_ok=True)
+    tabela.to_csv(SAIDA / "predicoes_selecao.csv", index=False)
+    print(f"tempo total de --selecao: {time.perf_counter() - inicio:.1f} s")
 
 
 def main():
@@ -291,6 +329,25 @@ def verificar():
         preenchido[v] = treino0[v].median() if v in CONTINUAS else treino0[v].mode().iloc[0]
         assert np.abs(prever(treino0, linhas, "logreg", ocultar=v) - prever(treino0, preenchido, "logreg")).max() < 1e-12, v
 
+    # 08.3: P(ruim) sem evidência = (192 + s/2)/(640 + s) para cada prior da grade
+    for m, ess in GRADE.values():
+        rede, _ = preparar_rede(treino0, m, ess)
+        assert abs(VariableElimination(rede).query(["kredit"]).values[0] - (192 + ess / 2) / (640 + ess)) < 1e-9, (m, ess)
+
+    sel0 = selecao_particao(0, folds)
+    # 08.4: guarda de vazamento: a validação interna 0 vem de uma rede treinada só no treino interno
+    internos = np.zeros(len(treino0), dtype=int)
+    for j, (_, va) in enumerate(StratifiedKFold(5, shuffle=True, random_state=2026).split(treino0, treino0["kredit"])):
+        internos[va] = j
+    tr, va = treino0[internos != 0], treino0[internos == 0].iloc[:5]
+    for config, (m, ess) in GRADE.items():
+        p = sel0[(sel0["config"] == config) & (sel0["fold_interno"] == 0)].set_index("record_id").loc[va["record_id"], "p_ruim"]
+        assert np.abs(p.to_numpy() - prever(tr, va, m, ess=ess)).max() < 1e-12, config
+    # 08.5: nb_ess5 e tan_ess5 na partição externa 0 iguais a p_nb e p_tan de calcular()
+    for m in ("nb", "tan"):
+        p = sel0[(sel0["config"] == f"{m}_ess5") & (sel0["fold_interno"] == -1)]["p_ruim"].to_numpy()
+        assert np.abs(p - gravado.loc[folds == 0, f"p_{m}"].to_numpy()).max() < 1e-12, m
+
     # 07: --final com um arquivo falso feito da partição 0 do dev, gravado numa pasta temporária
     with tempfile.TemporaryDirectory() as pasta:
         # cortes.json gravado como em main(); o gate confere byte a byte que o commitado é este
@@ -316,9 +373,11 @@ if __name__ == "__main__":
         verificar()
     elif sys.argv[1:] == ["--ocultar"]:
         main_oculta()
+    elif sys.argv[1:] == ["--selecao"]:
+        main_selecao()
     elif sys.argv[1:2] == ["--final"] and len(sys.argv) == 3:
         final(sys.argv[2], SAIDA)
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/modelos.py [--verificar | --ocultar | --final <arquivo>]")
+        sys.exit("Uso: uv run python codigo/modelos.py [--verificar | --ocultar | --selecao | --final <arquivo>]")
     else:
         main()
