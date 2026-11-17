@@ -10,7 +10,8 @@ Com --ocultar, calcula ROC-AUC e Brier de cada modelo com cada variável escondi
 
 Com --final, calcula as métricas sobre predicoes_teste.csv (todas as linhas juntas), com
 intervalo de 95% por bootstrap (2000 reamostras, semente 2026) para ROC-AUC, PR-AUC e Brier.
-A taxa_base prevê para toda linha a proporção de ruins do dev. Rodado só pelo autor.
+A taxa_base prevê para toda linha a proporção de ruins do dev. Se o arquivo tem p_sel (modelo
+secundário escolhido pela seleção), a linha sel entra por último, nas mesmas reamostras. Rodado só pelo autor.
 
 Com --selecao, resume a validação cruzada aninhada da grade de redes. Em cada partição externa,
 o log_loss_interno de cada configuração é a média do log loss das 5 partições internas; no bloco
@@ -23,14 +24,14 @@ Entradas:
   resultados/predicoes_dev.csv         record_id,kredit,fold,p_nb,p_tan,p_logreg
   resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
   resultados/metricas_dev.csv          desempenho com todas as variáveis (só com --ocultar)
-  resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg (só com --final)
+  resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg[,p_sel] (só com --final)
   resultados/predicoes_selecao.csv     config,record_id,fold_externo,fold_interno,p_ruim (só com --selecao)
   dados/processados/dev.csv            proporção de ruins do dev para a taxa_base (só com --final)
 Saídas:
   resultados/metricas_dev.csv   média e desvio amostral, entre as 5 partições, de cada métrica
   resultados/calibracao_dev.png diagrama de calibração com as 800 predições juntas
   resultados/evidencia_incompleta.csv  modelo,variavel_oculta,roc_auc,brier,delta_roc_auc,delta_brier (só com --ocultar)
-  resultados/metricas_teste.csv   valor e intervalo de cada métrica no teste (só com --final)
+  resultados/metricas_teste.csv   valor e intervalo de cada métrica no teste; linha sel se houver p_sel (só com --final)
   resultados/calibracao_teste.png diagrama de calibração no teste (só com --final)
   resultados/selecao_escolha.csv  fold_externo,config,log_loss_interno,escolhida (só com --selecao)
   resultados/selecao_dev.csv      métricas de cada configuração e do aninhado, colunas de metricas_dev.csv (só com --selecao)
@@ -166,6 +167,8 @@ def calcular_final(pred, taxa_dev):
     indices = np.random.default_rng(SEMENTE).integers(0, n, size=(REAMOSTRAS, n))
     probs = {m: pred[f"p_{m}"].to_numpy() for m in MODELOS}
     probs["taxa_base"] = np.full(n, taxa_dev)
+    if "p_sel" in pred.columns:
+        probs["sel"] = pred["p_sel"].to_numpy()
     linhas = []
     for nome, p in probs.items():
         valores = dict(zip(METRICAS, metricas(y, p)))
@@ -181,6 +184,8 @@ def calcular_final(pred, taxa_dev):
 
 def main_final():
     pred = ler(TESTE, ["kredit"] + [f"p_{m}" for m in MODELOS])
+    if "p_sel" in pred.columns and (pred["p_sel"].isna().any() or not pred["p_sel"].between(0, 1).all()):
+        sys.exit(f"ERRO: p_sel vazia ou fora de [0, 1] em {TESTE.name}")
     taxa_dev = (pd.read_csv(DEV)["kredit"] == 0).mean()
     calcular_final(pred, taxa_dev).to_csv(SAIDA / "metricas_teste.csv", index=False)
     desenhar(pred, "calibracao_teste.png", "no teste")
@@ -287,6 +292,15 @@ def verificar():
         tabela, dev = tabela.set_index("modelo"), ler_csv(SAIDA / "metricas_dev.csv", ["modelo"]).set_index("modelo")
         for m in ("nb", "tan"):
             assert np.abs(tabela.loc[f"{m}_ess5", dev.columns].to_numpy() - dev.loc[m].to_numpy()).max() < 1e-9, m
+    # 11: --final com arquivo falso montado do dev; sem p_sel, a tabela é a de antes; com p_sel, sel é a última linha
+    falso = ler()[["kredit"] + [f"p_{m}" for m in MODELOS]]
+    sem = calcular_final(falso, 0.3)
+    com = calcular_final(falso.assign(p_sel=falso["p_tan"]), 0.3)
+    assert list(sem["modelo"]) == MODELOS + ["taxa_base"]
+    assert list(com["modelo"]) == MODELOS + ["taxa_base", "sel"]
+    assert com.iloc[:-1].equals(sem)
+    assert not com.iloc[-1].isna().any()
+    assert ((falso["p_tan"] > 0) & (falso["p_tan"] < 1)).all()
     print("verificar: ok")
 
 
