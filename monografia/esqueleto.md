@@ -76,24 +76,24 @@ Estrutura exigida pela FEELT: capa, folha de rosto, sumário, listas, resumo e a
 
 ### 4.1 Desempenho preditivo
 <!-- fonte: metricas_dev.csv, calibracao_dev.png, tan_arestas.csv; no teste: metricas_teste.csv, calibracao_teste.png -->
-<!-- pendente: issues 01 e 02; passo 10 (teste final, só o autor) -->
+<!-- feito: issues 01 e 02 (resultados/metricas_dev.csv etc.). Falta: passo 10 (teste final, só o autor) -->
 
 ### 4.2 Evidência incompleta
 <!-- fonte: evidencia_incompleta.csv; ressalva: redes marginalizam, logística imputa (decisão P9) -->
-<!-- pendente: issue 03 -->
+<!-- feito: issue 03 (resultados/evidencia_incompleta.csv) -->
 
 ### 4.3 Política de decisão
 <!-- fonte: resumo_politicas_dev.csv, politicas_dev.csv; no teste: resumo_politicas_teste.csv, diferenca_politicas_teste.csv -->
 <!-- texto da tabela 2×2: "política de três ações por utilidade esperada contra corte 0,5 de duas ações" (decisão P8) -->
-<!-- pendente: issues 04 e 07; passo 10 -->
+<!-- feito: issues 04 e 07 (resumo_politicas_dev.csv, politicas_dev.csv). Falta: passo 10 -->
 
 ### 4.4 Sensibilidade
 <!-- fonte: sensibilidade.csv, sensibilidade.png -->
-<!-- pendente: issue 05 -->
+<!-- feito: issue 05 (resultados/sensibilidade.csv) -->
 
 ### 4.5 Demonstração
 <!-- fonte: saída de codigo/demo.py para um caso -->
-<!-- pendente: issue 06 -->
+<!-- feito: issue 06 (codigo/demo.py) -->
 
 ---
 
