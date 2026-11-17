@@ -154,9 +154,9 @@ Arquivos passados entre scripts:
 | `resultados/sensibilidade.csv` | Fronteiras para perda em {200, 400, 600, 800} × custo da análise em {0, 5, …, 100} |
 | `resultados/tan_arestas.csv` | Arestas do TAN aprendido em cada partição: `fold, origem, destino` |
 | `resultados/cortes.json` | Cortes das 3 variáveis contínuas, aprendidos no dev inteiro; usados só pelo teste final (o `demo.py` aprende os cortes nas 4 partições, via `prever`) |
-| `resultados/predicoes_selecao.csv` | Estudo de seleção (`modelos.py --selecao`): `record_id, kredit, fold, config, p_sel` |
-| `resultados/selecao_dev.csv` | Estudo de seleção (`avaliar.py --selecao`): as 8 configurações, a linha `aninhado` e a linha `dev` |
-| `resultados/selecao_escolha.csv` | Configuração escolhida em cada partição externa e no dev inteiro |
+| `resultados/predicoes_selecao.csv` | Estudo de seleção (`modelos.py --selecao`): `config, record_id, fold_externo, fold_interno, p_ruim` (`fold_interno` = -1 é a predição externa; 32.000 linhas) |
+| `resultados/selecao_dev.csv` | Estudo de seleção (`avaliar.py --selecao`): as 8 configurações e a linha `aninhado` |
+| `resultados/selecao_escolha.csv` | `fold_externo` (0 a 4 e `dev`) × 8 configurações: `log_loss_interno`, `escolhida`; 48 linhas |
 | `config/utilidade.json` | `{"acoes": {"aprovar": {"bom": 100, "ruim": -400}, ...}, "hipoteses": "..."}` |
 
 ## 8. Passos, em ordem

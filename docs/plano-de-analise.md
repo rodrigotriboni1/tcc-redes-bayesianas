@@ -100,7 +100,7 @@ A ordem da tabela é a ordem da grade. Fora da grade: K2, outras faixas, seleç�
 
 **Validação cruzada aninhada.** Partições externas = as 5 atuais. Em cada externa, as 640 linhas de treino são divididas por `StratifiedKFold(5, shuffle=True, random_state=2026)`; cada configuração é treinada e avaliada nas partições internas.
 
-**Regra de escolha.** Menor log loss médio nas partições internas. Empate (diferença < 1e-9) resolvido pela ordem da grade. A configuração escolhida em cada externa prevê as 160 linhas dela; daí saem a coluna `p_sel` e a linha "aninhado". A escolha também é recalculada no dev inteiro (linha `dev`), só para relato.
+**Regra de escolha.** Menor log loss médio nas partições internas. Empate (diferença < 1e-9) resolvido pela ordem da grade. A configuração escolhida em cada externa prevê as 160 linhas dela; daí saem `p_sel` (as linhas com `fold_interno` = -1 da configuração escolhida) e a linha "aninhado". A escolha também é recalculada no dev inteiro (linha `dev` de `selecao_escolha.csv`), só para relato.
 
 **Relato obrigatório.** As 8 linhas da grade, o número de comparações (8) e a linha "aninhado", qualquer que seja o resultado.
 
@@ -110,4 +110,8 @@ A ordem da tabela é a ordem da grade. Fora da grade: K2, outras faixas, seleç�
 
 **O que não muda.** A tabela 2×2 e a análise primária continuam com NB e TAN de BDeu 5 (P5 intacta). `p_sel` é análise secundária e aparece rotulada como tal.
 
-Saídas: `resultados/predicoes_selecao.csv`, `resultados/selecao_dev.csv`, `resultados/selecao_escolha.csv`.
+Saídas:
+
+- `resultados/predicoes_selecao.csv`: `config, record_id, fold_externo, fold_interno, p_ruim`; `fold_interno` = -1 é a predição externa; 32.000 linhas.
+- `resultados/selecao_dev.csv`: as 8 configurações e a linha `aninhado` (sem linha `dev`).
+- `resultados/selecao_escolha.csv`: `fold_externo` (0 a 4 e `dev`) × 8 configurações, com `log_loss_interno` e `escolhida`; 48 linhas.
