@@ -9,7 +9,8 @@ Saídas:
   resultados/tan_arestas.csv    fold,origem,destino (grafo do TAN de cada partição)
   resultados/cortes.json        cortes dos tercis das contínuas no dev inteiro
   resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
-  resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg (só com --final)
+  resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg,p_sel (só com --final;
+                                       p_sel é secundário)
   resultados/predicoes_selecao.csv     config,record_id,fold_externo,fold_interno,p_ruim (só com --selecao)
 
 Com --ocultar, os modelos são treinados com as 20 variáveis e cada variável é escondida,
@@ -18,6 +19,8 @@ recebe a mediana (contínuas) ou a moda (categóricas) do treino da partição.
 
 Com --final <arquivo>, os três modelos são treinados no dev inteiro (redes com os cortes de
 resultados/cortes.json) e preveem cada linha do arquivo, que precisa ter as colunas do dev.
+A coluna secundária p_sel vem da rede da linha escolhida do bloco dev de
+resultados/selecao_escolha.csv, treinada do mesmo jeito.
 Recusa sobrescrever predicoes_teste.csv. Esse modo é rodado só pelo autor, uma única vez.
 
 Com --selecao, faz a validação cruzada aninhada da grade de redes (NB e TAN com prior BDeu de
@@ -241,6 +244,20 @@ def final(entrada, pasta):
         sys.exit(f"ERRO: colunas ausentes em {entrada.name}: {', '.join(faltando)}")
     if destino.exists():
         sys.exit(f"ERRO: {destino.name} já existe; não sobrescrevo")
+    escolha = Path(pasta) / "selecao_escolha.csv"
+    if not escolha.exists():
+        sys.exit(f"ERRO: arquivo ausente: {escolha}")
+    tabela = pd.read_csv(escolha)
+    bloco = tabela[tabela["fold_externo"].astype(str) == "dev"]
+    if bloco.empty:
+        sys.exit(f"ERRO: {escolha.name} não tem o bloco dev")
+    escolhida = bloco[bloco["escolhida"]]
+    if len(escolhida) != 1:
+        sys.exit(f"ERRO: o bloco dev de {escolha.name} tem {len(escolhida)} linhas escolhidas; esperado 1")
+    config = escolhida["config"].iloc[0]
+    if config not in GRADE:
+        sys.exit(f"ERRO: configuração fora da grade em {escolha.name}: {config}")
+    modelo, ess = GRADE[config]
     c = json.loads((Path(pasta) / "cortes.json").read_text())
     treino = discretizar(dev.drop(columns="record_id"), c)
     x = alvo.drop(columns="kredit")
@@ -248,6 +265,7 @@ def final(entrada, pasta):
     for m in ("nb", "tan"):
         saida[f"p_{m}"] = montar_rede(treino, m).predict_probability(discretizar(x[VARIAVEIS], c))["kredit_0"].to_numpy()
     saida["p_logreg"] = prever(dev, x, "logreg")
+    saida["p_sel"] = montar_rede(treino, modelo, ess).predict_probability(discretizar(x[VARIAVEIS], c))["kredit_0"].to_numpy()
     saida.to_csv(destino, index=False)
 
 
@@ -354,17 +372,49 @@ def verificar():
         (Path(pasta) / "cortes.json").write_text(json.dumps(cortes(dev)) + "\n")
         falso = dev[folds == 0]
         falso.to_csv(Path(pasta) / "falso.csv", index=False)
+        # selecao_escolha.csv no formato da issue 08, montado aqui porque o gate roda --verificar antes de --selecao
+        escolha = pd.DataFrame({"fold_externo": "dev", "config": list(GRADE), "log_loss_interno": 0.5,
+                                "escolhida": [i == len(GRADE) - 1 for i in range(len(GRADE))]})
+        escolha.to_csv(Path(pasta) / "selecao_escolha.csv", index=False)
         final(Path(pasta) / "falso.csv", pasta)
         teste = pd.read_csv(Path(pasta) / "predicoes_teste.csv")
         assert len(teste) == 160 and list(teste["record_id"]) == list(falso["record_id"])
+        assert list(teste.columns) == ["record_id", "kredit", "p_nb", "p_tan", "p_logreg", "p_sel"]
         for m in MODELOS:
             assert np.abs(teste[f"p_{m}"].to_numpy() - prever(dev, falso.drop(columns="kredit"), m)).max() < 1e-12, m
+        # 10.2: p_sel igual a prever com a configuração da linha escolhida do bloco dev
+        no_dev = escolha["fold_externo"].astype(str) == "dev"
+        modelo, ess = GRADE[escolha.loc[no_dev & escolha["escolhida"], "config"].iloc[0]]
+        assert np.abs(teste["p_sel"].to_numpy() - prever(dev, falso.drop(columns="kredit"), modelo, ess=ess)).max() < 1e-12
         # a recusa acontece antes de qualquer treino
         try:
             final(Path(pasta) / "falso.csv", pasta)
             assert False, "--final sobrescreveu predicoes_teste.csv"
         except SystemExit:
             pass
+        # 10.3 e 10.4: outra linha escolhida no bloco dev muda p_sel e não mexe nos três modelos
+        outra = escolha[no_dev & ~escolha["escolhida"]].index[0]
+        trocada = escolha.copy()
+        trocada.loc[no_dev, "escolhida"] = False
+        trocada.loc[outra, "escolhida"] = True
+        with tempfile.TemporaryDirectory() as pasta2:
+            (Path(pasta2) / "cortes.json").write_text(json.dumps(cortes(dev)) + "\n")
+            trocada.to_csv(Path(pasta2) / "selecao_escolha.csv", index=False)
+            final(Path(pasta) / "falso.csv", pasta2)
+            teste2 = pd.read_csv(Path(pasta2) / "predicoes_teste.csv")
+            assert not np.array_equal(teste2["p_sel"].to_numpy(), teste["p_sel"].to_numpy())
+            for m in MODELOS:
+                assert np.array_equal(teste2[f"p_{m}"].to_numpy(), teste[f"p_{m}"].to_numpy()), m
+            # nenhuma linha escolhida no bloco dev: falha antes de gravar
+            (Path(pasta2) / "predicoes_teste.csv").unlink()
+            trocada.loc[no_dev, "escolhida"] = False
+            trocada.to_csv(Path(pasta2) / "selecao_escolha.csv", index=False)
+            try:
+                final(Path(pasta) / "falso.csv", pasta2)
+                assert False, "--final aceitou o bloco dev sem linha escolhida"
+            except SystemExit:
+                pass
+            assert not (Path(pasta2) / "predicoes_teste.csv").exists()
     print("verificar: ok")
 
 
