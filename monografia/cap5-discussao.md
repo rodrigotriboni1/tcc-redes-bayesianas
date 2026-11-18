@@ -1,6 +1,6 @@
 # 5 DISCUSSÃO E LIMITAÇÕES
 
-Este capítulo interpreta os resultados do capítulo 4 e declara as limitações do experimento. Os métodos estão no capítulo 3 e as tabelas no capítulo 4; aqui apenas se remete a eles. Toda leitura de resultado segue as regras pré-registradas da §4 do plano de análise [fonte: docs/plano-de-analise.md §4], escritas antes de existir qualquer número [fonte: docs/plano-de-analise.md, preâmbulo]. O conjunto de teste final ainda não foi aberto [fonte: docs/resultados-dev.md §5]; toda discussão que dependa dele está marcada como pendente.
+Este capítulo interpreta os resultados do capítulo 4 e declara as limitações do experimento. Os métodos estão no capítulo 3 e as tabelas no capítulo 4; aqui apenas se remete a eles. Toda leitura de resultado segue as regras pré-registradas da §4 do plano de análise [fonte: docs/plano-de-analise.md §4], escritas antes de existir qualquer número [fonte: docs/plano-de-analise.md, preâmbulo]. O conjunto de teste final (200 casos, 60 ruins) foi avaliado uma única vez, em 17/11/2026, sobre o commit de congelamento 49d77ff; seus números estão nas Tabelas 4.1b, 4.4b e 4.4c e na Figura 4.1b, e são lidos aqui pelas mesmas regras.
 
 ## 5.1 Leitura do desenvolvimento
 
@@ -14,8 +14,15 @@ Os números do capítulo 4 constituem um *baseline* pré-estudo, obtidos só com
 
 **Políticas.** A utilidade média da regra de três ações supera a do corte 0,5 nos três modelos (Tabela 4.4), com diferenças de 28,125 (nb), 25,4 (tan) e 27,25 (logreg) [fonte: resultados/resumo_politicas_dev.csv, utilidade_media]. São diferenças descritivas, sem intervalo, que misturam modelo, representação e conjunto de ações, e não são chamadas de efeito da regra [fonte: docs/plano-de-analise.md §3; docs/decisoes.md §4, P8]. A seção 5.4 explica por que essa vantagem era esperada antes de qualquer dado. A coincidência, em cada modelo, entre o número de casos que mudam de ação e o número de casos em análise manual [fonte: resultados/resumo_politicas_dev.csv, n_mudam_vs_outra_regra e n_analise_manual] decorre da própria matriz: com *c* = 40, a faixa de análise manual vai de 0,10 a 0,60 e contém o corte 0,5, e fora dela as duas regras escolhem a mesma ação [fonte: monografia/cap3-metodos.md §3.7; resultados/sensibilidade.csv, perda 400, custo_analise 40; resultados/resumo_politicas_dev.csv]. Trata-se de aritmética da faixa 0,10–0,60, não de um achado do experimento.
 
-<!-- PENDENTE: leitura do teste final, só depois do passo 10 -->
-A leitura da diferença pareada no teste seguirá as três primeiras linhas da §4 do plano de análise [fonte: docs/plano-de-analise.md §4]. O teste ainda não foi aberto.
+## 5.1b Leitura do teste final
+
+**Desempenho preditivo.** No teste, a ROC-AUC foi 0,728 (nb), 0,706 (tan) e 0,729 (logreg) [fonte: resultados/metricas_teste.csv, coluna roc_auc, linhas nb, tan e logreg] (Tabela 4.1b). Todas as diferenças entre pares são menores que 0,03 (nb–logreg 0,001; nb–tan 0,021; logreg–tan 0,022), e pela regra pré-registrada são ruído [fonte: docs/plano-de-analise.md §4]. Os intervalos de 95% são largos e se sobrepõem, como o do TAN, de 0,623 a 0,789 [fonte: resultados/metricas_teste.csv, roc_auc_ic_inf e roc_auc_ic_sup, linha tan]. A PR-AUC foi 0,490 (nb), 0,480 (tan) e 0,500 (logreg), contra 0,300 da taxa base [fonte: resultados/metricas_teste.csv, coluna pr_auc]; como o plano deixa em aberto a regra para a PR-AUC, os valores são apenas descritos, sem conclusão sobre diferenças.
+
+**Queda do desenvolvimento para o teste.** A ROC-AUC caiu de 0,789 para 0,728 no NB, de 0,742 para 0,706 no TAN e de 0,788 para 0,729 na logística [fonte: resultados/metricas_dev.csv, roc_auc_media; resultados/metricas_teste.csv, roc_auc]; a PR-AUC caiu de 0,616, 0,549 e 0,649 para 0,490, 0,480 e 0,500 [fonte: resultados/metricas_dev.csv, pr_auc_media; resultados/metricas_teste.csv, pr_auc]. A queda é registrada como saiu. Nenhuma análise deste trabalho testa sua causa, e as duas estimativas não são diretamente comparáveis: uma é média de 5 partições sem intervalo, a outra é um único conjunto de 200 casos com intervalo que não cobre a variação do treino (seção 5.7).
+
+**Brier e calibração.** O Brier do TAN no teste foi 0,215, maior que o da taxa base, 0,210 [fonte: resultados/metricas_teste.csv, coluna brier, linhas tan e taxa_base]: pela regra pré-registrada, o TAN **não foi melhor que prever a taxa base** no teste [fonte: docs/plano-de-analise.md §4]. NB (0,199) e logística (0,191) ficaram abaixo da taxa base [fonte: resultados/metricas_teste.csv, coluna brier]. O erro de calibração foi 0,115 (nb), 0,157 (tan) e 0,078 (logreg) [fonte: resultados/metricas_teste.csv, coluna ece] (Figura 4.1b). A calibração foi apenas medida, sem correção (seção 5.8); essas probabilidades entram como estão na política.
+
+**Políticas.** Na comparação principal, com o TAN (decisão P5), a diferença pareada de utilidade média (`ue` − `limiar`) foi 22,5, com intervalo de 95% de 9,2 a 37,2 [fonte: resultados/diferenca_politicas_teste.csv, linha tan, colunas dif_utilidade_media, dif_ic_inf e dif_ic_sup] (Tabela 4.4c). O intervalo exclui zero, de modo que, pela regra pré-registrada (nível de 95% ainda a confirmar pelo autor, plano de análise §8), o resultado é **a favor da política de três ações**, sem afirmação de causa [fonte: docs/plano-de-analise.md §4 e §8]. Como apêndice, os intervalos do NB (29,5; de 13,1 a 46,3) e da logística (38,3; de 20,2 a 56,4) também excluem zero [fonte: resultados/diferenca_politicas_teste.csv, linhas nb e logreg]. A leitura carrega todas as ressalvas das seções 5.3 e 5.4: a política de três ações ganha do corte de duas ações por construção, pois só ela tem a ação de análise manual, e a matriz supõe que o analista sempre acerta; a matriz é demonstrativa; e a utilidade é simulada sobre o rótulo observado, não medida em operação. O resultado não indica qual modelo usar nem que a política seria vantajosa fora deste experimento.
 
 ## 5.2 Estudo de seleção
 
@@ -27,8 +34,7 @@ O estudo da §9 do plano é secundário e não altera a análise primária, que 
 
 **O TAN na grade.** Nas configurações do TAN, o log loss médio cai de 0,825 (`tan_ess1`) para 0,583 (`tan_ess50`) à medida que o tamanho equivalente aumenta [fonte: resultados/selecao_dev.csv, log_loss_media]. A grade varia só o tamanho equivalente, não a estrutura nem as variáveis. A hipótese continua não testada. Nenhuma configuração do TAN foi escolhida em partição alguma [fonte: resultados/selecao_escolha.csv, coluna escolhida].
 
-<!-- PENDENTE: leitura do teste final, só depois do passo 10 -->
-As predições `p_sel` no teste ainda não existem, porque o teste não foi aberto [fonte: monografia/cap4-resultados.md §4.6].
+**`sel` no teste (análise secundária).** No teste, a configuração escolhida pela regra teve ROC-AUC 0,720, PR-AUC 0,477, Brier 0,202 e erro de calibração 0,120 [fonte: resultados/metricas_teste.csv, linha sel]; a diferença de ROC-AUC para o NB de BDeu 5 (0,728) é 0,008, ruído pela regra da §4 [fonte: docs/plano-de-analise.md §4]. A diferença pareada de utilidade foi 34,4, com intervalo de 16,4 a 52,5 [fonte: resultados/diferenca_politicas_teste.csv, linha sel], lida com as mesmas ressalvas da seção 5.1b. Esses números herdam o viés declarado acima: a grade foi desenhada depois de ver o desenvolvimento [fonte: docs/plano-de-analise.md §9], e o teste não remove esse viés. A análise primária continua com NB e TAN de BDeu 5 (P5) [fonte: docs/plano-de-analise.md §9].
 
 ## 5.3 Simulação, não política real
 
@@ -44,9 +50,7 @@ Há uma segunda razão para cautela: a comparação com o corte 0,5 não testa "
 
 ## 5.5 Tamanho do teste
 
-O teste tem 200 casos, dos quais 60 ruins [fonte: monografia/cap3-metodos.md §3.2]. Com tão poucos casos da classe positiva, diferenças pequenas entre modelos ou políticas são indistinguíveis de ruído [fonte: docs/plano-de-analise.md §6, item 2]. Se o intervalo da diferença pareada incluir zero, o texto dirá que não há evidência de diferença com esse tamanho de amostra, sem concluir que as políticas são iguais [fonte: docs/plano-de-analise.md §4].
-
-<!-- PENDENTE: leitura do teste final, só depois do passo 10 -->
+O teste tem 200 casos, dos quais 60 ruins [fonte: monografia/cap3-metodos.md §3.2]. Com tão poucos casos da classe positiva, diferenças pequenas entre modelos ou políticas são indistinguíveis de ruído [fonte: docs/plano-de-analise.md §6, item 2]. No resultado, os intervalos da diferença pareada (nível de 95% ainda a confirmar pelo autor, plano de análise §8) não incluíram zero em nenhum modelo [fonte: resultados/diferenca_politicas_teste.csv, dif_ic_inf], mas são largos: no TAN, vão de 9,2 a 37,2 [fonte: resultados/diferenca_politicas_teste.csv, linha tan]. Já as diferenças de ROC-AUC entre modelos no teste ficaram todas abaixo de 0,03 e são tratadas como ruído (seção 5.1b); com 60 ruins, pela regra, as diferenças são ruído e nenhum modelo se distingue.
 
 ## 5.6 Modelo e representação variam juntos
 
@@ -73,4 +77,4 @@ As direções a seguir decorrem das limitações acima, não das métricas do de
 - comparar modelos sob a mesma representação das variáveis, separando modelo e representação;
 - estimar a incerteza incluindo a variação do treino.
 
-<!-- PENDENTE: leitura do teste final, só depois do passo 10 -->
+O teste final não acrescenta direções: nenhuma das listadas decorre de suas métricas, e o resultado do teste não motiva mudança de modelo, parâmetro, faixa ou variável [fonte: docs/plano-de-analise.md §5, item 1].

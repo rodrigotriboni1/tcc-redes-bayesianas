@@ -1,8 +1,8 @@
 # 4 RESULTADOS
 
-Este capítulo relata os resultados obtidos até o momento. Todos os números a seguir constituem um *baseline* pré-estudo: foram gerados exclusivamente com o conjunto de desenvolvimento (800 casos), por validação cruzada estratificada em 5 partições, conforme descrito no capítulo 3 (seções 3.2 e 3.3). O conjunto de teste final ainda não foi aberto; os resultados correspondentes serão acrescentados pelo autor após o commit de congelamento. Os métodos não são repetidos aqui: cada seção remete à seção correspondente do capítulo 3. A leitura de cada resultado segue as regras pré-registradas na §4 do plano de análise (`docs/plano-de-analise.md`), e a interpretação fica para o capítulo 5.
+Este capítulo relata os resultados obtidos até o momento. Os números das seções 4.1 a 4.7 são o baseline de desenvolvimento (validação cruzada estratificada em 5 partições sobre os 800 casos, capítulo 3, seções 3.2 e 3.3), salvo os blocos rotulados "conjunto de teste (n=200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o commit de congelamento 49d77ff. Nas tabelas e figuras, o sufixo b/c (Tabelas 4.1b, 4.4b, 4.4c e Figura 4.1b) marca o resultado no conjunto de teste. Os métodos não são repetidos aqui: cada seção remete à seção correspondente do capítulo 3. A leitura de cada resultado segue as regras pré-registradas na §4 do plano de análise (`docs/plano-de-analise.md`), e a interpretação fica para o capítulo 5.
 
-Nas tabelas de métricas (4.1 e 4.7), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato [fonte: arquivo, coluna/linha]. Valores arredondados a três casas, salvo indicação.
+Nas tabelas de métricas (4.1 e 4.7), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato [fonte: arquivo, coluna/linha]. A Tabela 4.1b traz o valor no conjunto de teste com intervalo de 95% por bootstrap. Valores arredondados a três casas, salvo indicação.
 
 ## 4.1 Desempenho preditivo
 
@@ -40,8 +40,27 @@ Aplicando as regras da §4 do plano de análise:
 
 Em todas as partições, `verw` (finalidade do crédito) é, fora `kredit`, a variável da qual sai o maior número de arestas (7 a 9) [fonte: resultados/tan_arestas.csv, coluna origem]. Registra-se, como **hipótese não testada**, que o fato de `verw` ser pai de muitas variáveis poderia produzir tabelas de probabilidade condicional esparsas e excesso de confiança, o que seria coerente com o log loss e o erro de calibração maiores do tan. Nenhuma análise deste trabalho testou essa hipótese: a contagem de arestas e as métricas apenas coexistem, e a observação não autoriza alterar modelo, faixa ou parâmetro.
 
-<!-- PENDENTE: resultado do teste final, só o autor roda (passo 10) -->
-Os resultados no conjunto de teste (`metricas_teste.csv`, `calibracao_teste.png`) não existem: o teste ainda não foi aberto.
+**Conjunto de teste (n=200; 60 ruins).** O teste final foi rodado uma única vez, em 17/11/2026, sobre o commit de congelamento 49d77ff [fonte: resultados/predicoes_teste.csv, coluna kredit: 60 linhas com 0 e 140 com 1]. Os intervalos são de 95% por bootstrap. A Tabela 4.1b traz as métricas; a linha `sel` é a análise secundária da seção 4.6.
+
+**Tabela 4.1b** – Métricas por modelo no conjunto de teste (n=200; 60 ruins), valor [intervalo de 95%] [fonte: resultados/metricas_teste.csv, todas as colunas]
+
+| modelo | roc_auc [ic_inf; ic_sup] | pr_auc [ic_inf; ic_sup] | brier [ic_inf; ic_sup] | log_loss | ece |
+|---|---|---|---|---|---|
+| nb | 0,728 [0,648; 0,802] | 0,490 [0,378; 0,630] | 0,199 [0,161; 0,239] | 0,627 | 0,115 |
+| tan | 0,706 [0,623; 0,789] | 0,480 [0,372; 0,617] | 0,215 [0,173; 0,261] | 0,780 | 0,157 |
+| logreg | 0,729 [0,651; 0,800] | 0,500 [0,383; 0,636] | 0,191 [0,157; 0,228] | 0,578 | 0,078 |
+| taxa_base | 0,500 [0,500; 0,500] | 0,300 [0,235; 0,365] | 0,210 [0,184; 0,236] | 0,611 | 0,000 |
+| sel (secundária) | 0,720 [0,641; 0,795] | 0,477 [0,365; 0,620] | 0,202 [0,164; 0,242] | 0,623 | 0,120 |
+
+Aplicando as regras da §4 do plano de análise ao conjunto de teste:
+
+- **ROC-AUC.** As diferenças entre os três modelos primários são 0,001 (logreg − nb: 0,7287 contra 0,7277), 0,021 (nb − tan: 0,7277 contra 0,7063) e 0,022 (logreg − tan: 0,7287 contra 0,7063) [fonte: resultados/metricas_teste.csv, roc_auc, linhas nb, tan e logreg]. As três são menores que 0,03 e, pela regra pré-registrada, tratadas como ruído: nenhum modelo se distingue dos outros por essa métrica no teste.
+- **PR-AUC.** Os valores são 0,490 (nb), 0,480 (tan) e 0,500 (logreg), contra 0,300 da taxa base [fonte: resultados/metricas_teste.csv, pr_auc]. A §8 do plano deixa em aberto se o limite de 0,03 vale para PR-AUC; por isso, nenhuma regra é aplicada a essas diferenças e elas são apenas descritas.
+- **Brier contra taxa base.** O Brier do tan no teste é 0,215, maior que o da taxa base, 0,210 [fonte: resultados/metricas_teste.csv, brier, linhas tan e taxa_base]. Pela regra pré-registrada, o tan é **não melhor que prever a taxa base** no conjunto de teste. O nb (0,199) e o logreg (0,191) ficam abaixo de 0,21, e a regra não é acionada para eles [fonte: resultados/metricas_teste.csv, brier].
+- **Calibração.** O erro de calibração esperado é 0,115 (nb), 0,157 (tan) e 0,078 (logreg) [fonte: resultados/metricas_teste.csv, ece]. Conforme a decisão P1, é apenas relatado; não há correção. O log loss do tan, 0,780, do nb, 0,627, e do sel (secundária), 0,623, são maiores que o da taxa base, 0,611 [fonte: resultados/metricas_teste.csv, log_loss, linhas tan, nb, sel e taxa_base]. O plano não tem regra para log loss contra a taxa base, e o fato é apenas descrito.
+- **Desenvolvimento e teste.** ROC-AUC e PR-AUC do teste são menores que as do desenvolvimento nos três modelos: ROC-AUC 0,728 contra 0,789 (nb), 0,706 contra 0,742 (tan) e 0,729 contra 0,788 (logreg); PR-AUC 0,490 contra 0,616 (nb), 0,480 contra 0,549 (tan) e 0,500 contra 0,649 (logreg) [fonte: resultados/metricas_teste.csv, roc_auc e pr_auc; resultados/metricas_dev.csv, roc_auc_media e pr_auc_media]. Brier e log loss do teste são maiores que os do desenvolvimento nos três modelos; a ECE é maior no teste para nb (0,115 contra 0,093) e tan (0,157 contra 0,152) e menor para logreg (0,078 contra 0,095) [fonte: resultados/metricas_teste.csv, brier, log_loss, ece; resultados/metricas_dev.csv, brier_media, log_loss_media, ece_media]. O plano não tem regra para essa comparação; o fato é descrito sem conclusão.
+
+**Figura 4.1b** – Diagramas de confiabilidade no conjunto de teste (n=200; 60 ruins) (`resultados/calibracao_teste.png`).
 
 ## 4.2 Evidência incompleta
 
@@ -80,8 +99,33 @@ A Tabela 4.4 compara a política de três ações por utilidade esperada (`ue`) 
 
 A utilidade média da regra `ue` é maior que a da regra `limiar` nos três modelos, com diferenças de 28,125 (nb), 25,4 (tan) e 27,25 (logreg) [fonte: resultados/resumo_politicas_dev.csv, utilidade_media]. Trata-se de diferença descritiva no desenvolvimento, sem intervalo: pelo plano, a comparação pareada com intervalo só é feita no teste final, e a diferença mistura modelo, representação e conjunto de ações, razão pela qual não é chamada de efeito da regra. Na regra `ue`, a análise manual recebe 355 (nb), 262 (tan) e 415 (logreg) dos 800 casos [fonte: resultados/resumo_politicas_dev.csv, n_analise_manual]; a regra `limiar` tem zero casos nessa ação por definição, por ter só duas ações. Essa ressalva acompanha qualquer leitura da diferença. As três ações aparecem na regra `ue` em todos os modelos, de modo que a regra "alguma ação não aparece numa política" não se aplica. O número de casos cuja ação muda entre as regras coincide, em cada modelo, com o número de casos em análise manual da regra `ue` [fonte: resultados/resumo_politicas_dev.csv, n_mudam_vs_outra_regra]. A ação de cada caso está em `resultados/politicas_dev.csv`.
 
-<!-- PENDENTE: resultado do teste final, só o autor roda (passo 10) -->
-A diferença pareada com intervalo (`resumo_politicas_teste.csv`, `diferenca_politicas_teste.csv`) não foi calculada: o teste ainda não foi aberto. Sua leitura seguirá as três primeiras linhas da §4 do plano de análise.
+**Conjunto de teste (n=200; 60 ruins).** A Tabela 4.4b traz as duas regras no teste, e a Tabela 4.4c, a diferença pareada de utilidade média (`ue` − `limiar`) com intervalo de 95% por bootstrap (seção 3.7.1). Pela §3 do plano (decisão P5), a comparação principal é a do TAN; NB e regressão logística vão para o apêndice na mesma estrutura, e `sel` é análise secundária (seção 4.6).
+
+**Tabela 4.4b** – Política de três ações contra corte 0,5 de duas ações, conjunto de teste (n=200; 60 ruins) [fonte: resultados/resumo_politicas_teste.csv, todas as colunas]
+
+| modelo | regra | utilidade_media [ic_inf; ic_sup] | n_aprovar | n_rejeitar | n_analise_manual | n_mudam_vs_outra_regra |
+|---|---|---|---|---|---|---|
+| nb | ue | 24,0 [7,6; 38,7] | 74 | 41 | 85 | 85 |
+| nb | limiar | −5,5 [−30,5; 19,5] | 149 | 51 | 0 | 85 |
+| tan | ue | 17,5 [−1,4; 35,3] | 92 | 48 | 60 | 60 |
+| tan | limiar | −5,0 [−29,5; 19,5] | 145 | 55 | 0 | 60 |
+| logreg | ue | 25,3 [10,2; 39,1] | 62 | 27 | 111 | 111 |
+| logreg | limiar | −13,0 [−38,5; 12,0] | 154 | 46 | 0 | 111 |
+| sel (secundária) | ue | 27,9 [13,4; 40,8] | 69 | 38 | 93 | 93 |
+| sel (secundária) | limiar | −6,5 [−31,5; 17,5] | 152 | 48 | 0 | 93 |
+
+O intervalo de cada regra isolada não é o critério de leitura; o critério é a diferença pareada (Tabela 4.4c).
+
+**Tabela 4.4c** – Diferença pareada de utilidade média (`ue` − `limiar`), conjunto de teste (n=200; 60 ruins) [fonte: resultados/diferenca_politicas_teste.csv, todas as colunas]
+
+| modelo | dif_utilidade_media | dif_ic_inf | dif_ic_sup |
+|---|---|---|---|
+| tan (principal) | 22,5 | 9,2 | 37,2 |
+| nb | 29,5 | 13,1 | 46,3 |
+| logreg | 38,3 | 20,2 | 56,4 |
+| sel (secundária) | 34,4 | 16,4 | 52,5 |
+
+Aplicando a §4 do plano: na comparação principal (TAN), a diferença é 22,5, com intervalo de 9,2 a 37,2 [fonte: resultados/diferenca_politicas_teste.csv, linha tan]. Diferença observada a favor da política de utilidade, com intervalo que exclui zero; não se afirma causa. Nos modelos do apêndice e na análise secundária, o intervalo também exclui zero a favor da regra `ue`: nb 29,5 [13,1; 46,3], logreg 38,3 [20,2; 56,4] e sel 34,4 [16,4; 52,5] [fonte: resultados/diferenca_politicas_teste.csv, linhas nb, logreg e sel]. A tabela é descritiva: a diferença mistura modelo, representação e conjunto de ações e não é chamada de efeito da regra nem do modelo. Ressalva obrigatória: a política de três ações ganha por construção, pois tem a ação de análise manual, ausente na regra `limiar`, e a matriz supõe que o analista sempre acerta (capítulo 5, seção 5.4; §6 do plano, itens 3 e 7). Na regra `ue`, a análise manual recebe 60 (tan), 85 (nb), 111 (logreg) e 93 (sel) dos 200 casos, e o número de casos que mudam de ação entre as regras coincide com esses valores [fonte: resultados/resumo_politicas_teste.csv, n_analise_manual e n_mudam_vs_outra_regra]. As três ações aparecem na regra `ue` em todos os modelos, de modo que a regra "alguma ação não aparece numa política" não se aplica [fonte: resultados/resumo_politicas_teste.csv, n_aprovar, n_rejeitar, n_analise_manual]. A ação de cada caso está em `resultados/politicas_teste.csv`.
 
 ## 4.4 Sensibilidade
 
@@ -159,5 +203,4 @@ Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.7 t
 
 Como a mesma configuração foi escolhida em todas as partições externas, a linha `aninhado` reproduz os valores de `nb_ess50` [fonte: resultados/selecao_dev.csv, linhas nb_ess50 e aninhado]. A diferença de ROC-AUC entre `aninhado` (0,788) e o baseline `nb_ess5` (0,789) é 0,001 [fonte: resultados/selecao_dev.csv, roc_auc_media], menor que 0,03 e, portanto, tratada como ruído pela regra da §4. A diferença de log loss entre as duas é 0,011 (0,512 contra 0,523) [fonte: resultados/selecao_dev.csv, log_loss_media]. Entre as configurações do TAN, o log loss médio diminui à medida que o tamanho equivalente aumenta, de 0,825 (`tan_ess1`) a 0,583 (`tan_ess50`) [fonte: resultados/selecao_dev.csv, log_loss_media]; em nenhuma partição uma configuração do TAN foi escolhida. Esses resultados descrevem o que a regra escolheu e quanto a escolha difere do baseline; não indicam qual modelo adotar.
 
-<!-- PENDENTE: resultado do teste final, só o autor roda (passo 10) -->
-As predições `p_sel` no conjunto de teste não foram calculadas: o teste ainda não foi aberto.
+**Conjunto de teste (n=200; 60 ruins), análise secundária.** As predições `p_sel` no teste estão em `resultados/predicoes_teste.csv` (coluna `p_sel`), e suas métricas, na linha `sel` da Tabela 4.1b. Como define a §9, a diferença principal da escolha é contra o baseline `nb` (NB, BDeu 5): a ROC-AUC de `sel` é 0,720 [0,641; 0,795], contra 0,728 do `nb` [fonte: resultados/metricas_teste.csv, roc_auc, roc_auc_ic_inf, roc_auc_ic_sup, linhas sel e nb]; a diferença, 0,008 (nb − sel), é menor que 0,03 e, pela regra da §9, tratada como ruído. De forma apenas descritiva, a diferença contra o `tan` (TAN, BDeu 5, ROC-AUC 0,706) é 0,014 (sel − tan) [fonte: resultados/metricas_teste.csv, roc_auc, linha tan]. O log loss de `sel` é 0,623, contra 0,627 do `nb` (diferença de 0,005) [fonte: resultados/metricas_teste.csv, log_loss, linhas sel e nb]; o plano não tem regra de leitura para essa diferença, e ela é apenas descrita. O Brier de `sel`, 0,202, é menor que o da taxa base, 0,210 [fonte: resultados/metricas_teste.csv, brier]. Na política de decisão, a diferença pareada de `sel` é 34,4 [16,4; 52,5] (Tabela 4.4c). Esses números relatam quanto a configuração escolhida pela regra difere do baseline no teste; não indicam qual modelo adotar, e a análise primária continua com NB e TAN de BDeu 5.
