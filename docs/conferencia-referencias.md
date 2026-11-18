@@ -1,5 +1,7 @@
 # Conferência de `monografia/referencias.bib`
 
+> **Estado atual (17-18/11/2026).** `ankan2015` foi substituída por `ankan2024` (Ankan & Textor, JMLR 25(265)). O `.bib` não tem `edition` em `siddiqi2012` (removido por decisão do autor). `zadrozny2001` e as entradas heckerman/friedman/chow foram atualizadas na 2ª e 3ª conferência. O resumo "26/2/1" abaixo é da 1ª conferência.
+
 Conferido em 17/11/2026 contra Crossref, páginas dos editores e catálogos. O `.bib` não foi alterado: a confirmação e a retirada dos `% VERIFICAR` são do autor.
 
 Resumo: 26 BATE, 2 DIVERGE, 1 NÃO ACHEI.
