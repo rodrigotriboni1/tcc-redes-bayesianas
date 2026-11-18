@@ -221,9 +221,9 @@ Referências de cada seção: [docs/mapa-de-referencias.md](docs/mapa-de-referen
 
 ## 11. Em aberto, depende do orientador
 
-1. **Prazo:** datas de entrega e de defesa. O autor informou em 15/11/2026 "até o final do mês", sem dizer se é entrega ou defesa; pelo Anexo 6 do curso, a defesa só pode ser agendada 15 dias depois da entrega das cópias na secretaria.
-2. **Matriz de utilidade:** ele aceita a matriz demonstrativa do item 5, com c = 40?
-3. **Monografia:** modelo de documento exigido pelo curso. Pesquisado em 15/11/2026: o Anexo 6 manda usar o modelo do Colegiado, que não foi encontrado; as regras de formatação da FEELT aceitam Word, LibreOffice, Google Docs ou LaTeX. Ver `docs/decisoes.md`, seção 7.
+1. **Prazo:** datas de entrega e de defesa. O autor informou em 15/11/2026 "até o final do mês", sem dizer se é entrega ou defesa; pelo Anexo 6 do curso, a defesa só pode ser agendada 15 dias depois da entrega das cópias na secretaria. **Respondido em 18/11/2026** (ver `docs/decisoes.md`, "Respostas do orientador"): até 30/11/2026, sem dizer se é entrega ou defesa.
+2. **Matriz de utilidade:** ele aceita a matriz demonstrativa do item 5, com c = 40? **Respondido em 18/11/2026** (ver `docs/decisoes.md`, "Respostas do orientador"): aprovada; os valores continuam demonstrativos.
+3. **Monografia:** modelo de documento exigido pelo curso. Pesquisado em 15/11/2026: o Anexo 6 manda usar o modelo do Colegiado, que não foi encontrado; as regras de formatação da FEELT aceitam Word, LibreOffice, Google Docs ou LaTeX. Ver `docs/decisoes.md`, seção 7. **Respondido em 18/11/2026** (ver `docs/decisoes.md`, "Respostas do orientador"): modelo de TCC da FEELT enviado pelo orientador (`template_tcc_final.docx`).
 4. **Avisos a dar:** a base passou a ser a South German Credit, versão corrigida da citada na proposta; o protótipo previsto na proposta virou demonstração em terminal; a pergunta foi reformulada em duas partes e deixou de falar em "calibrada", "consistentes" e "transparentes" (a calibração é só medida, e a contribuição é derivar limiares dos custos de forma explícita e medir o efeito). Ver `docs/decisoes.md`.
 
 ## 12. Para depois

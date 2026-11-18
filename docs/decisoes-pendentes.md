@@ -28,7 +28,7 @@ P17, P19, P20 e P21 foram decididas e aplicadas em 15/11/2026 (registro em [deci
 
 ## 5. Orientador e entregas
 
-P22 a P25 foram tratadas em 15/11/2026 (registro em [decisoes.md](decisoes.md)); ficam em aberto o prazo (entrega ou defesa), o aceite da matriz pelo orientador e o modelo do Colegiado. Ver a seção 6 de `decisoes.md`.
+P22 a P25 foram tratadas em 15/11/2026 (registro em [decisoes.md](decisoes.md)); o prazo, o aceite da matriz e o modelo de documento foram resolvidos em 18/11/2026 (ver `decisoes.md`, "Respostas do orientador").
 
 | # | Questão | Conferido | Decisão |
 |---|---|---|---|
@@ -45,3 +45,4 @@ P26 a P28 foram decididas em 15/11/2026 (registro em [decisoes.md](decisoes.md))
 - Divergências mecânicas de texto: PR #15.
 - Erros nos meus documentos de docs: commits nos PRs #4, #5 e #7.
 - As duas pendências da §8 de `plano-de-analise.md` (nível de 95% e limite de 0,03 para PR-AUC): decididas pelo autor em 18/11/2026, registro em [decisoes.md](decisoes.md).
+- Respostas do orientador de 18/11/2026: prazo até 30/11/2026 (entrega ou defesa não dito), matriz demonstrativa com c = 40 aprovada, modelo de documento FEELT (`template_tcc_final.docx`) e dispensa de mencionar o uso de IA na monografia. Registro em [decisoes.md](decisoes.md).

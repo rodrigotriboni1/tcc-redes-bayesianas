@@ -7,7 +7,7 @@ Fontes: [PLANO.md](../PLANO.md) (itens 4, 5 e 10) e [criterios-de-aceite.md](cri
 Quem decidiu:
 - **Autor**: Rodrigo, em nome próprio.
 - **Autor (proposta do levantamento)**: proposta feita por um subagente em 15/11/2026 e aceita pelo autor em bloco no mesmo dia.
-- **Orientador**: ainda em aberto, ver o fim do arquivo.
+- **Orientador**: ver "Respostas do orientador (18/11/2026)".
 
 ## 1. Dados e divisão
 
@@ -122,13 +122,19 @@ Decidido por delegação em 16/11/2026, a rever pelo autor. Detalhe em [plano-de
 
 Viés declarado: a grade foi desenhada depois de ver `metricas_dev.csv`; o aninhamento não corrige isso.
 
+## Respostas do orientador (18/11/2026)
+
+| Data | Decisão | Motivo | Quem |
+|---|---|---|---|
+| 18/11/2026 | Prazo informado pelo autor: até 30/11/2026 (não foi dito se é entrega ou defesa) | Resposta ao item 1 da §11 do `PLANO.md` | Autor, informado pelo orientador |
+| 18/11/2026 | Matriz de utilidade demonstrativa (+100, −400, c = 40) aprovada ("pode fazer"). Os valores continuam demonstrativos, não calibrados com dados reais, e o analista continua suposto infalível | Resposta ao item 2 da §11 do `PLANO.md` | Autor, informado pelo orientador |
+| 18/11/2026 | Modelo de documento: o modelo de TCC da FEELT enviado pelo orientador (`template_tcc_final.docx`, 2017): margens esquerda 2,75 cm e direita 1,73 cm, Tahoma nos títulos e Georgia no corpo, numeração "Figura 1"/"Tabela 1" e referências com "Citado na página" | Resposta ao item 3 da §11 do `PLANO.md` | Autor, informado pelo orientador |
+| 18/11/2026 | A monografia não precisa mencionar o uso de inteligência artificial em nenhum lugar; o registro interno `docs/uso-de-ia.md` continua no repositório | Dispensa dada pelo orientador | Autor, informado pelo orientador |
+
 ## 6. Em aberto
 
 | Questão | Depende de |
 |---|---|
-| Prazo: o autor informou "até o final do mês" (15/11/2026); falta dizer se é entrega ou defesa. Se for a defesa, as cópias têm de estar na secretaria 15 dias antes (seção 7) | Autor |
-| Aceita a matriz de utilidade demonstrativa (c = 40)? Os valores `+100`, `−400` e `100 − c` são hipóteses | Orientador |
-| Modelo de documento do Colegiado (Anexo 6, art. 6º, §5º): não foi encontrado; confirmar com a coordenação | Autor, à coordenação |
 | Avisar a troca de base (SGC), a troca do protótipo, a nova pergunta e a calibração só medida | Autor, ao orientador (rascunho da mensagem na conversa de 15/11/2026) |
 | Construir a interface de uma tela (plano, item 12). Esboço escolhido em 15/11/2026: mapa de sensibilidade do caso, lendo os CSV por `fetch` com servidor local; fica para depois do experimento | Autor, só depois de o experimento estar pronto |
 
