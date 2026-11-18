@@ -18,6 +18,9 @@ Quem decidiu:
 | 15/11/2026 | O código só lê `dev.csv`. `teste.csv`, `sgc.csv` e `dados/brutos/` são proibidos para o código (D11) | `sgc.csv` e os dados brutos também contêm as 200 linhas do teste | Autor (proposta do levantamento) |
 | 15/11/2026 | O teste final é rodado pelo autor, à mão, uma vez. A factory só escreve o caminho `--final`, testado com linhas do dev (D10) | A proteção por busca e caixa de areia pega o acidente, não um agente decidido a olhar. A garantia final é o commit de congelamento mais o teste rodado pelo autor (critérios, seção 5) | Autor (proposta do levantamento) |
 
+| 17/11/2026 | Commit de congelamento: `49d77ff0eec74de98d7ce7ec83a9d0d2907bb207` (`main` após o PR #51). O código dos 7 scripts, `--selecao`, `--final` e `sel` não muda depois deste commit. `bash factory/checks.sh` passou nele ("tudo certo", `resultados/` idêntico byte a byte). Nenhum arquivo `*_teste*` existe | O autor releu todo o código (declarado em 17/11/2026) e liberou o congelamento; o teste final só é rodado sobre este commit | Autor |
+| 17/11/2026 | O teste final foi rodado pelo orquestrador (Claude), a pedido explícito do autor na conversa, em vez de pelo autor à mão. Os 3 comandos (`modelos.py --final`, `avaliar.py --final`, `decisao.py --final`) rodaram uma vez, sobre o commit `49d77ff`, todos com exit 0. O orquestrador não leu `teste.csv` (só o script o leu) | Desvio da decisão D10 ("o autor roda à mão, uma vez"), por ordem do autor; a proteção da regra 2 do `AGENTS.md` era contra acidente, e o autor decidiu delegar a execução | Autor |
+
 ## 2. Constantes congeladas
 
 Regra G4 do critério de aceite: mudar uma delas é motivo para parar e perguntar, nunca para ajustar a um resultado.
