@@ -63,7 +63,7 @@ Estrutura exigida pela FEELT: capa, folha de rosto, sumário, listas, resumo e a
 - 3.2 Análise exploratória: tabela de descrição da base (contagens, categorias raras, as três contínuas) <!-- fonte: dev.csv e dicionário; sem script (decisão P12) --> <!-- pendente: contagens da base completa a conferir no sgc.csv -->
 - 3.3 Divisão e validação: semente 2026, 5 partições estratificadas; o teste fica fechado até o passo 10 <!-- refs: kaufman2012 -->
 - 3.4 Discretização por tercis, cortes aprendidos só no treino <!-- fonte: resultados/cortes.json -->
-- 3.5 Modelos: Naive Bayes, TAN, regressão logística; prior BDeu de tamanho 5; o espaço de estados fixado no dev inteiro, declarado como vazamento brando <!-- refs: ankan2015, pedregosa2011 -->
+- 3.5 Modelos: Naive Bayes, TAN, regressão logística; prior BDeu de tamanho 5; o espaço de estados fixado no dev inteiro, declarado como vazamento brando <!-- refs: ankan2024, pedregosa2011 -->
 - 3.6 Métricas e intervalos <!-- refs: brier1950, naeini2015, efron1993 --> <!-- fonte: docs/plano-de-analise.md seções 2 e 4 -->
 - 3.7 Camada de decisão: matriz de utilidade, hipóteses, desempate <!-- fonte: config/utilidade.json (criado na issue 04) -->
 - 3.8 Reprodutibilidade <!-- fonte: docs/reproduzir.md -->
