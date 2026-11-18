@@ -11,7 +11,7 @@ Utiliza-se a base South German Credit \cite{gromping2019}, versão corrigida da 
 
 Das 20 variáveis preditoras, três são contínuas — duração do crédito (`laufzeit`), valor do crédito (`hoehe`) e idade (`alter`) — e as 17 restantes já são categóricas [fonte: PLANO.md §4]. Os nomes originais, em alemão, são mantidos no código; a tradução é usada apenas no texto [fonte: PLANO.md §4]. O identificador `record_id` é removido antes de qualquer etapa de modelagem [fonte: PLANO.md §4].
 
-Tabela 3.1 — Dicionário das variáveis [fonte: docs/glossario.md §1]. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n=800), calculado a partir de `dados/processados/dev.csv`; os códigos e seus significados seguem o codetable.txt da UCI (South German Credit (UPDATE), https://archive.ics.uci.edu/dataset/573/south+german+credit+update), traduzidos para o português.
+**Tabela 3.1** – Dicionário das variáveis [fonte: docs/glossario.md §1]. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n = 800), calculado a partir de `dados/processados/dev.csv`; os códigos e seus significados seguem o codetable.txt da UCI (South German Credit (UPDATE), https://archive.ics.uci.edu/dataset/573/south+german+credit+update), traduzidos para o português.
 
 | Variável | Tradução | Tipo | Categorias |
 |---|---|---|---|
@@ -28,7 +28,7 @@ Tabela 3.1 — Dicionário das variáveis [fonte: docs/glossario.md §1]. Catego
 | `beszeit` | Tempo no emprego atual | Categórica | 5: 1 = desempregado; 2 = < 1 ano; 3 = 1 a < 4 anos; 4 = 4 a < 7 anos; 5 = >= 7 anos |
 | `rate` | Parcela em relação à renda disponível | Categórica | 4: 1 = >= 35; 2 = 25 a < 35; 3 = 20 a < 25; 4 = < 20 (em %) |
 | `famges` | Estado civil e sexo (`personal_status_sex`) | Categórica | 4: 1 = homem divorciado/separado; 2 = mulher não solteira ou homem solteiro; 3 = homem casado/viúvo; 4 = mulher solteira |
-| `buerge` | Outros devedores ou fiadores | Categórica | 3: 1 = nenhum; 2 = co-solicitante; 3 = fiador |
+| `buerge` | Outros devedores ou fiadores | Categórica | 3: 1 = nenhum; 2 = cossolicitante; 3 = fiador |
 | `wohnzeit` | Tempo na residência atual | Categórica | 4: 1 = < 1 ano; 2 = 1 a < 4 anos; 3 = 4 a < 7 anos; 4 = >= 7 anos |
 | `verm` | Bem mais valioso | Categórica | 4: 1 = desconhecido/sem bens; 2 = carro ou outro; 3 = poupança habitacional/seguro de vida; 4 = imóvel |
 | `weitkred` | Outros planos de parcelamento | Categórica | 3: 1 = banco; 2 = lojas; 3 = nenhum |
@@ -39,15 +39,15 @@ Tabela 3.1 — Dicionário das variáveis [fonte: docs/glossario.md §1]. Catego
 
 Traduções e códigos conferidos, variável a variável, no codetable.txt do conjunto South German Credit (UPDATE), UCI, https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Na fonte, `verw` tem 11 códigos (0 a 10); 10 aparecem no conjunto de desenvolvimento.
 
-A base apresenta categorias raras, por exemplo `bishkred` = 4 e `verw` = 8 [fonte: PLANO.md §4]. Essa característica motiva o uso de prior bayesiano na estimação dos parâmetros (Seção 3.5).
+A base apresenta categorias raras, por exemplo `bishkred` = 4 e `verw` = 8 [fonte: PLANO.md §4]. Essa característica motiva o uso de *prior* bayesiano na estimação dos parâmetros (Seção 3.5).
 
-No conjunto de desenvolvimento (n=800), `bishkred` = 4 tem 5 casos e `verw` = 8 tem 7 casos; outras categorias pequenas são `verw` = 4 e `verw` = 10 (9 casos cada), `buerge` = 2 (35 casos) e `beruf` = 1 (16 casos). <!-- LACUNA: a contagem na base completa (n=1000) é do autor, a conferir no sgc.csv (docs/decisoes.md §4, P25). -->
+No conjunto de desenvolvimento (n = 800), `bishkred` = 4 tem 5 casos e `verw` = 8 tem 7 casos; outras categorias pequenas são `verw` = 4 e `verw` = 10 (9 casos cada), `buerge` = 2 (35 casos) e `beruf` = 1 (16 casos). <!-- LACUNA: a contagem na base completa (n=1000) é do autor, a conferir no sgc.csv (docs/decisoes.md §4, P25). -->
 
 ### 3.1.1 Análise exploratória
 
-A análise exploratória limita-se a uma tabela de descrição da base (contagens, categorias raras e as três variáveis contínuas), elaborada a partir do conjunto de desenvolvimento e do dicionário, sem script dedicado [fonte: docs/decisoes.md §4, P12].
+A análise exploratória limita-se a uma tabela de descrição da base (contagens, categorias raras e as três variáveis contínuas), elaborada a partir do conjunto de desenvolvimento e do dicionário, sem *script* dedicado [fonte: docs/decisoes.md §4, P12].
 
-Tabela 3.2 — Descrição do conjunto de desenvolvimento (n=800), calculada a partir de `dados/processados/dev.csv`.
+**Tabela 3.2** – Descrição do conjunto de desenvolvimento (n = 800), calculada a partir de `dados/processados/dev.csv`.
 
 | Item | Valor |
 |---|---|
@@ -61,40 +61,42 @@ Os tercis acima são calculados sobre todo o conjunto de desenvolvimento, apenas
 
 ## 3.2 Divisão em desenvolvimento e teste
 
-A base é dividida de forma estratificada, com semente 2026, em um conjunto de desenvolvimento (dev), com 800 casos (240 ruins), e um conjunto de teste, com 200 casos (60 ruins) [fonte: PLANO.md §4; docs/decisoes.md §1]. Uma divisão anterior, com semente 42, foi descartada porque seu conjunto de teste já havia sido usado para avaliar a regressão logística em trabalho anterior [fonte: docs/decisoes.md §1].
+A base é dividida de forma estratificada, com semente 2026, em um conjunto de desenvolvimento, com 800 casos (240 ruins), e um conjunto de teste, com 200 casos (60 ruins) [fonte: PLANO.md §4; docs/decisoes.md §1]. Uma divisão anterior, com semente 42, foi descartada porque seu conjunto de teste já havia sido usado para avaliar a regressão logística em trabalho anterior [fonte: docs/decisoes.md §1].
 
-O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, pelo autor, após um commit de congelamento do código [fonte: PLANO.md §8, passo 10; docs/decisoes.md §1]. Os scripts de modelagem leem exclusivamente o conjunto de desenvolvimento [fonte: docs/decisoes.md §1, D11].
+O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, após um *commit* de congelamento do código; o protocolo previa que o autor o executasse à mão, e a execução foi delegada pelo autor (decisão registrada em docs/decisoes.md) [fonte: PLANO.md §8, passo 10; docs/decisoes.md §1]. O teste foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, a pedido do autor, por um assistente de inteligência artificial (Claude Code), com os três comandos do caminho `--final`; o assistente não leu o arquivo de teste [fonte: docs/decisoes.md §1, linha de 17/11/2026]. Os *scripts* de modelagem leem exclusivamente o conjunto de desenvolvimento [fonte: docs/decisoes.md §1, D11].
 
 ## 3.3 Validação cruzada
 
 No conjunto de desenvolvimento, adota-se validação cruzada estratificada em 5 partições, com semente 2026 [fonte: PLANO.md §5; docs/decisoes.md §2]. Cada partição é usada uma vez como validação enquanto as outras quatro compõem o treino, de modo que cada caso recebe uma predição de um modelo que não o viu [fonte: docs/glossario.md §2]. As métricas de desenvolvimento são reportadas como média e desvio entre as 5 partições [fonte: docs/plano-de-analise.md §2].
 
-O número de partições (5) foi escolhido por convenção, e não por desempenho [fonte: decisão do autor, 17/11/2026].
+Todas as constantes — partições, faixas, tamanho equivalente e grade da sensibilidade — foram fixadas por convenção, e não por desempenho [fonte: decisão do autor, 17/11/2026].
 
 ## 3.4 Discretização
 
 As redes bayesianas utilizadas exigem variáveis discretas. As três variáveis contínuas são discretizadas em 3 faixas por tercis, com cortes aprendidos apenas no treino de cada partição, para evitar vazamento de informação da partição de validação \cite{kaufman2012} [fonte: PLANO.md §5; docs/decisoes.md §2]. Para o teste final, os cortes são aprendidos no conjunto de desenvolvimento inteiro e gravados em `resultados/cortes.json` [fonte: PLANO.md §7].
 
-O número de faixas (3, por tercis) foi escolhido por convenção, e não por desempenho [fonte: decisão do autor, 17/11/2026].
+O número de faixas segue essa convenção (ver Seção 3.3).
 
 ## 3.5 Modelos de risco
 
 São comparados três modelos que estimam a probabilidade de um crédito ser ruim [fonte: docs/decisoes.md §3]:
 
 1. **Naive Bayes**, rede em que a variável-alvo é pai de cada preditora, tratadas como condicionalmente independentes dado o alvo \cite{friedman1997}; <!-- LACUNA: referência a conferir no original -->
-2. **TAN** (Naive Bayes aumentado por árvore), que acrescenta ao Naive Bayes uma árvore de dependências entre as preditoras \cite{friedman1997,chowliu1968}. A árvore é a de máximo peso no grafo completo das preditoras, em que o peso de cada aresta é a informação mútua entre as duas preditoras condicional à classe, $I(X_i; X_j \mid C)$; a árvore é então orientada a partir de uma raiz, e a classe é acrescentada como pai de todas as preditoras \cite{friedman1997,chowliu1968}; <!-- LACUNA: referência a conferir no original -->
+2. **TAN** (*Naive Bayes* aumentado por árvore), que acrescenta ao *Naive Bayes* uma árvore de dependências entre as preditoras \cite{friedman1997,chowliu1968}. A árvore é a de máximo peso no grafo completo das preditoras, em que o peso de cada aresta é a informação mútua entre as duas preditoras condicional à classe, $I(X_i; X_j \mid C)$; a árvore é então orientada a partir de uma raiz, e a classe é acrescentada como pai de todas as preditoras \cite{friedman1997,chowliu1968}; <!-- LACUNA: referência a conferir no original -->
 3. **Regressão logística**, como modelo de referência \cite{pedregosa2011}.
 
-As redes são implementadas com a biblioteca `pgmpy`, na versão fixa 1.1.2 \cite{ankan2024} [fonte: PLANO.md §3; docs/decisoes.md §3; CITATION.cff do pgmpy]. O Naive Bayes é montado como rede em estrela, pois a classe específica da biblioteca falha no cálculo de probabilidades nessa versão [fonte: docs/decisoes.md §3]. A estrutura do TAN é aprendida em cada partição, e as arestas resultantes são registradas em `resultados/tan_arestas.csv` para descrever a estabilidade da estrutura entre partições [fonte: docs/decisoes.md §4, P16].
+A busca por *hill climbing*, prevista como opcional, não foi rodada [fonte: PLANO.md §5; codigo/modelos.py, que não chama HillClimbSearch].
+
+As redes são implementadas com a biblioteca `pgmpy`, na versão fixa 1.1.2 \cite{ankan2024} [fonte: PLANO.md §3; docs/decisoes.md §3; CITATION.cff do pgmpy]. O *Naive Bayes* é montado como rede em estrela, pois a classe específica da biblioteca falha no cálculo de probabilidades nessa versão [fonte: docs/decisoes.md §3]. A raiz da árvore do TAN não é indicada na chamada `TreeSearch(treino).estimate(estimator_type="tan", class_node="kredit")`; nesse caso, o `pgmpy` 1.1.2 toma como raiz a variável com a maior soma de informação mútua (não condicional) com as demais colunas [fonte: codigo/modelos.py, função montar_rede; pgmpy, TreeSearch.estimate, passo 1.3]. A estrutura do TAN é aprendida em cada partição, e as arestas resultantes são registradas em `resultados/tan_arestas.csv` para descrever a estabilidade da estrutura entre partições [fonte: docs/decisoes.md §4, P16].
 
 
-Os parâmetros das redes são estimados por estimação bayesiana com prior BDeu de tamanho equivalente 5 \cite{heckerman1995}, para evitar probabilidade zero em combinações raras [fonte: PLANO.md §5; docs/decisoes.md §2]. <!-- LACUNA: referência a conferir no original --> O prior BDeu é uma distribuição de Dirichlet uniforme sobre cada tabela de probabilidade condicional: o tamanho equivalente $N'$ é repartido igualmente entre as células, de modo que cada combinação de valor $x_i$ do nó e configuração $\mathrm{pa}_i$ dos pais recebe a pseudocontagem $N'/(r_i q_i)$, em que $r_i$ é o número de estados do nó e $q_i$ o número de configurações dos pais \cite{heckerman1995}. <!-- LACUNA: referência a conferir no original --> O espaço de estados de cada variável é fixado com todos os valores que aparecem no conjunto de desenvolvimento inteiro, para que uma categoria rara ausente do treino de uma partição não interrompa a inferência. Essa escolha não usa o rótulo, mas constitui um vazamento brando de informação, aqui declarado [fonte: docs/decisoes.md §4, P10; docs/plano-de-analise.md §6, item 6].
+Os parâmetros das redes são estimados por estimação bayesiana com *prior* BDeu de tamanho equivalente 5 \cite{heckerman1995}, para evitar probabilidade zero em combinações raras [fonte: PLANO.md §5; docs/decisoes.md §2]. <!-- LACUNA: referência a conferir no original --> O *prior* BDeu é uma distribuição de Dirichlet uniforme sobre cada tabela de probabilidade condicional: o tamanho equivalente $N'$ é repartido igualmente entre as células, de modo que cada combinação de valor $x_i$ do nó e configuração $\mathrm{pa}_i$ dos pais recebe a pseudocontagem $N'/(r_i q_i)$, em que $r_i$ é o número de estados do nó e $q_i$ o número de configurações dos pais \cite{heckerman1995}. <!-- LACUNA: referência a conferir no original --> O espaço de estados de cada variável é fixado com todos os valores que aparecem no conjunto de desenvolvimento inteiro, para que uma categoria rara ausente do treino de uma partição não interrompa a inferência. Essa escolha não usa o rótulo, mas constitui um vazamento brando de informação, aqui declarado [fonte: docs/decisoes.md §4, P10; docs/plano-de-analise.md §6, item 6].
 
-O tamanho equivalente 5 foi escolhido por convenção, e não por desempenho; outros valores só aparecem no estudo de seleção secundário [fonte: decisão do autor, 17/11/2026; docs/plano-de-analise.md §9].
+O tamanho equivalente segue essa convenção (ver Seção 3.3); outros valores só aparecem no estudo de seleção secundário [fonte: docs/plano-de-analise.md §9].
 
-A inferência é exata, por eliminação de variáveis, viável porque as redes são pequenas \cite{koller2009} [fonte: PLANO.md §5].
+A inferência é exata, por eliminação de variáveis, viável porque as redes são pequenas (`predict_probability` do `pgmpy`, conferida contra `VariableElimination` no modo `--verificar`) \cite{koller2009} [fonte: PLANO.md §5; codigo/modelos.py].
 
-A regressão logística é configurada como `LogisticRegression(max_iter=1000)`, herdada do baseline anterior, e recebe as três variáveis contínuas em sua forma original, sem discretização [fonte: docs/decisoes.md §2; docs/decisoes.md §4, P6]. Em consequência, a diferença entre as redes e a regressão logística mistura modelo e representação das variáveis, e não é interpretada como efeito do modelo isoladamente [fonte: docs/decisoes.md §4, P6].
+A regressão logística é configurada como `LogisticRegression(max_iter=1000)`, herdada da avaliação anterior, e recebe as três variáveis contínuas em sua forma original, sem discretização [fonte: docs/decisoes.md §2; docs/decisoes.md §4, P6]. Em consequência, a diferença entre as redes e a regressão logística mistura modelo e representação das variáveis, e não é interpretada como efeito do modelo isoladamente [fonte: docs/decisoes.md §4, P6].
 
 A calibração das probabilidades é apenas medida, sem aplicação de método de correção [fonte: PLANO.md §5; docs/decisoes.md §4, P1].
 
@@ -104,9 +106,9 @@ Para avaliar o comportamento com evidência incompleta, cada variável é oculta
 
 ## 3.6 Métricas
 
-O desempenho dos modelos de risco é medido por ROC-AUC, PR-AUC, escore de Brier \cite{brier1950}, log loss e erro esperado de calibração (ECE) \cite{naeini2015}, acompanhados de diagrama de calibração [fonte: PLANO.md §6; docs/decisoes.md §4, P14]. A PR-AUC é incluída porque a classe positiva corresponde a 30% dos casos [fonte: docs/decisoes.md §4, P14]. Como referência, reporta-se também um preditor que atribui a todo caso a taxa base de ruins [fonte: docs/plano-de-analise.md §2].
+O desempenho dos modelos de risco é medido pela área sob a curva ROC (ROC-AUC), pela área sob a curva de precisão e sensibilidade (PR-AUC), pelo escore de Brier \cite{brier1950}, pelo *log loss* e pelo ECE \cite{naeini2015}, acompanhados de diagrama de calibração [fonte: PLANO.md §6; docs/decisoes.md §4, P14]. A PR-AUC é incluída porque a classe positiva corresponde a 30% dos casos [fonte: docs/decisoes.md §4, P14]. Como referência, reporta-se também um preditor que atribui a todo caso a taxa base de ruins [fonte: docs/plano-de-analise.md §2].
 
-O ECE é calculado com 10 faixas de mesma largura sobre P(ruim), comparando a probabilidade média prevista com a taxa observada de ruins em cada faixa. Essa definição difere da versão *top-label* usada no baseline anterior; os dois valores não são comparáveis, e apenas a definição atual é usada [fonte: docs/decisoes.md §2; docs/decisoes.md §4, P11].
+O ECE é calculado com 10 faixas de mesma largura sobre P(ruim), comparando a probabilidade média prevista com a taxa observada de ruins em cada faixa. Essa definição difere da versão *top-label* usada na avaliação anterior; os dois valores não são comparáveis, e apenas a definição atual é usada [fonte: docs/decisoes.md §2; docs/decisoes.md §4, P11].
 
 Para $n$ casos com rótulo $y_k \in \{0, 1\}$ (1 = ruim) e probabilidade prevista $p_k$ de ruim, as duas métricas são
 
@@ -116,7 +118,7 @@ $$\text{ECE} = \sum_{b=1}^{10}\frac{|B_b|}{n}\left|\bar{y}_b - \bar{p}_b\right|,
 
 em que $B_b$ é o conjunto de casos cuja $p_k$ cai na faixa $b$, e $\bar{y}_b$ e $\bar{p}_b$ são a taxa observada de ruins e a probabilidade média prevista nessa faixa \cite{naeini2015} [fonte: docs/decisoes.md §2].
 
-No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por bootstrap com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993} [fonte: docs/decisoes.md §4, P4; docs/plano-de-analise.md §3]. O intervalo não cobre a variação devida ao treino [fonte: docs/plano-de-analise.md §6, item 5].
+No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por *bootstrap* com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993} [fonte: docs/decisoes.md §4, P4; docs/plano-de-analise.md §3]. O intervalo não cobre a variação devida ao treino [fonte: docs/plano-de-analise.md §6, item 5].
 
 Regras de leitura foram fixadas antes de qualquer resultado. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor; Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base" [fonte: docs/plano-de-analise.md §4; PLANO.md §6].
 
@@ -152,34 +154,32 @@ Estimativas de probabilidade bem calibradas são necessárias quando a decisão 
 
 ### 3.7.1 Comparação de políticas
 
-A política é calculada para os três modelos e comparada com um limiar fixo de 0,5 de duas ações [fonte: PLANO.md §5]. A comparação principal, fixada antes de qualquer métrica, usa o TAN; Naive Bayes e regressão logística são reportados em apêndice na mesma estrutura [fonte: docs/decisoes.md §4, P5; docs/plano-de-analise.md §3]. A tabela 2×2 é descrita como "política de três ações por utilidade esperada contra corte 0,5 de duas ações", sem linguagem causal, pois a diferença mistura modelo, representação e conjunto de ações [fonte: docs/decisoes.md §4, P8]. Com analista infalível, a política de três ações supera o corte de duas ações por construção, o que é declarado junto da tabela [fonte: docs/decisoes.md §4, P7].
+A política é calculada para os três modelos e comparada com um limiar fixo de 0,5 de duas ações [fonte: PLANO.md §5]. A comparação principal, fixada antes de qualquer métrica, usa o TAN; *Naive Bayes* e regressão logística são reportados em apêndice na mesma estrutura [fonte: docs/decisoes.md §4, P5; docs/plano-de-analise.md §3]. A comparação de duas regras é descrita como "política de três ações por utilidade esperada contra corte 0,5 de duas ações", sem linguagem causal, pois a diferença mistura modelo, representação e conjunto de ações [fonte: docs/decisoes.md §4, P8]. Com analista infalível, a política de três ações supera o corte de duas ações por construção, o que é declarado junto da tabela [fonte: docs/decisoes.md §4, P7].
 
-São medidas a utilidade média, a distribuição das ações e o número de casos que mudam de ação entre as políticas [fonte: PLANO.md §6]. No teste, reporta-se também a diferença pareada de utilidade média entre a regra de utilidade e o limiar fixo, com intervalo por bootstrap [fonte: docs/decisoes.md §4; docs/plano-de-analise.md §3]. Para a regra de utilidade, registram-se ainda a segunda melhor ação e a diferença de utilidade esperada em relação a ela [fonte: docs/decisoes.md §4, P13].
+São medidas a utilidade média, a distribuição das ações e o número de casos que mudam de ação entre as políticas [fonte: PLANO.md §6]. No teste, reporta-se também a diferença pareada de utilidade média entre a regra de utilidade e o limiar fixo, com intervalo por *bootstrap* [fonte: docs/decisoes.md §4; docs/plano-de-analise.md §3]. Para a regra de utilidade, registram-se ainda a segunda melhor ação e a diferença de utilidade esperada em relação a ela [fonte: docs/decisoes.md §4, P13].
 
 ## 3.8 Análise de sensibilidade
 
 A sensibilidade da política aos custos é avaliada calculando-se as fronteiras de decisão em uma grade de perda por inadimplência em {200, 400, 600, 800} e custo da análise manual em {0, 5, …, 100} [fonte: PLANO.md §7; docs/decisoes.md §4, D7]. A análise mostra a ação recomendada em função do risco, da perda e do custo da análise manual [fonte: PLANO.md §6].
 
-Os valores da grade da análise de sensibilidade foram escolhidos por convenção, e não por desempenho [fonte: decisão do autor, 17/11/2026; docs/decisoes.md §4, D7].
+Os valores da grade seguem essa convenção (ver Seção 3.3) [fonte: docs/decisoes.md §4, D7].
 
 ## 3.9 Demonstração
 
-Um script de terminal recebe o identificador de um caso, treina novamente o modelo nas 4 partições que não contêm o caso e mostra o risco estimado, a utilidade esperada de cada ação, as fronteiras e a ação recomendada; o modelo padrão é o TAN [fonte: PLANO.md §7; docs/decisoes.md §4, D1, D8]. A demonstração mostra a conta, não uma justificativa textual da recomendação [fonte: docs/decisoes.md §4, P15].
+Um *script* de terminal recebe o identificador de um caso, treina novamente o modelo nas 4 partições que não contêm o caso e mostra o risco estimado, a utilidade esperada de cada ação, as fronteiras e a ação recomendada; o modelo padrão é o TAN [fonte: PLANO.md §7; docs/decisoes.md §4, D1, D8]. A demonstração mostra a conta, não uma justificativa textual da recomendação [fonte: docs/decisoes.md §4, P15].
 
 ## 3.10 Estudo de seleção aninhado (secundário)
 
-Como análise secundária, pré-registrada em relação ao teste final e decidida por delegação, a rever pelo autor, realiza-se um estudo de seleção de configuração [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção]. A análise primária, incluindo a tabela 2×2 com NB e TAN de BDeu 5, não muda [fonte: docs/plano-de-analise.md §9].
+Como análise secundária, pré-registrada em relação ao teste final e decidida por delegação, que será revista pelo autor, realiza-se um estudo de seleção de configuração [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção]. A análise primária, incluindo a comparação de duas regras com NB e TAN de BDeu 5, não muda [fonte: docs/plano-de-analise.md §9].
 
-A grade é fechada, com 8 configurações: {Naive Bayes, TAN} × tamanho equivalente BDeu {1, 5, 10, 50} [fonte: docs/plano-de-analise.md §9]. Ficam fora da grade K2, outras faixas, seleção de variáveis, hill climbing, métodos de calibração e reponderação [fonte: docs/plano-de-analise.md §9].
+A grade é fechada, com 8 configurações: {*Naive Bayes*, TAN} × tamanho equivalente BDeu {1, 5, 10, 50} [fonte: docs/plano-de-analise.md §9]. Ficam fora da grade K2, outras faixas, seleção de variáveis, *hill climbing*, métodos de calibração e reponderação [fonte: docs/plano-de-analise.md §9].
 
-Usa-se validação cruzada aninhada. As partições externas são as 5 já descritas; em cada uma, as 640 linhas de treino são divididas em 5 partições internas estratificadas, com semente 2026, nas quais cada configuração é treinada e avaliada [fonte: docs/plano-de-analise.md §9]. Escolhe-se a configuração de menor log loss médio nas partições internas, com empate (diferença menor que 1e-9) resolvido pela ordem da grade; a configuração escolhida prevê as 160 linhas da partição externa, gerando a linha "aninhado" [fonte: docs/plano-de-analise.md §9]. A escolha é também recalculada no conjunto de desenvolvimento inteiro, só para relato; essa configuração é a usada como modelo secundário no teste final [fonte: docs/plano-de-analise.md §9; docs/reproduzir.md §5].
+Usa-se validação cruzada aninhada. As partições externas são as 5 já descritas; em cada uma, as 640 linhas de treino são divididas em 5 partições internas estratificadas, com semente 2026, nas quais cada configuração é treinada e avaliada [fonte: docs/plano-de-analise.md §9]. Escolhe-se a configuração de menor *log loss* médio nas partições internas, com empate (diferença menor que 1e-9) resolvido pela ordem da grade; a configuração escolhida prevê as 160 linhas da partição externa, gerando a linha "aninhado" [fonte: docs/plano-de-analise.md §9]. A escolha é também recalculada no conjunto de desenvolvimento inteiro, só para relato; essa configuração é a usada como modelo secundário no teste final [fonte: docs/plano-de-analise.md §9; docs/reproduzir.md §5].
 
 Relatam-se obrigatoriamente as 8 configurações, o número de comparações (8) e a linha "aninhado", qualquer que seja o resultado. O texto não se refere a um "melhor modelo": informa qual configuração a regra escolheu e quanto ela difere da configuração de base [fonte: docs/plano-de-analise.md §9].
 
-**Declaração de viés.** A grade foi definida depois da observação das métricas de desenvolvimento e motivada por elas (ver cap. 4). O aninhamento corrige o viés de escolher entre as 8 configurações, mas não o de ter desenhado a grade com base no mesmo conjunto de desenvolvimento [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção].
+**Declaração de viés.** A grade de 8 configurações foi definida depois da observação das métricas de desenvolvimento (`metricas_dev.csv`) e motivada por elas: o TAN saiu pior que o NB e surgiu a hipótese sobre `verw` (Seção 4.1). O aninhamento corrige o viés de escolher entre as 8 configurações, mas não o de ter desenhado a grade com base no mesmo conjunto de desenvolvimento [fonte: docs/plano-de-analise.md §9; docs/decisoes.md, Estudo de seleção].
 
 ## 3.11 Ambiente e reprodutibilidade
 
-O experimento é composto por sete scripts Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo [fonte: PLANO.md §3, §7; docs/arquitetura.md §2]. O projeto exige Python 3.12 ou superior [fonte: pyproject.toml, `requires-python`]. A execução local usou Python 3.12.13 (saída de `uv run python --version`); `uv.lock` e `pyproject.toml` fixam apenas `requires-python = ">=3.12"`, e não há `.python-version`. As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências travadas pelo gerenciador `uv` [fonte: PLANO.md §3]. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte [fonte: AGENTS.md, Reprodutibilidade; docs/reproduzir.md §2]. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão commitada [fonte: docs/reproduzir.md §4]. As figuras PNG não são comparadas byte a byte [fonte: docs/reproduzir.md §4]. O passo a passo completo está no Apêndice A [fonte: docs/reproduzir.md].
-
-<!-- LACUNA: hash do commit de congelamento, a anotar pelo autor no passo 10 (PLANO.md §8). -->
+O experimento é composto por sete *scripts* Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo [fonte: PLANO.md §3, §7; docs/arquitetura.md §2]. O projeto exige Python 3.12 ou superior [fonte: pyproject.toml, `requires-python`]. A execução local usou Python 3.12.13 (saída de `uv run python --version`); `uv.lock` e `pyproject.toml` fixam apenas `requires-python = ">=3.12"`, e não há `.python-version`. As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências fixadas pelo gerenciador `uv` [fonte: PLANO.md §3]. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte [fonte: AGENTS.md, Reprodutibilidade; docs/reproduzir.md §2]. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão registrada no *commit* [fonte: docs/reproduzir.md §4]. As figuras PNG não são comparadas byte a byte [fonte: docs/reproduzir.md §4]. O passo a passo completo está no Apêndice A [fonte: docs/reproduzir.md]. O teste final usou o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, teste rodado em 17/11/2026 [fonte: docs/decisoes.md §1, linha do congelamento].

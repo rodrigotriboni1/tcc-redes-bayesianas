@@ -1,4 +1,4 @@
-# Referências
+# REFERÊNCIAS
 
 <!-- Formato ABNT NBR 6023 (autor-data). Gerado de referencias.bib; só campos do .bib. -->
 <!-- normas ABNT não citadas retiradas da lista: abnt6023, abnt10520, abnt14724 -->
@@ -18,7 +18,7 @@ CHOW, C. K.; LIU, C. N. Approximating discrete probability distributions with de
 EFRON, Bradley; TIBSHIRANI, Robert J. **An Introduction to the Bootstrap**. New York: Chapman & Hall, 1993.
 <!-- efron1993 -->
 
-ELKAN, Charles. The foundations of cost-sensitive learning. In: INTERNATIONAL JOINT CONFERENCE ON ARTIFICIAL INTELLIGENCE, 17., 2001. **Proceedings** [...]. p. 973–978.
+ELKAN, Charles. The foundations of cost-sensitive learning. In: INTERNATIONAL JOINT CONFERENCE ON ARTIFICIAL INTELLIGENCE, 17., 2001. **Proceedings** [...]. [S. l.: s. n.], 2001. p. 973–978.
 <!-- elkan2001: Entrada do bloco "A CONFERIR NO ORIGINAL ANTES DE CITAR" (título, ano, volume e páginas podem estar errados). -->
 <!-- FALTA: local do evento, local de publicação, editora -->
 
@@ -35,10 +35,10 @@ GUO, Chuan et al. On calibration of modern neural networks. In: INTERNATIONAL CO
 HAND, David J.; HENLEY, William E. Statistical classification methods in consumer credit scoring: a review. **Journal of the Royal Statistical Society: Series A**, v. 160, n. 3, p. 523–541, 1997.
 <!-- hand1997: VERIFICAR: todos os campos. -->
 
-HECKERMAN, David; GEIGER, Dan; CHICKERING, David M. Learning Bayesian networks: The combination of knowledge and statistical data. **Machine Learning**, v. 20, n. 3, p. 197–243, 1995. DOI: 10.1007/BF00994016.
+HECKERMAN, David; GEIGER, Dan; CHICKERING, David M. Learning Bayesian networks: the combination of knowledge and statistical data. **Machine Learning**, v. 20, n. 3, p. 197–243, 1995. DOI: 10.1007/BF00994016.
 <!-- heckerman1995: Metadados conferidos em 17/11/2026 (Microsoft Research, DOI 10.1007/BF00994016); texto não lido. -->
 
-HOFMANN, Hans. **Statlog (German Credit Data)**. UCI Machine Learning Repository, 1994. Disponível em: https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data).
+HOFMANN, Hans. **Statlog (German Credit Data)**. 1994. Conjunto de dados. UCI Machine Learning Repository. Disponível em: https://archive.ics.uci.edu/ml/datasets/statlog+(german+credit+data).
 <!-- hofmann1994: Base original, citada na proposta. O trabalho usa a versão corrigida (gromping2019, uci573). Entrada do bloco "referências da proposta" (conferir no exemplar usado). -->
 <!-- FALTA: data de acesso (urlaccessdate) -->
 
@@ -58,11 +58,11 @@ NAEINI, Mahdi Pakdaman; COOPER, Gregory F.; HAUSKRECHT, Milos. Obtaining well ca
 <!-- naeini2015 -->
 <!-- FALTA: local do evento, local de publicação -->
 
-NICULESCU-MIZIL, Alexandru; CARUANA, Rich. Predicting good probabilities with supervised learning. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 22., 2005. **Proceedings** [...]. p. 625–632.
+NICULESCU-MIZIL, Alexandru; CARUANA, Rich. Predicting good probabilities with supervised learning. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 22., 2005. **Proceedings** [...]. [S. l.: s. n.], 2005. p. 625–632.
 <!-- niculescu2005: VERIFICAR: todos os campos. -->
 <!-- FALTA: local do evento, local de publicação, editora -->
 
-PEARL, Judea. **Probabilistic Reasoning in Intelligent Systems**: Networks of Plausible Inference. San Francisco: Morgan Kaufmann, 1988.
+PEARL, Judea. **Probabilistic Reasoning in Intelligent Systems**: networks of plausible inference. San Francisco: Morgan Kaufmann, 1988.
 <!-- pearl1988: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->
 
 PEDREGOSA, Fabian et al. Scikit-learn: Machine learning in Python. **Journal of Machine Learning Research**, v. 12, p. 2825–2830, 2011.
@@ -71,23 +71,23 @@ PEDREGOSA, Fabian et al. Scikit-learn: Machine learning in Python. **Journal of 
 PLATT, John C. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In: SMOLA, Alexander J. et al. (ed.). **Advances in Large Margin Classifiers**. Cambridge: MIT Press, 1999. p. 61–74.
 <!-- platt1999: VERIFICAR: ano do livro (1999 na capa; algumas bases citam 2000) e páginas 61–74. -->
 
-RUSSELL, Stuart; NORVIG, Peter. **Artificial Intelligence**: A Modern Approach. 3. ed. Upper Saddle River: Prentice Hall, 2010.
+RUSSELL, Stuart; NORVIG, Peter. **Artificial Intelligence**: a modern approach. 3. ed. Upper Saddle River: Prentice Hall, 2010.
 <!-- russell2010: VERIFICAR: trocada em 15/11/2026 da tradução brasileira para o original em inglês (3ª edição); título, editora, cidade e ano escritos de memória de um assistente de IA. -->
 
-SIDDIQI, Naeem. **Credit Risk Scorecards**: Developing and Implementing Intelligent Credit Scoring. Hoboken: John Wiley & Sons, 2012.
+SIDDIQI, Naeem. **Credit Risk Scorecards**: developing and implementing intelligent credit scoring. Hoboken: John Wiley & Sons, 2012.
 <!-- siddiqi2012: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->
 
 THOMAS, Lyn C. A survey of credit and behavioural scoring: forecasting financial risk of lending to consumers. **International Journal of Forecasting**, v. 16, n. 2, p. 149–172, 2000.
 <!-- thomas2000: Bloco "referências da proposta": conferir no original. -->
 
-UCI MACHINE LEARNING REPOSITORY. **South German Credit (UPDATE)**. 2020. Conjunto de dados n. 573. DOI: 10.24432/C5QG88. Disponível em: https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Acesso em: 10 nov. 2026.
+UCI MACHINE LEARNING REPOSITORY. **South German Credit (UPDATE)**. 2020. Conjunto de dados n. 573. UCI Machine Learning Repository. DOI: 10.24432/C5QG88. Disponível em: https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Acesso em: 10 nov. 2026.
 <!-- uci573: Ano 2020 = criação do conjunto na UCI (decidido pelo autor, 17/11/2026). DOI conferido na API da UCI (docs/conferencia-referencias.md). -->
 
-ZADROZNY, Bianca; ELKAN, Charles. Obtaining calibrated probability estimates from decision trees and naive Bayesian classifiers. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 18., 2001. **Proceedings** [...]. p. 609–616.
+ZADROZNY, Bianca; ELKAN, Charles. Obtaining calibrated probability estimates from decision trees and naive Bayesian classifiers. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 18., 2001. **Proceedings** [...]. [S. l.: s. n.], 2001. p. 609–616.
 <!-- zadrozny2001: Anais e páginas conferidos em 17/11/2026 (mlanthology.org, ICML 2001, pp. 609–616); título, autores e resumo no PDF dos autores. -->
 <!-- FALTA: local do evento, local de publicação, editora -->
 
-ZADROZNY, Bianca; ELKAN, Charles. Transforming classifier scores into accurate multiclass probability estimates. In: ACM SIGKDD INTERNATIONAL CONFERENCE ON KNOWLEDGE DISCOVERY AND DATA MINING, 8., 2002. **Proceedings** [...]. p. 694–699.
+ZADROZNY, Bianca; ELKAN, Charles. Transforming classifier scores into accurate multiclass probability estimates. In: ACM SIGKDD INTERNATIONAL CONFERENCE ON KNOWLEDGE DISCOVERY AND DATA MINING, 8., 2002. **Proceedings** [...]. [S. l.: s. n.], 2002. p. 694–699.
 <!-- zadrozny2002: VERIFICAR: todos os campos. -->
 <!-- FALTA: local do evento, local de publicação, editora -->
 
