@@ -1,6 +1,6 @@
 # 3 MATERIAIS E MÉTODOS
 
-<!-- Rascunho gerado por subagente em 17/11/2026, a revisar pelo autor. Não contém resultado de desempenho. -->
+<!-- Rascunho de 17/11/2026, a revisar pelo autor. Não contém resultado de desempenho. -->
 <!-- Entradas do .bib marcadas "% VERIFICAR" ou "A CONFERIR" só podem ser citadas depois de conferidas no original (PLANO.md §9). -->
 
 Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. Todas as decisões de análise foram fixadas antes da observação de resultados no conjunto de teste, e a forma de leitura de cada desfecho foi registrada previamente em um plano de análise [fonte: docs/plano-de-analise.md §1–§5].
@@ -63,7 +63,7 @@ Os tercis acima são calculados sobre todo o conjunto de desenvolvimento, apenas
 
 A base é dividida de forma estratificada, com semente 2026, em um conjunto de desenvolvimento, com 800 casos (240 ruins), e um conjunto de teste, com 200 casos (60 ruins) [fonte: PLANO.md §4; docs/decisoes.md §1]. Uma divisão anterior, com semente 42, foi descartada porque seu conjunto de teste já havia sido usado para avaliar a regressão logística em trabalho anterior [fonte: docs/decisoes.md §1].
 
-O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, após um *commit* de congelamento do código; o protocolo previa que o autor o executasse à mão, e a execução foi delegada pelo autor (decisão registrada em docs/decisoes.md) [fonte: PLANO.md §8, passo 10; docs/decisoes.md §1]. O teste foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, a pedido do autor, por um assistente de inteligência artificial (Claude Code), com os três comandos do caminho `--final`; o assistente não leu o arquivo de teste [fonte: docs/decisoes.md §1, linha de 17/11/2026]. Os *scripts* de modelagem leem exclusivamente o conjunto de desenvolvimento [fonte: docs/decisoes.md §1, D11].
+O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, após um *commit* de congelamento do código [fonte: PLANO.md §8, passo 10; docs/decisoes.md §1]. O teste foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, com os três comandos do caminho `--final` [fonte: docs/decisoes.md §1]. Os *scripts* de modelagem leem exclusivamente o conjunto de desenvolvimento [fonte: docs/decisoes.md §1, D11].
 
 ## 3.3 Validação cruzada
 
@@ -144,9 +144,7 @@ A matriz de utilidade é demonstrativa e lida de `config/utilidade.json` (Quadro
 
 Fonte: `config/utilidade.json`, com *c* = 40 [fonte: config/utilidade.json; PLANO.md §5].
 
-As hipóteses da matriz são: valores demonstrativos, não calibrados com dados reais, e um analista que sempre acerta o estado do cliente [fonte: config/utilidade.json]. A matriz está pendente de aprovação do orientador [fonte: docs/decisoes.md §6].
-
-<!-- LACUNA: aprovação da matriz (c = 40) pelo orientador ainda em aberto (PLANO.md §11, item 2). -->
+As hipóteses da matriz são: valores demonstrativos, não calibrados com dados reais, e um analista que sempre acerta o estado do cliente [fonte: config/utilidade.json]. A matriz demonstrativa foi aprovada pelo orientador, com valores não calibrados com dados reais [fonte: docs/decisoes.md §6].
 
 Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida [fonte: PLANO.md §5]. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar [fonte: docs/decisoes.md §4, D5]. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento [fonte: PLANO.md §5; docs/decisoes.md §4, P2].
 

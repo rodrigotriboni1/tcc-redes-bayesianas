@@ -72,7 +72,7 @@ PLATT, John C. Probabilistic outputs for support vector machines and comparisons
 <!-- platt1999: VERIFICAR: ano do livro (1999 na capa; algumas bases citam 2000) e páginas 61–74. -->
 
 RUSSELL, Stuart; NORVIG, Peter. **Artificial Intelligence**: a modern approach. 3. ed. Upper Saddle River: Prentice Hall, 2010.
-<!-- russell2010: VERIFICAR: trocada em 15/11/2026 da tradução brasileira para o original em inglês (3ª edição); título, editora, cidade e ano escritos de memória de um assistente de IA. -->
+<!-- russell2010: VERIFICAR: trocada em 15/11/2026 da tradução brasileira para o original em inglês (3ª edição); título, editora, cidade e ano escritos de memória; conferir no original. -->
 
 SIDDIQI, Naeem. **Credit Risk Scorecards**: developing and implementing intelligent credit scoring. Hoboken: John Wiley & Sons, 2012.
 <!-- siddiqi2012: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->

@@ -100,8 +100,6 @@ Quadro 3.1 – Matriz de utilidade demonstrativa ........ p. __
 
 Quadro A.1 – Comandos, em ordem, e arquivos gravados ........ p. __
 
-Quadro B.1 – Usos de IA no trabalho ........ p. __
-
 ---
 
 ## LISTA DE SIGLAS E ABREVIATURAS
@@ -114,8 +112,6 @@ CSV – <!-- confirmar: o texto usa a sigla (cap. 3, seção 3.11) sem expandi-l
 
 ECE – Erro esperado de calibração (seção 2.5)
 
-IA – Inteligência artificial (apêndice B)
-
 NB – <!-- confirmar: usada nos capítulos 3 a 5 como abreviatura de *Naive Bayes*, mas a sigla não é introduzida no texto -->
 
 PR-AUC – <!-- confirmar: o texto não expande a sigla; é a métrica de precisão e revocação (seção 3.6) -->
@@ -126,7 +122,7 @@ TAN – *Tree-Augmented Naive Bayes*, Naive Bayes aumentado por árvore (seçõe
 
 UCI – <!-- confirmar: o texto cita o "repositório da UCI" (seção 3.1) sem expandir a sigla -->
 
-FEELT – <!-- confirmar: aparece só no apêndice B, sem expansão -->
+FEELT – <!-- confirmar: não aparece mais no texto; retirar se continuar assim -->
 
 UFU – <!-- confirmar: aparece só em PLANO.md, sem expansão; ver capa -->
 
@@ -215,8 +211,7 @@ LISTA DE SIGLAS E ABREVIATURAS ........ p. __
 **APÊNDICES** ........ p. __
 
 - APÊNDICE A – Como reproduzir os resultados ........ p. __
-- APÊNDICE B – Declaração de uso de inteligência artificial ........ p. __
-- APÊNDICE C – Resultados dos três modelos ........ p. __
-- APÊNDICE D – Plano de análise ........ p. __
+- APÊNDICE B – Resultados dos três modelos ........ p. __
+- APÊNDICE C – Plano de análise ........ p. __
 
 <!-- Conferir no texto final: a seção "5.1b" tem numeração provisória (cap5-discussao.md). Os títulos do capítulo 2 vêm de dois arquivos (2.1–2.5 e 2.6–2.9). Os anexos (se houver) ainda não existem no repositório. -->

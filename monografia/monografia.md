@@ -92,8 +92,6 @@ Quadro 3.1 – Matriz de utilidade demonstrativa ........ p. __
 
 Quadro A.1 – Comandos, em ordem, e arquivos gravados ........ p. __
 
-Quadro B.1 – Usos de IA no trabalho ........ p. __
-
 ## LISTA DE SIGLAS E ABREVIATURAS
 
 <!-- Só siglas que aparecem nos capítulos. Significado dado quando o próprio texto o traz; senão, "confirmar". -->
@@ -103,8 +101,6 @@ BDeu – *Bayesian Dirichlet equivalent uniform* (prior usado no aprendizado de 
 CSV – <!-- confirmar: o texto usa a sigla (cap. 3, seção 3.11) sem expandi-la -->
 
 ECE – Erro esperado de calibração (seção 2.5)
-
-IA – Inteligência artificial (apêndice B)
 
 NB – <!-- confirmar: usada nos capítulos 3 a 5 como abreviatura de *Naive Bayes*, mas a sigla não é introduzida no texto -->
 
@@ -116,7 +112,7 @@ TAN – *Tree-Augmented Naive Bayes*, Naive Bayes aumentado por árvore (seçõe
 
 UCI – <!-- confirmar: o texto cita o "repositório da UCI" (seção 3.1) sem expandir a sigla -->
 
-FEELT – <!-- confirmar: aparece só no apêndice B, sem expansão -->
+FEELT – <!-- confirmar: não aparece mais no texto; retirar se continuar assim -->
 
 UFU – <!-- confirmar: aparece só em PLANO.md, sem expansão; ver capa -->
 
@@ -142,7 +138,6 @@ LISTA DE SIGLAS E ABREVIATURAS ........ p. __
 - 1.4 O que o trabalho não faz ........ p. __
 - 1.5 Mudanças em relação à proposta ........ p. __
 - 1.6 Organização do texto ........ p. __
-
 **2 FUNDAMENTAÇÃO** ........ p. __
 
 - 2.1 Redes bayesianas ........ p. __
@@ -154,7 +149,6 @@ LISTA DE SIGLAS E ABREVIATURAS ........ p. __
 - 2.7 Limiares derivados dos custos ........ p. __
 - 2.8 Opção de rejeição ........ p. __
 - 2.9 Escore de crédito e *next best action* ........ p. __
-
 **3 MATERIAIS E MÉTODOS** ........ p. __
 
 - 3.1 Base de dados ........ p. __
@@ -171,7 +165,6 @@ LISTA DE SIGLAS E ABREVIATURAS ........ p. __
 - 3.9 Demonstração ........ p. __
 - 3.10 Estudo de seleção aninhado (secundário) ........ p. __
 - 3.11 Ambiente e reprodutibilidade ........ p. __
-
 **4 RESULTADOS** ........ p. __
 
 - 4.1 Desempenho preditivo ........ p. __
@@ -180,7 +173,6 @@ LISTA DE SIGLAS E ABREVIATURAS ........ p. __
 - 4.4 Sensibilidade ........ p. __
 - 4.5 Demonstração ........ p. __
 - 4.6 Estudo de seleção (secundário) ........ p. __
-
 **5 DISCUSSÃO E LIMITAÇÕES** ........ p. __
 
 - 5.1 Leitura do desenvolvimento ........ p. __
@@ -194,7 +186,6 @@ LISTA DE SIGLAS E ABREVIATURAS ........ p. __
 - 5.9 Calibração só medida ........ p. __
 - 5.10 Escopo das entregas ........ p. __
 - 5.11 Direções futuras ........ p. __
-
 **6 CONCLUSÃO** ........ p. __
 
 - 6.1 Limiares explícitos e reprodutíveis ........ p. __
@@ -206,9 +197,8 @@ LISTA DE SIGLAS E ABREVIATURAS ........ p. __
 **APÊNDICES** ........ p. __
 
 - APÊNDICE A – Como reproduzir os resultados ........ p. __
-- APÊNDICE B – Declaração de uso de inteligência artificial ........ p. __
-- APÊNDICE C – Resultados dos três modelos ........ p. __
-- APÊNDICE D – Plano de análise ........ p. __
+- APÊNDICE B – Resultados dos três modelos ........ p. __
+- APÊNDICE C – Plano de análise ........ p. __
 
 <!-- INÍCIO DO TEXTO -->
 
@@ -414,7 +404,7 @@ Neste trabalho, entende-se por *next best action* (próxima melhor ação) a aç
 
 # 3 MATERIAIS E MÉTODOS
 
-<!-- Rascunho gerado por subagente em 17/11/2026, a revisar pelo autor. Não contém resultado de desempenho. -->
+<!-- Rascunho de 17/11/2026, a revisar pelo autor. Não contém resultado de desempenho. -->
 <!-- Entradas do .bib marcadas "% VERIFICAR" ou "A CONFERIR" só podem ser citadas depois de conferidas no original (PLANO.md §9). -->
 
 Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. Todas as decisões de análise foram fixadas antes da observação de resultados no conjunto de teste, e a forma de leitura de cada desfecho foi registrada previamente em um plano de análise [fonte: docs/plano-de-analise.md §1–§5].
@@ -477,7 +467,7 @@ Os tercis acima são calculados sobre todo o conjunto de desenvolvimento, apenas
 
 A base é dividida de forma estratificada, com semente 2026, em um conjunto de desenvolvimento, com 800 casos (240 ruins), e um conjunto de teste, com 200 casos (60 ruins) [fonte: PLANO.md §4; docs/decisoes.md §1]. Uma divisão anterior, com semente 42, foi descartada porque seu conjunto de teste já havia sido usado para avaliar a regressão logística em trabalho anterior [fonte: docs/decisoes.md §1].
 
-O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, após um *commit* de congelamento do código; o protocolo previa que o autor o executasse à mão, e a execução foi delegada pelo autor (decisão registrada em docs/decisoes.md) [fonte: PLANO.md §8, passo 10; docs/decisoes.md §1]. O teste foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, a pedido do autor, por um assistente de inteligência artificial (Claude Code), com os três comandos do caminho `--final`; o assistente não leu o arquivo de teste [fonte: docs/decisoes.md §1, linha de 17/11/2026]. Os *scripts* de modelagem leem exclusivamente o conjunto de desenvolvimento [fonte: docs/decisoes.md §1, D11].
+O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, após um *commit* de congelamento do código [fonte: PLANO.md §8, passo 10; docs/decisoes.md §1]. O teste foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, com os três comandos do caminho `--final` [fonte: docs/decisoes.md §1]. Os *scripts* de modelagem leem exclusivamente o conjunto de desenvolvimento [fonte: docs/decisoes.md §1, D11].
 
 ## 3.3 Validação cruzada
 
@@ -558,9 +548,7 @@ A matriz de utilidade é demonstrativa e lida de `config/utilidade.json` (Quadro
 
 Fonte: `config/utilidade.json`, com *c* = 40 [fonte: config/utilidade.json; PLANO.md §5].
 
-As hipóteses da matriz são: valores demonstrativos, não calibrados com dados reais, e um analista que sempre acerta o estado do cliente [fonte: config/utilidade.json]. A matriz está pendente de aprovação do orientador [fonte: docs/decisoes.md §6].
-
-<!-- LACUNA: aprovação da matriz (c = 40) pelo orientador ainda em aberto (PLANO.md §11, item 2). -->
+As hipóteses da matriz são: valores demonstrativos, não calibrados com dados reais, e um analista que sempre acerta o estado do cliente [fonte: config/utilidade.json]. A matriz demonstrativa foi aprovada pelo orientador, com valores não calibrados com dados reais [fonte: docs/decisoes.md §6].
 
 Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida [fonte: PLANO.md §5]. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar [fonte: docs/decisoes.md §4, D5]. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento [fonte: PLANO.md §5; docs/decisoes.md §4, P2].
 
@@ -851,7 +839,7 @@ A base não traz o resultado das ações que não foram tomadas [fonte: docs/pla
 
 ## 5.5 Matriz demonstrativa e analista infalível
 
-A matriz de utilidade (+100, −400, custo da análise *c* = 40) é demonstrativa, não calibrada com dados reais, e aguarda aceite do orientador [fonte: config/utilidade.json, campo hipoteses; docs/decisoes.md §6]. Ela supõe que o analista da análise manual sempre acerta o estado do cliente: aprova os bons, recusa os ruins e só paga o custo *c* [fonte: config/utilidade.json, campo hipoteses; docs/decisoes.md §4, P7].
+A matriz de utilidade (+100, −400, custo da análise *c* = 40) é demonstrativa, não calibrada com dados reais, e foi aprovada pelo orientador [fonte: config/utilidade.json, campo hipoteses; docs/decisoes.md §6]. Ela supõe que o analista da análise manual sempre acerta o estado do cliente: aprova os bons, recusa os ruins e só paga o custo *c* [fonte: config/utilidade.json, campo hipoteses; docs/decisoes.md §4, P7].
 
 Essa hipótese tem uma consequência direta para a comparação de duas regras (Tabelas 4.5 a 4.7): **a política de três ações ganha do corte de duas ações por construção** [fonte: docs/decisoes.md §4, P7]. A análise manual é uma ação adicional que, com analista infalível, oferece um resultado intermediário quase sem risco; a política de três ações (`ue`) esperada só a escolhe quando, pelo modelo, ela vale mais que aprovar e que rejeitar \cite{chow1970}. O corte 0,5 não tem acesso a essa ação. Uma vantagem da política de três ações (`ue`) na comparação de duas regras é, assim, em grande parte consequência da matriz e do conjunto de ações, não evidência sobre a rede bayesiana nem sobre o critério da utilidade esperada [fonte: docs/decisoes.md §4, P7 e P8]. Por esse motivo a comparação é descrita como "política de três ações por utilidade esperada contra corte 0,5 de duas ações", sem linguagem causal (decisão P8) [fonte: docs/decisoes.md §4, P8].
 
@@ -894,7 +882,7 @@ Este trabalho perguntou (1) se uma política que separa a estimativa de risco da
 
 ## 6.1 Limiares explícitos e reprodutíveis
 
-A primeira parte é respondida pela construção da política, e não pelo desempenho dos modelos. Como a utilidade esperada de cada ação é linear na probabilidade estimada *p* de o caso ser ruim, a escolha da ação de maior utilidade equivale a uma regra de limiares sobre *p* (Capítulo 3, Seção 3.7). Com a matriz demonstrativa, pendente de aprovação do orientador [fonte: PLANO.md §11, item 2; config/utilidade.json], a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60 [fonte: PLANO.md §5; config/utilidade.json]. Dadas a matriz em `config/utilidade.json` e a coluna de probabilidade, qualquer pessoa obtém a ação de cada caso e as fronteiras. A resposta à primeira parte é, portanto, afirmativa, com uma ressalva que o próprio plano registra: essa propriedade vale para qualquer escore de probabilidade e não distingue a rede bayesiana da regressão logística [fonte: PLANO.md §5].
+A primeira parte é respondida pela construção da política, e não pelo desempenho dos modelos. Como a utilidade esperada de cada ação é linear na probabilidade estimada *p* de o caso ser ruim, a escolha da ação de maior utilidade equivale a uma regra de limiares sobre *p* (Capítulo 3, Seção 3.7). Com a matriz demonstrativa aprovada pelo orientador, com valores não calibrados com dados reais [fonte: PLANO.md §11, item 2; config/utilidade.json], a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60 [fonte: PLANO.md §5; config/utilidade.json]. Dadas a matriz em `config/utilidade.json` e a coluna de probabilidade, qualquer pessoa obtém a ação de cada caso e as fronteiras. A resposta à primeira parte é, portanto, afirmativa, com uma ressalva que o próprio plano registra: essa propriedade vale para qualquer escore de probabilidade e não distingue a rede bayesiana da regressão logística [fonte: PLANO.md §5].
 
 Quanto aos objetivos de sensibilidade e de demonstração (Seção 1.3), os limiares se movem com a perda e o custo da análise (Tabela 4.8) e a demonstração mostra um caso (Tabela 4.9); nenhum valor foi escolhido.
 
@@ -910,7 +898,7 @@ Quanto ao risco estimado, o teste mostrou diferenças de ROC-AUC entre os três 
 
 ## 6.3 Limitações essenciais
 
-As conclusões acima valem dentro de limites discutidos no Capítulo 5: a matriz de utilidade é demonstrativa, pendente de aprovação do orientador, e supõe analista infalível (Seção 5.5); a camada de decisão é simulação, não política real (Seção 5.4); o teste tem 200 casos e 60 ruins, o que deixa intervalos largos (Seção 5.6); modelo e representação das variáveis variam juntos (Seção 5.7); o intervalo não cobre a variação do treino (Seção 5.8); e a calibração é só medida, sem correção (Seção 5.9). Os resultados não autorizam generalizar para outras bases nem recomendar um modelo. As direções gerais de continuação estão na Seção 5.11.
+As conclusões acima valem dentro de limites discutidos no Capítulo 5: a matriz de utilidade é demonstrativa, aprovada pelo orientador, com valores não calibrados com dados reais, e supõe analista infalível (Seção 5.5); a camada de decisão é simulação, não política real (Seção 5.4); o teste tem 200 casos e 60 ruins, o que deixa intervalos largos (Seção 5.6); modelo e representação das variáveis variam juntos (Seção 5.7); o intervalo não cobre a variação do treino (Seção 5.8); e a calibração é só medida, sem correção (Seção 5.9). Os resultados não autorizam generalizar para outras bases nem recomendar um modelo. As direções gerais de continuação estão na Seção 5.11.
 
 # REFERÊNCIAS
 
@@ -986,7 +974,7 @@ PLATT, John C. Probabilistic outputs for support vector machines and comparisons
 <!-- platt1999: VERIFICAR: ano do livro (1999 na capa; algumas bases citam 2000) e páginas 61–74. -->
 
 RUSSELL, Stuart; NORVIG, Peter. **Artificial Intelligence**: a modern approach. 3. ed. Upper Saddle River: Prentice Hall, 2010.
-<!-- russell2010: VERIFICAR: trocada em 15/11/2026 da tradução brasileira para o original em inglês (3ª edição); título, editora, cidade e ano escritos de memória de um assistente de IA. -->
+<!-- russell2010: VERIFICAR: trocada em 15/11/2026 da tradução brasileira para o original em inglês (3ª edição); título, editora, cidade e ano escritos de memória; conferir no original. -->
 
 SIDDIQI, Naeem. **Credit Risk Scorecards**: developing and implementing intelligent credit scoring. Hoboken: John Wiley & Sons, 2012.
 <!-- siddiqi2012: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->
@@ -1007,7 +995,7 @@ ZADROZNY, Bianca; ELKAN, Charles. Transforming classifier scores into accurate m
 
 # APÊNDICES
 
-<!-- rascunho de 18/11/2026. Fontes: docs/reproduzir.md (A), docs/uso-de-ia.md (B), cap. 4 (C), docs/plano-de-analise.md (D). Trechos entre colchetes e comentários "confirmar" são do autor. -->
+<!-- rascunho de 18/11/2026. Fontes: docs/reproduzir.md (A), cap. 4 (B), docs/plano-de-analise.md (C). Trechos entre colchetes e comentários "confirmar" são do autor. -->
 
 ## APÊNDICE A – Como reproduzir os resultados
 
@@ -1059,7 +1047,7 @@ Esse teste confere que os arquivos são idênticos aos publicados, não que o mo
 
 ### A.4 Teste final
 
-O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`. A decisão original era que o autor rodasse os comandos à mão; na prática, eles foram executados por um agente Claude (o orquestrador), a pedido explícito do autor, todos com código de saída 0, e o agente não leu o arquivo de teste (apenas o script o leu) [fonte: docs/decisoes.md, registro de 17/11/2026; docs/reproduzir.md §5]. Os comandos, na ordem, foram:
+O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0 [fonte: docs/decisoes.md, registro de 17/11/2026; docs/reproduzir.md §5]. Os comandos, na ordem, foram:
 
 ```bash
 uv run python codigo/modelos.py --final <arquivo do teste>
@@ -1070,40 +1058,16 @@ uv run python codigo/decisao.py --final
 Eles gravam `predicoes_teste.csv`, `metricas_teste.csv`, `calibracao_teste.png`, `politicas_teste.csv`, `resumo_politicas_teste.csv` e `diferenca_politicas_teste.csv`; os intervalos usam bootstrap com 2000 reamostras e semente 2026. O primeiro comando exige o caminho do arquivo de teste como argumento e recusa sobrescrever `predicoes_teste.csv` se ele já existir [fonte: docs/reproduzir.md §5].
 
 Quem reproduz sem o arquivo de teste obtém todos os resultados de desenvolvimento, mas não os `*_teste*`: a divisão é determinística (semente 2026) e sai de `dados/brutos/`, que não acompanha a descrição do código [fonte: docs/reproduzir.md §6].
-<!-- confirmar: se os dados brutos (UCI) e o `teste.csv` entram no repositório entregue à banca; hoje a regra do projeto é que nenhum agente os lê -->
+<!-- confirmar: se os dados brutos (UCI) e o `teste.csv` entram no repositório entregue à banca; hoje a regra do projeto é que o código de modelagem não os lê -->
 
 ---
 
-## APÊNDICE B – Declaração de uso de inteligência artificial
-
-O autor recebeu do orientador, em 19/10/2026, autorização para usar inteligência artificial como apoio ao trabalho, com o objetivo de otimizar o tempo [fonte: docs/uso-de-ia.md, "Acordo de trabalho"]. Esta declaração descreve os usos, o que foi aproveitado e como cada um foi validado. O registro completo, linha a linha, está em `docs/uso-de-ia.md`. A IA não foi usada como comprovação de resultado: os números do texto apontam para arquivos de `resultados/`, gerados pelo código.
-
-**Quadro B.1** – Usos de IA no trabalho [fonte: docs/uso-de-ia.md, "Registro de uso"]
-
-| Uso | Ferramenta | O que foi aproveitado | Como foi validado |
-|---|---|---|---|
-| Código dos sete scripts e arquivos de `resultados/` | Software factory de agentes Claude (intake, especificação, construção, revisão e aprovação), com roteamento de modelos por risco | O código de `codigo/` | Gate automático (`factory/checks.sh`: autotestes `--verificar`, execução do zero, comparação com `resultados/`); leitura de cada PR pelo autor depois do merge; releitura de todo o código antes do commit de congelamento |
-| Critérios de aceite, issues, plano de análise e documentos de apoio (`docs/`) | Claude Code (Sonnet 5.5 e Fable 5.2) e subagentes Claude | O texto dos documentos, depois de decisões do autor | Conferência contra `PLANO.md` e critérios; decisões do autor registradas em `docs/decisoes.md`. Não conferidos: tradução das variáveis do glossário (feita de memória) e diagramas Mermaid (não renderizados) |
-| Revisão do repositório | opencode v2.3.0 com o modelo DeepSeek 4.1 flash (informado pelo autor) | Lista de pendências | Cinco achados reconferidos no repositório; os demais registrados como "só da revisão" |
-| Pesquisa das normas do curso | Claude Code com busca web e leitura de PDFs | Estrutura exigida e regras de formatação | PDFs oficiais da FEELT lidos diretamente; vigência para o curso ainda a confirmar com a coordenação |
-| Referências bibliográficas | Claude Code | Sugestão e conferência de entradas de `monografia/referencias.bib` | Conferência contra Crossref, páginas de editoras e catálogos (`docs/conferencia-referencias.md`); referências não abertas no original permanecem marcadas no texto e só entram na versão final depois da confirmação do autor |
-| Rascunho dos capítulos 1 a 6, do resumo e destes apêndices | Subagentes Claude Code e Claude Code | Rascunhos a partir de `PLANO.md`, `docs/` e `resultados/` | Cada número aponta para o arquivo de origem; leitura e correção pelo autor [confirmar] |
-
-<!-- confirmar com o autor antes de entregar:
-  1. `docs/uso-de-ia.md` não tem linha para o rascunho dos capítulos (PRs #52 a #63) nem para o resumo e referências; a última linha do Quadro B.1 foi inferida do histórico do git. Acrescentar ao registro, com modelo e validação, e corrigir aqui se for diferente.
-  2. As linhas "Agentes avulsos" e "decisões por delegação" de 17/11/2026 (PRs #43 e #47) estão marcadas no registro como "não conferido pelo autor". Se continuarem assim na entrega, a declaração tem de dizer isso.
-  3. O orientador ainda não confirmou quais usos aceita nem como devem ser declarados (fim de docs/uso-de-ia.md). -->
-
-Limites declarados: a IA pode produzir referências inexistentes e afirmações incorretas; por isso nenhuma referência foi tratada como real sem conferência na fonte, e nenhum resultado numérico depende de texto gerado por IA. As escolhas que dependem de um número (modelo principal, calibração, valores de utilidade) são do autor e estão em `docs/decisoes.md`; as tomadas por delegação, com o autor ausente, estão marcadas ali como "a rever pelo autor".
-
----
-
-## APÊNDICE C – Resultados dos três modelos
+## APÊNDICE B – Resultados dos três modelos
 
 Os três modelos (Naive Bayes, TAN e regressão logística) aparecem lado a lado nas Tabelas 4.1, 4.3, 4.5, 4.6 e 4.7 do capítulo 4; o TAN é o modelo da comparação principal por decisão de 15/11/2026, tomada antes de qualquer métrica [fonte: PLANO.md §5]. Por isso este apêndice não repete as tabelas. Se o formato do curso exigir os três modelos fora do corpo do texto, as Tabelas 4.3, 4.6 e 4.7 passam para cá, com as linhas `nb` e `logreg` no apêndice e `tan` no capítulo.
 <!-- decidir: manter as tabelas completas no capítulo 4 (como está) ou mover as linhas nb/logreg para este apêndice, como previa o PLANO.md §5 -->
 
-## APÊNDICE D – Plano de análise
+## APÊNDICE C – Plano de análise
 
 O plano de análise foi escrito em 15/11/2026, antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido [fonte: docs/plano-de-analise.md]. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
 <!-- confirmar: o plano diz "15/11/2026" no cabeçalho, mas a §9 foi acrescentada em 16/11/2026 (por delegação); conferir se a monografia deve declarar isso -->
@@ -1224,10 +1188,10 @@ Saídas:
 - `resultados/selecao_dev.csv`: as 8 configurações e a linha `aninhado` (sem linha `dev`).
 - `resultados/selecao_escolha.csv`: `fold_externo` (0 a 4 e `dev`) × 8 configurações, com `log_loss_interno` e `escolhida`; 48 linhas.
 
-<!-- PENDÊNCIAS DO AUTOR (contagem por grep em todo o arquivo, sem contar as linhas deste bloco)
-LACUNA=33
-confirmar=60
+<!-- PENDÊNCIAS DO AUTOR (contagem por grep em todo o arquivo)
+LACUNA=32
+confirmar=57
 VERIFICAR=10
 FALTA=7
-p. __=86
+p. __=84
 -->

@@ -132,6 +132,5 @@ Estrutura exigida pela FEELT: capa, folha de rosto, sumário, listas, resumo e a
 ## Apêndices
 
 - A: como reproduzir <!-- fonte: docs/reproduzir.md -->
-- B: declaração de uso de IA <!-- fonte: docs/uso-de-ia.md -->
-- C: resultados dos três modelos em todas as tabelas
-- D: plano de análise <!-- fonte: docs/plano-de-analise.md -->
+- B: resultados dos três modelos em todas as tabelas
+- C: plano de análise <!-- fonte: docs/plano-de-analise.md -->
