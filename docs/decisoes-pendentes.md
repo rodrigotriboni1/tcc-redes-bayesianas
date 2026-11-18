@@ -44,3 +44,4 @@ P26 a P28 foram decididas em 15/11/2026 (registro em [decisoes.md](decisoes.md))
 
 - Divergências mecânicas de texto: PR #15.
 - Erros nos meus documentos de docs: commits nos PRs #4, #5 e #7.
+- As duas pendências da §8 de `plano-de-analise.md` (nível de 95% e limite de 0,03 para PR-AUC): decididas pelo autor em 18/11/2026, registro em [decisoes.md](decisoes.md).

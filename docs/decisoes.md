@@ -94,6 +94,7 @@ Decididas em conversa com o autor; um avaliador independente (subagente) julgou 
 | 15/11/2026 | O mapa de referências ganha a coluna "Verificar" com o que falta conferir em cada entrada; o plano passa a dizer 15 entradas a conferir, não 9 (P28) | Cinco marcas `% VERIFICAR` do `.bib` não apareciam no mapa. A conferência no original continua sendo do autor | Autor |
 | 15/11/2026 | O log de uso de IA registra uma linha por tipo de uso (nove linhas), com o que foi aproveitado e o que **não** foi conferido (P29) | Transparência e reprodução, como pede `uso-de-ia.md`. Confirmar com o professor os usos aceitos e a forma de declarar | Autor |
 | 15/11/2026 | O `README.md` ganha índice da documentação, comandos, mapa das pastas e um parágrafo dizendo que `factory/` e `.claude/` são ferramenta de processo, não parte do experimento (P30) | Quem abre o repositório, incluindo a banca, via sete linhas e oito agentes sem explicação | Autor |
+| 18/11/2026 | Plano de análise §8: o intervalo de 95% (*bootstrap*) é o critério de leitura da diferença pareada de utilidade; o limite de 0,03 vale só para ROC-AUC, e PR-AUC fica só descrita, sem conclusão de ruído | Confirma o que o texto já aplica; PR-AUC fica só descrita para não criar regra nova depois de aberto o teste | Autor |
 
 ## 5. Processo
 
