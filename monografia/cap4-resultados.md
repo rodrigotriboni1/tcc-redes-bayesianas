@@ -2,7 +2,7 @@
 
 Este capítulo relata os resultados obtidos até o momento. Todos os números a seguir constituem um *baseline* pré-estudo: foram gerados exclusivamente com o conjunto de desenvolvimento (800 casos), por validação cruzada estratificada em 5 partições, conforme descrito no capítulo 3 (seções 3.2 e 3.3). O conjunto de teste final ainda não foi aberto; os resultados correspondentes serão acrescentados pelo autor após o commit de congelamento. Os métodos não são repetidos aqui: cada seção remete à seção correspondente do capítulo 3. A leitura de cada resultado segue as regras pré-registradas na §4 do plano de análise (`docs/plano-de-analise.md`), e a interpretação fica para o capítulo 5.
 
-Os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato [fonte: arquivo, coluna/linha]. Valores arredondados a três casas, salvo indicação.
+Nas tabelas de métricas (4.1 e 4.7), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato [fonte: arquivo, coluna/linha]. Valores arredondados a três casas, salvo indicação.
 
 ## 4.1 Desempenho preditivo
 
@@ -20,7 +20,7 @@ As métricas (seção 3.6) dos três modelos e da referência de taxa base estã
 Aplicando as regras da §4 do plano de análise:
 
 - **ROC-AUC, nb contra logreg.** A diferença é 0,001 (0,7890 contra 0,7880) [fonte: resultados/metricas_dev.csv, roc_auc_media, linhas nb e logreg], menor que 0,03. Pela regra pré-registrada, é tratada como ruído e nenhum dos dois modelos se distingue do outro por essa métrica.
-- **ROC-AUC, nb e logreg contra tan.** As diferenças são 0,047 (nb − tan) e 0,046 (logreg − tan) [fonte: resultados/metricas_dev.csv, roc_auc_media, linhas nb, tan e logreg]. Ambas passam de 0,03, de modo que a regra de ruído não se aplica a esses pares. O plano não prevê outra regra para esse caso; registra-se ao lado que o desvio do tan entre partições é 0,049 [fonte: resultados/metricas_dev.csv, roc_auc_desvio, linha tan], da mesma ordem das diferenças. O TAN ficou abaixo do NB em todas as cinco métricas no desenvolvimento, e esse resultado é relatado como saiu.
+- **ROC-AUC, nb e logreg contra tan.** As diferenças são 0,047 (nb − tan) e 0,046 (logreg − tan) [fonte: resultados/metricas_dev.csv, roc_auc_media, linhas nb, tan e logreg]. Ambas passam de 0,03, de modo que a regra de ruído não se aplica a esses pares. O plano não prevê outra regra para esse caso; registra-se ao lado que o desvio do tan entre partições é 0,049 [fonte: resultados/metricas_dev.csv, roc_auc_desvio, linha tan]. O TAN ficou abaixo do NB em todas as cinco métricas no desenvolvimento, e esse resultado é relatado como saiu.
 - **Brier contra taxa base.** O Brier médio dos três modelos (nb 0,171; tan 0,200; logreg 0,165) é menor que o da taxa base, 0,210 [fonte: resultados/metricas_dev.csv, brier_media]. A condição "igual ou maior que 0,21" não ocorre; a frase "não melhor que prever a taxa base" não é acionada para nenhum modelo.
 - **Calibração.** O erro de calibração esperado do tan, 0,152, é o maior dos três (nb 0,093; logreg 0,095) [fonte: resultados/metricas_dev.csv, ece_media]. Conforme a regra pré-registrada e a decisão P1, a calibração é apenas medida e relatada; não há correção. Os diagramas de confiabilidade dos três modelos estão em `resultados/calibracao_dev.png`.
 
@@ -53,7 +53,7 @@ O efeito de esconder uma variável por vez (seção 3.5.1) está em `resultados/
 |---|---|---|---|---|---|
 | nb | laufkont | 0,741 | 0,183 | −0,048 | 0,012 |
 | nb | moral | 0,777 | 0,175 | −0,012 | 0,004 |
-| nb | beruf | 0,794 | 0,168 | 0,005 | −0,003 |
+| nb | sparkont | 0,783 | 0,174 | −0,006 | 0,003 |
 | tan | laufkont | 0,692 | 0,216 | −0,050 | 0,016 |
 | tan | verw | 0,768 | 0,183 | 0,025 | −0,018 |
 | tan | laufzeit | 0,733 | 0,205 | −0,010 | 0,005 |
@@ -61,7 +61,7 @@ O efeito de esconder uma variável por vez (seção 3.5.1) está em `resultados/
 | logreg | moral | 0,769 | 0,174 | −0,019 | 0,009 |
 | logreg | hoehe | 0,773 | 0,168 | −0,015 | 0,003 |
 
-Nos três modelos, a ocultação de `laufkont` (situação da conta corrente) é a que mais reduz a ROC-AUC: −0,048 (nb), −0,050 (tan) e −0,046 (logreg) [fonte: resultados/evidencia_incompleta.csv, delta_roc_auc, linhas laufkont]. No tan, esconder `verw` eleva a ROC-AUC em 0,025 e reduz o Brier em 0,018 [fonte: resultados/evidencia_incompleta.csv, delta_roc_auc e delta_brier, linha tan/verw]; o resultado é relatado como saiu, sem interpretação causal e sem que se proponha retirar a variável do modelo. A maior parte das demais variações tem valor absoluto inferior a 0,01 [fonte: resultados/evidencia_incompleta.csv, delta_roc_auc]. Nenhuma linha tem `delta_roc_auc` e `delta_brier` simultaneamente iguais a zero, de modo que a regra "esconder uma variável não muda nenhuma predição" da §4 não é acionada; a menor variação observada no nb é a de `hoehe` (delta_roc_auc 0,0001) [fonte: resultados/evidencia_incompleta.csv, linha nb/hoehe]. Essas diferenças não têm intervalo e são, em vários casos, menores que os desvios entre partições da Tabela 4.1.
+Nos três modelos, a ocultação de `laufkont` (situação da conta corrente) é a que mais reduz a ROC-AUC: −0,048 (nb), −0,050 (tan) e −0,046 (logreg) [fonte: resultados/evidencia_incompleta.csv, delta_roc_auc, linhas laufkont]. No tan, esconder `verw` eleva a ROC-AUC em 0,025 e reduz o Brier em 0,018 [fonte: resultados/evidencia_incompleta.csv, delta_roc_auc e delta_brier, linha tan/verw]; o resultado é relatado como saiu, sem interpretação causal e sem que se proponha retirar a variável do modelo. A maior parte das demais variações tem valor absoluto inferior a 0,01 [fonte: resultados/evidencia_incompleta.csv, delta_roc_auc]. Nenhuma linha tem `delta_roc_auc` e `delta_brier` simultaneamente iguais a zero, de modo que a regra "esconder uma variável não muda nenhuma predição" da §4 não é acionada; a menor variação observada no nb é a de `hoehe` (delta_roc_auc 0,0001) [fonte: resultados/evidencia_incompleta.csv, linha nb/hoehe]. Essas diferenças não têm intervalo.
 
 ## 4.3 Política de decisão
 
@@ -93,12 +93,12 @@ A Tabela 4.5 mostra, para alguns pares de perda e custo da análise manual, os l
 |---|---|---|---|
 | 200 | 50 | 0,25 | 0,5 |
 | 200 | 70 | 0,333 | 0,333 |
-| 400 | 0 | 0,0 | 1,0 |
+| 400 | 0 | 0,000 | 1,000 |
 | 400 | 50 | 0,125 | 0,5 |
 | 400 | 100 | 0,2 | 0,2 |
-| 800 | 50 | 0,0625 | 0,5 |
+| 800 | 50 | 0,063 | 0,5 |
 
-Com custo zero, a faixa de análise manual cobre todo o intervalo de 0 a 1 (linha 400, 0). Quando os dois limiares coincidem, a faixa desaparece e a política se reduz a duas ações; isso ocorre, por exemplo, para perda 200 com custo a partir de 70 e para perda 400 com custo 100 [fonte: resultados/sensibilidade.csv, linhas 200/70 e 400/100]. A Figura 4.2 mostra a tabela inteira. Não há regra da §4 para esta análise, e este texto não escolhe valor de custo nem de perda.
+Com custo zero, a faixa de análise manual cobre todo o intervalo de 0 a 1 (linha 400, 0). Quando os dois limiares coincidem, a faixa desaparece e a política se reduz a duas ações; isso ocorre, por exemplo, para perda 200 com custo a partir de 70 e para perda 400 com custo a partir de 80 [fonte: resultados/sensibilidade.csv, linhas 200/70 e 400/80 a 400/100]. A Figura 4.2 mostra a tabela inteira. Não há regra da §4 para esta análise, e este texto não escolhe valor de custo nem de perda.
 
 **Figura 4.2** – Limiares da política em função da perda e do custo da análise manual (`resultados/sensibilidade.png`).
 
@@ -157,7 +157,7 @@ Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.7 t
 | 4 | nb_ess50 | 0,508 | 0,515 | 0,738 |
 | dev | nb_ess50 | 0,512 | 0,523 | 0,704 |
 
-Como a mesma configuração foi escolhida em todas as partições externas, a linha `aninhado` reproduz os valores de `nb_ess50` [fonte: resultados/selecao_dev.csv, linhas nb_ess50 e aninhado]. A diferença de ROC-AUC entre `aninhado` (0,788) e o baseline `nb_ess5` (0,789) é 0,001 [fonte: resultados/selecao_dev.csv, roc_auc_media], menor que 0,03 e, portanto, tratada como ruído pela regra da §4. A diferença de log loss entre as duas é 0,011 (0,512 contra 0,523) [fonte: resultados/selecao_dev.csv, log_loss_media], menor que o desvio de cada uma entre partições (0,033 e 0,035). Entre as configurações do TAN, o log loss médio diminui à medida que o tamanho equivalente aumenta, de 0,825 (`tan_ess1`) a 0,583 (`tan_ess50`) [fonte: resultados/selecao_dev.csv, log_loss_media]; em nenhuma partição uma configuração do TAN foi escolhida. Esses resultados descrevem o que a regra escolheu e quanto a escolha difere do baseline; não indicam qual modelo adotar.
+Como a mesma configuração foi escolhida em todas as partições externas, a linha `aninhado` reproduz os valores de `nb_ess50` [fonte: resultados/selecao_dev.csv, linhas nb_ess50 e aninhado]. A diferença de ROC-AUC entre `aninhado` (0,788) e o baseline `nb_ess5` (0,789) é 0,001 [fonte: resultados/selecao_dev.csv, roc_auc_media], menor que 0,03 e, portanto, tratada como ruído pela regra da §4. A diferença de log loss entre as duas é 0,011 (0,512 contra 0,523) [fonte: resultados/selecao_dev.csv, log_loss_media]. Entre as configurações do TAN, o log loss médio diminui à medida que o tamanho equivalente aumenta, de 0,825 (`tan_ess1`) a 0,583 (`tan_ess50`) [fonte: resultados/selecao_dev.csv, log_loss_media]; em nenhuma partição uma configuração do TAN foi escolhida. Esses resultados descrevem o que a regra escolheu e quanto a escolha difere do baseline; não indicam qual modelo adotar.
 
 <!-- PENDENTE: resultado do teste final, só o autor roda (passo 10) -->
 As predições `p_sel` no conjunto de teste não foram calculadas: o teste ainda não foi aberto.
