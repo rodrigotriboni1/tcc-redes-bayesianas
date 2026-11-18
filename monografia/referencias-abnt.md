@@ -1,4 +1,4 @@
-# Referências
+# REFERÊNCIAS
 
 <!-- Formato ABNT NBR 6023 (autor-data). Gerado de referencias.bib; só campos do .bib. -->
 <!-- normas ABNT não citadas retiradas da lista: abnt6023, abnt10520, abnt14724 -->
