@@ -175,10 +175,10 @@ Tudo acima vale exceto o estudo da §9, que é secundário, pré-registrado e ro
 
 Qualquer mudança neste plano depois de existirem resultados vira uma linha em [decisoes.md](decisoes.md), com data e motivo, **antes** de rodar de novo. A mudança também é declarada no texto como desvio do plano de análise.
 
-### 8. A confirmar pelo autor
+### 8. Decidido pelo autor em 18/11/2026
 
-- Se o intervalo de 95% é o critério de leitura da diferença (seção 4) ou se prefere outro nível. Hoje está escrito 95%, o mesmo do bootstrap das métricas.
-- Se o limite de 0,03 de AUC, que vem do plano, vale também para PR-AUC.
+- O intervalo de 95% é o critério de leitura da diferença (seção 4), o mesmo nível do bootstrap das métricas. Decidido em 18/11/2026: confirma o que já estava escrito.
+- O limite de 0,03 de AUC, que vem do plano, vale só para ROC-AUC. PR-AUC é apenas descrita, sem conclusão de ruído. Decidido em 18/11/2026; registro em `docs/decisoes.md`.
 
 ### 9. Estudo de seleção (secundário, pré-registrado)
 

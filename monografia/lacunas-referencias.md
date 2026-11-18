@@ -296,7 +296,7 @@ Não dependem de abrir uma fonte bibliográfica.
 | C1:67 (1.5) | Regressão logística da proposta calibrada; no trabalho não é | LACUNA: motivo não registrado para a logística (D4 e P1 tratam da calibração em geral) |
 | C1:69 (1.5) | Diagramas de influência, Streamlit e explicação da evidência fora do trabalho | LACUNA: motivo não registrado; o autor decide se a revisão de diagramas entra no Cap. 2 |
 | C3:44 (3.1) | Contagem das categorias pequenas na base completa (n=1000) | LACUNA: conferir no `sgc.csv` (`docs/decisoes.md` §4, P25) |
-| C3:123 (3.6) | Limite de 0,03 para PR-AUC e nível de 95% | LACUNA: não confirmado (`docs/plano-de-analise.md` §8) |
+| C3:123 (3.6) | Limite de 0,03 para PR-AUC e nível de 95% | Resolvida em 18/11/2026: 0,03 só para ROC-AUC, PR-AUC só descrita, 95% confirmado (`docs/decisoes.md`) |
 | C3:147 (3.7) | Aprovação da matriz de custos (c = 40) pelo orientador | LACUNA: em aberto (`PLANO.md` §11, item 2) |
 | C3:185 (3.11) | Hash do commit de congelamento | LACUNA: anotar no passo 10 (`PLANO.md` §8) |
 

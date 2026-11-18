@@ -55,7 +55,7 @@ Em todas as partições, `verw` (finalidade do crédito) é, fora `kredit`, a va
 Aplicando as regras da §4 do plano de análise ao conjunto de teste:
 
 - **ROC-AUC.** As diferenças entre os três modelos primários são 0,001 (logreg − nb: 0,7287 contra 0,7277), 0,021 (nb − tan: 0,7277 contra 0,7063) e 0,022 (logreg − tan: 0,7287 contra 0,7063) [fonte: resultados/metricas_teste.csv, roc_auc, linhas nb, tan e logreg]. As três são menores que 0,03 e, pela regra pré-registrada, tratadas como ruído: nenhum modelo se distingue dos outros por essa métrica no teste.
-- **PR-AUC.** Os valores são 0,490 (nb), 0,480 (tan) e 0,500 (logreg), contra 0,300 da taxa base [fonte: resultados/metricas_teste.csv, pr_auc]. A §8 do plano deixa em aberto se o limite de 0,03 vale para PR-AUC; por isso, nenhuma regra é aplicada a essas diferenças e elas são apenas descritas.
+- **PR-AUC.** Os valores são 0,490 (nb), 0,480 (tan) e 0,500 (logreg), contra 0,300 da taxa base [fonte: resultados/metricas_teste.csv, pr_auc]. O limite de 0,03 vale só para ROC-AUC; por decisão do autor registrada em docs/decisoes.md (plano de análise, §8), nenhuma regra é aplicada a essas diferenças e elas são apenas descritas, sem conclusão de ruído.
 - **Brier contra taxa base.** O Brier do tan no teste é 0,215, maior que o da taxa base, 0,210 [fonte: resultados/metricas_teste.csv, brier, linhas tan e taxa_base]. Pela regra pré-registrada, o tan é **não melhor que prever a taxa base** no conjunto de teste. O nb (0,199) e o logreg (0,191) ficam abaixo de 0,21, e a regra não é acionada para eles [fonte: resultados/metricas_teste.csv, brier].
 - **Calibração.** O ECE é 0,115 (nb), 0,157 (tan) e 0,078 (logreg) [fonte: resultados/metricas_teste.csv, ece].
 

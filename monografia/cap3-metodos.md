@@ -122,7 +122,7 @@ No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem interval
 
 Regras de leitura foram fixadas antes de qualquer resultado. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor; Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base" [fonte: docs/plano-de-analise.md §4; PLANO.md §6].
 
-<!-- LACUNA: o autor ainda não confirmou se o limite de 0,03 vale também para PR-AUC, nem se 95% é o nível de leitura da diferença (docs/plano-de-analise.md §8). -->
+O limite de 0,03 vale só para ROC-AUC: a PR-AUC é descrita sem conclusão de ruído, e a diferença pareada de utilidade é lida pelo intervalo de 95%, por decisão do autor registrada em docs/decisoes.md [fonte: docs/plano-de-analise.md §8].
 
 ## 3.7 Camada de decisão por utilidade esperada
 
