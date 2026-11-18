@@ -70,8 +70,15 @@ sys.exit(1 if ruins else 0)
 PY
 fi
 
-# 7. Nenhum resultado do teste final no repositório.
-if compgen -G "resultados/*_teste*" >/dev/null; then falha "há arquivo *_teste* em resultados/"; fi
+# 7. Resultados do teste final: ou nenhum, ou exatamente os 6 esperados.
+#    Desde 18/11/2026 (teste final rodado pelo autor) eles podem ser commitados.
+if compgen -G "resultados/*_teste*" >/dev/null; then
+  esperados="calibracao_teste.png diferenca_politicas_teste.csv metricas_teste.csv politicas_teste.csv predicoes_teste.csv resumo_politicas_teste.csv"
+  for e in $esperados; do [ -f "resultados/$e" ] || falha "falta resultados/$e (resultados do teste final incompletos)"; done
+  for f in resultados/*_teste*; do
+    case " $esperados " in *" $(basename "$f") "*) ;; *) falha "sobra $f (não é um dos 6 resultados do teste final)" ;; esac
+  done
+fi
 
 [ -f codigo/modelos.py ] || { passo "nenhum script do experimento ainda; fim"; exit 0; }
 
@@ -131,6 +138,8 @@ for f in "$S"/resultados/*; do
 done
 for f in resultados/*; do
   nome="$(basename "$f")"
+  # Só o autor gera os *_teste* (com --final, à mão); a factory não os reproduz.
+  case "$nome" in *_teste*) continue ;; esac
   [ -f "$S/resultados/$nome" ] || falha "resultados/$nome está no ramo mas nenhum script o gera"
 done
 
