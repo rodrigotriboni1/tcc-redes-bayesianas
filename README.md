@@ -98,6 +98,7 @@ Já foi executado uma única vez, em 17/11/2026, depois do congelamento do códi
 | `dados/` | base South German Credit e a divisão em dev e teste |
 | `resultados/` | tabelas e figuras geradas, commitadas junto com o código |
 | `monografia/` | texto da monografia, referências e slides da defesa |
+| `frontend/` | painel web só de leitura para a defesa; mostra os resultados já gerados, sem alterar o experimento (`cd frontend && npm install && npm run build && npm run preview`) |
 | `docs/` | documentação do projeto |
 | `factory/`, `.claude/` | ferramentas de processo (revisão automática de PRs); não fazem parte do experimento |
 
