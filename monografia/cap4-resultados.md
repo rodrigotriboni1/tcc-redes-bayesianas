@@ -1,8 +1,8 @@
 # 4 RESULTADOS
 
-Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.2, 4.4, 4.5, 4.8, 4.10, 4.11) são resultados de desenvolvimento pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.3, 4.6, 4.7 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. A numeração das tabelas e figuras é sequencial. Cada seção remete à seção correspondente do Capítulo 3. A leitura de cada resultado segue as regras pré-registradas na §4 do plano de análise (`docs/plano-de-analise.md`), e a interpretação fica para o Capítulo 5.
+Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados de desenvolvimento pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. A numeração das tabelas e figuras é sequencial. Cada seção remete à seção correspondente do Capítulo 3. A leitura de cada resultado segue as regras pré-registradas na §4 do plano de análise (`docs/plano-de-analise.md`), e a interpretação fica para o Capítulo 5.
 
-Nas tabelas de métricas (4.1 e 4.10), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato. A Tabela 4.3 traz o valor no conjunto de teste com intervalo de 95% por *bootstrap*. Os valores são arredondados a três casas, salvo indicação.
+Nas tabelas de métricas (4.1 e 4.9), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato. A Tabela 4.2 traz o valor no conjunto de teste com intervalo de 95% por *bootstrap*. Os valores são arredondados a três casas, salvo indicação.
 
 ## 4.1 Desempenho preditivo
 
@@ -26,23 +26,13 @@ Aplicando as regras da §4 do plano de análise:
 
 **Figura 4.1** – Diagramas de confiabilidade no desenvolvimento (`resultados/calibracao_dev.png`)
 
-**Arestas do TAN.** O plano determina que as arestas aprendidas pelo TAN em cada partição sejam relatadas nesta seção. A Tabela 4.2 resume o arquivo de arestas; em cada partição há 39 arestas, 20 das quais saem da classe risco do crédito.
+**Arestas do TAN.** O plano determina que as arestas aprendidas pelo TAN em cada partição sejam relatadas nesta seção. Em todas as 5 partições há 39 arestas, 20 das quais saem da classe risco do crédito.
 
-**Tabela 4.2** – Arestas do TAN por partição
+Fora a classe, a variável da qual sai o maior número de arestas, em todas as partições, é finalidade do crédito (7 a 9 por partição; 1 ou 2 chegam a ela). Registra-se, como **hipótese não testada**, que o fato de finalidade do crédito ser pai de muitas variáveis poderia produzir tabelas de probabilidade condicional esparsas e excesso de confiança, o que seria coerente com o *log loss* e o erro de calibração maiores do tan. Nenhuma análise deste trabalho testou essa hipótese: a contagem de arestas e as métricas apenas coexistem, e a observação não autoriza alterar modelo, faixa ou parâmetro.
 
-| Partição | Arestas | origem = risco do crédito | origem = finalidade do crédito | destino = finalidade do crédito |
-|---|---|---|---|---|
-| 0 | 39 | 20 | 9 | 1 |
-| 1 | 39 | 20 | 8 | 1 |
-| 2 | 39 | 20 | 8 | 1 |
-| 3 | 39 | 20 | 7 | 2 |
-| 4 | 39 | 20 | 8 | 1 |
+**Conjunto de teste (n = 200; 60 ruins).** O teste final foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff. Os intervalos são de 95% por *bootstrap*. A Tabela 4.2 traz as métricas; a linha `sel` é a análise secundária da Seção 4.6.
 
-Em todas as partições, finalidade do crédito é, fora o risco do crédito, a variável da qual sai o maior número de arestas (7 a 9). Registra-se, como **hipótese não testada**, que o fato de finalidade do crédito ser pai de muitas variáveis poderia produzir tabelas de probabilidade condicional esparsas e excesso de confiança, o que seria coerente com o *log loss* e o erro de calibração maiores do tan. Nenhuma análise deste trabalho testou essa hipótese: a contagem de arestas e as métricas apenas coexistem, e a observação não autoriza alterar modelo, faixa ou parâmetro.
-
-**Conjunto de teste (n = 200; 60 ruins).** O teste final foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff. Os intervalos são de 95% por *bootstrap*. A Tabela 4.3 traz as métricas; a linha `sel` é a análise secundária da Seção 4.6.
-
-**Tabela 4.3** – Métricas por modelo no conjunto de teste (n = 200; 60 ruins), valor [intervalo de 95%]
+**Tabela 4.2** – Métricas por modelo no conjunto de teste (n = 200; 60 ruins), valor [intervalo de 95%]
 
 | Modelo | ROC-AUC [IC 95%] | PR-AUC [IC 95%] | Brier [IC 95%] | *log loss* | ECE |
 |---|---|---|---|---|---|
@@ -66,9 +56,9 @@ Conforme a decisão P1, é apenas relatado; não há correção. O *log loss* do
 
 ## 4.2 Evidência incompleta
 
-O efeito de esconder uma variável por vez (Seção 3.5.1) está em `resultados/evidencia_incompleta.csv`, com 60 linhas (3 modelos × 20 variáveis). A Tabela 4.4 traz, para cada modelo, as variáveis cuja ocultação produziu as maiores variações absolutas de ROC-AUC. A ressalva da decisão P9 acompanha toda a seção: as redes bayesianas marginalizam a variável ausente, enquanto a regressão logística a imputa; as duas operações não são equivalentes.
+O efeito de esconder uma variável por vez (Seção 3.5.1) está em `resultados/evidencia_incompleta.csv`, com 60 linhas (3 modelos × 20 variáveis). A Tabela 4.3 traz, para cada modelo, as variáveis cuja ocultação produziu as maiores variações absolutas de ROC-AUC. A ressalva da decisão P9 acompanha toda a seção: as redes bayesianas marginalizam a variável ausente, enquanto a regressão logística a imputa; as duas operações não são equivalentes.
 
-**Tabela 4.4** – Variação de métricas ao esconder uma variável, seleção de linhas
+**Tabela 4.3** – Variação de métricas ao esconder uma variável, seleção de linhas
 
 | Modelo | Variável oculta | ROC-AUC | Brier | Δ ROC-AUC | Δ Brier |
 |---|---|---|---|---|---|
@@ -86,9 +76,9 @@ Nos três modelos, a ocultação de situação da conta corrente é a que mais r
 
 ## 4.3 Política de decisão
 
-A Tabela 4.5 compara a política de três ações por utilidade esperada (`ue`) contra o corte 0,5 de duas ações (`limiar`) (Seções 3.7 e 3.7.1, decisão P8), com os valores de utilidade de `config/utilidade.json`. As contagens referem-se aos 800 casos do desenvolvimento.
+A Tabela 4.4 compara a política de três ações por utilidade esperada (`ue`) contra o corte 0,5 de duas ações (`limiar`) (Seções 3.7 e 3.7.1, decisão P8), com os valores de utilidade de `config/utilidade.json`. As contagens referem-se aos 800 casos do desenvolvimento.
 
-**Tabela 4.5** – Política de três ações por utilidade esperada contra corte 0,5 de duas ações, desenvolvimento
+**Tabela 4.4** – Política de três ações por utilidade esperada contra corte 0,5 de duas ações, desenvolvimento
 
 | Modelo | Regra | Utilidade média | aprovar (n) | rejeitar (n) | análise manual (n) | mudam de ação (n) |
 |---|---|---|---|---|---|---|
@@ -101,9 +91,9 @@ A Tabela 4.5 compara a política de três ações por utilidade esperada (`ue`) 
 
 A utilidade média da política de três ações (`ue`) é maior que a do corte 0,5 de duas ações (`limiar`) nos três modelos, com diferenças de 28,125 (nb), 25,4 (tan) e 27,25 (logreg). Trata-se de diferença descritiva no desenvolvimento, sem intervalo: pelo plano, a comparação pareada com intervalo só é feita no teste final, e a diferença mistura modelo, representação e conjunto de ações, razão pela qual não é chamada de efeito da regra. Na política de três ações (`ue`), a análise manual recebe 355 (nb), 262 (tan) e 415 (logreg) dos 800 casos; o corte 0,5 de duas ações (`limiar`) tem zero casos nessa ação por definição, por ter só duas ações. As três ações aparecem na política de três ações (`ue`) em todos os modelos, de modo que a regra "alguma ação não aparece numa política" não se aplica. O número de casos cuja ação muda entre as regras coincide, em cada modelo, com o número de casos em análise manual da política de três ações (`ue`). A ação de cada caso está em `resultados/politicas_dev.csv`.
 
-**Conjunto de teste (n = 200; 60 ruins).** A Tabela 4.6 traz as duas regras no teste, e a Tabela 4.7, a diferença pareada de utilidade média (`ue` − `limiar`) com intervalo de 95% por *bootstrap* (Seção 3.7.1). Pela §3 do plano (decisão P5), a comparação principal é a do TAN; NB e regressão logística aparecem nas tabelas, sem destaque na leitura principal, e `sel` é análise secundária (Seção 4.6).
+**Conjunto de teste (n = 200; 60 ruins).** A Tabela 4.5 traz as duas regras no teste, e a Tabela 4.6, a diferença pareada de utilidade média (`ue` − `limiar`) com intervalo de 95% por *bootstrap* (Seção 3.7.1). Pela §3 do plano (decisão P5), a comparação principal é a do TAN; NB e regressão logística aparecem nas tabelas, sem destaque na leitura principal, e `sel` é análise secundária (Seção 4.6).
 
-**Tabela 4.6** – Política de três ações contra corte 0,5 de duas ações, conjunto de teste (n = 200; 60 ruins)
+**Tabela 4.5** – Política de três ações contra corte 0,5 de duas ações, conjunto de teste (n = 200; 60 ruins)
 
 | Modelo | Regra | Utilidade média [IC 95%] | aprovar (n) | rejeitar (n) | análise manual (n) | mudam de ação (n) |
 |---|---|---|---|---|---|---|
@@ -116,9 +106,9 @@ A utilidade média da política de três ações (`ue`) é maior que a do corte 
 | sel (secundária) | três ações (ue) | 27,9 [13,4; 40,8] | 69 | 38 | 93 | 93 |
 | sel (secundária) | corte 0,5 | −6,5 [−31,5; 17,5] | 152 | 48 | 0 | 93 |
 
-O intervalo de cada regra isolada não é o critério de leitura; o critério é a diferença pareada (Tabela 4.7).
+O intervalo de cada regra isolada não é o critério de leitura; o critério é a diferença pareada (Tabela 4.6).
 
-**Tabela 4.7** – Diferença pareada de utilidade média (`ue` − `limiar`), conjunto de teste (n = 200; 60 ruins)
+**Tabela 4.6** – Diferença pareada de utilidade média (`ue` − `limiar`), conjunto de teste (n = 200; 60 ruins)
 
 | Modelo | Diferença de utilidade média | IC 95% inferior | IC 95% superior |
 |---|---|---|---|
@@ -131,9 +121,9 @@ Aplicando a §4 do plano: na comparação principal (TAN), a diferença é 22,5,
 
 ## 4.4 Sensibilidade
 
-A Tabela 4.8 mostra, para alguns pares de perda e custo da análise manual, os limiares de risco que delimitam a faixa de análise manual (Seção 3.8). O arquivo completo tem 84 linhas: perda em {200, 400, 600, 800} e custo de 0 a 100, de 5 em 5. Esses limiares decorrem só da matriz de utilidade e não dependem de nenhum modelo.
+A Tabela 4.7 mostra, para alguns pares de perda e custo da análise manual, os limiares de risco que delimitam a faixa de análise manual (Seção 3.8). O arquivo completo tem 84 linhas: perda em {200, 400, 600, 800} e custo de 0 a 100, de 5 em 5. Esses limiares decorrem só da matriz de utilidade e não dependem de nenhum modelo.
 
-**Tabela 4.8** – Limiares da política por perda e custo da análise manual, seleção de linhas
+**Tabela 4.7** – Limiares da política por perda e custo da análise manual, seleção de linhas
 
 | Perda | Custo da análise | Limiar inferior | Limiar superior |
 |---|---|---|---|
@@ -150,9 +140,9 @@ Com custo zero, a faixa de análise manual cobre todo o intervalo de 0 a 1 (linh
 
 ## 4.5 Demonstração
 
-O *script* `codigo/demo.py` (Seção 3.9) lê apenas o conjunto de desenvolvimento, `resultados/predicoes_dev.csv` e `config/utilidade.json`, e não grava arquivos. Para um caso, ele treina os três modelos nas 4 partições que não contêm o caso e imprime as variáveis do caso, a probabilidade de ruim de cada modelo, a utilidade esperada de cada ação para o modelo indicado (padrão: tan), as fronteiras de risco da matriz e a ação recomendada. O comando `uv run python codigo/demo.py sgc-0000` produziu, para o primeiro caso de `predicoes_dev.csv` (partição 4), a saída resumida na Tabela 4.9.
+O *script* `codigo/demo.py` (Seção 3.9) lê apenas o conjunto de desenvolvimento, `resultados/predicoes_dev.csv` e `config/utilidade.json`, e não grava arquivos. Para um caso, ele treina os três modelos nas 4 partições que não contêm o caso e imprime as variáveis do caso, a probabilidade de ruim de cada modelo, a utilidade esperada de cada ação para o modelo indicado (padrão: tan), as fronteiras de risco da matriz e a ação recomendada. O comando `uv run python codigo/demo.py sgc-0000` produziu, para o primeiro caso de `predicoes_dev.csv` (partição 4), a saída resumida na Tabela 4.8.
 
-**Tabela 4.9** – Saída de `codigo/demo.py` para o caso sgc-0000
+**Tabela 4.8** – Saída de `codigo/demo.py` para o caso sgc-0000
 
 | Item | Valor |
 |---|---|
@@ -174,9 +164,9 @@ Esta seção relata o estudo secundário e pré-registrado da §9 do plano de an
 
 **Declaração de viés.** Vale a declaração de viés da Seção 3.10.
 
-Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.10 traz as 8 linhas e a linha `aninhado`, que avalia, em cada partição externa, a configuração escolhida pela regra nas partições internas.
+Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.9 traz as 8 linhas e a linha `aninhado`, que avalia, em cada partição externa, a configuração escolhida pela regra nas partições internas.
 
-**Tabela 4.10** – Métricas das 8 configurações e da seleção aninhada, média (desvio) entre 5 partições externas
+**Tabela 4.9** – Métricas das 8 configurações e da seleção aninhada, média (desvio) entre 5 partições externas
 
 | Modelo | ROC-AUC (desvio) | PR-AUC (desvio) | Brier (desvio) | *log loss* (desvio) | ECE (desvio) |
 |---|---|---|---|---|---|
@@ -190,9 +180,9 @@ Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.10 
 | tan_ess50 | 0,763 (0,036) | 0,569 (0,081) | 0,186 (0,023) | 0,583 (0,066) | 0,115 (0,040) |
 | aninhado | 0,788 (0,028) | 0,613 (0,049) | 0,169 (0,012) | 0,512 (0,033) | 0,093 (0,012) |
 
-**Escolha por partição.** Pela regra pré-registrada (menor *log loss* médio nas partições internas), `nb_ess50` foi escolhida nas cinco partições externas e também no desenvolvimento inteiro. A Tabela 4.11 traz o *log loss* interno da configuração escolhida e das duas configurações de referência.
+**Escolha por partição.** Pela regra pré-registrada (menor *log loss* médio nas partições internas), `nb_ess50` foi escolhida nas cinco partições externas e também no desenvolvimento inteiro. A Tabela 4.10 traz o *log loss* interno da configuração escolhida e das duas configurações de referência.
 
-**Tabela 4.11** – *Log loss* interno por partição externa, seleção de colunas
+**Tabela 4.10** – *Log loss* interno por partição externa, seleção de colunas
 
 | Partição externa | Escolhida | *log loss* interno (escolhida) | nb_ess5 | tan_ess5 |
 |---|---|---|---|---|
@@ -205,4 +195,4 @@ Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.10 
 
 Como a mesma configuração foi escolhida em todas as partições externas, a linha `aninhado` reproduz os valores de `nb_ess50`. A diferença de ROC-AUC entre `aninhado` (0,788) e a configuração de referência `nb_ess5` (0,789) é 0,001, menor que 0,03 e, portanto, tratada como ruído pela regra da §4. A diferença de *log loss* entre as duas é 0,011 (0,512 contra 0,523). Entre as configurações do TAN, o *log loss* médio diminui à medida que o tamanho equivalente aumenta, de 0,825 (`tan_ess1`) a 0,583 (`tan_ess50`); em nenhuma partição uma configuração do TAN foi escolhida.
 
-**Conjunto de teste (n = 200; 60 ruins), análise secundária.** As predições `p_sel` no teste estão em `resultados/predicoes_teste.csv` (coluna `p_sel`), e suas métricas, na linha `sel` da Tabela 4.3. Como define a §9, a diferença principal da escolha é contra a configuração de referência `nb` (NB, BDeu 5): a ROC-AUC de `sel` é 0,720 [0,641; 0,795], contra 0,728 do `nb`; a diferença, 0,008 (nb − sel), é menor que 0,03 e, pela regra da §9, tratada como ruído. De forma apenas descritiva, a diferença contra o `tan` (TAN, BDeu 5, ROC-AUC 0,706) é 0,014 (sel − tan). O *log loss* de `sel` é 0,623, contra 0,627 do `nb` (diferença de 0,005, calculada sobre os valores não arredondados: 0,6273 − 0,6226); o plano não tem regra de leitura para essa diferença, e ela é apenas descrita. O Brier de `sel`, 0,202, é menor que o da taxa base, 0,210. Na política de decisão, a diferença pareada de `sel` é 34,4 [16,4; 52,5] (Tabela 4.7). Esses números relatam quanto a configuração escolhida pela regra difere da configuração de referência no teste; não indicam qual modelo adotar, e a análise primária continua com NB e TAN de BDeu 5.
+**Conjunto de teste (n = 200; 60 ruins), análise secundária.** As predições `p_sel` no teste estão em `resultados/predicoes_teste.csv` (coluna `p_sel`), e suas métricas, na linha `sel` da Tabela 4.2. Como define a §9, a diferença principal da escolha é contra a configuração de referência `nb` (NB, BDeu 5): a ROC-AUC de `sel` é 0,720 [0,641; 0,795], contra 0,728 do `nb`; a diferença, 0,008 (nb − sel), é menor que 0,03 e, pela regra da §9, tratada como ruído. De forma apenas descritiva, a diferença contra o `tan` (TAN, BDeu 5, ROC-AUC 0,706) é 0,014 (sel − tan). O *log loss* de `sel` é 0,623, contra 0,627 do `nb` (diferença de 0,005, calculada sobre os valores não arredondados: 0,6273 − 0,6226); o plano não tem regra de leitura para essa diferença, e ela é apenas descrita. O Brier de `sel`, 0,202, é menor que o da taxa base, 0,210. Na política de decisão, a diferença pareada de `sel` é 34,4 [16,4; 52,5] (Tabela 4.6). Esses números relatam quanto a configuração escolhida pela regra difere da configuração de referência no teste; não indicam qual modelo adotar, e a análise primária continua com NB e TAN de BDeu 5.

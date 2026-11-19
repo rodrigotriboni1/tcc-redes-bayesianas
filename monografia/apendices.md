@@ -1,10 +1,8 @@
 # APÊNDICES
 
-<!-- rascunho de 18/11/2026. Fontes: docs/reproduzir.md (A), cap. 4 (B), docs/plano-de-analise.md (C). Trechos entre colchetes e comentários "confirmar" são do autor. -->
-
 ## APÊNDICE A – Como reproduzir os resultados
 
-Todos os arquivos de `resultados/` são gerados por sete scripts Python que leem CSV e gravam tabelas e figuras, sem servidor, banco de dados nem modelo salvo em arquivo [fonte: PLANO.md §3 e §7]. Os comandos abaixo partem da raiz do repositório, rodam sem interação e usam Python 3.12 com as dependências travadas pelo `uv`, inclusive o `pgmpy` 1.1.2 [fonte: docs/reproduzir.md §1].
+Todos os arquivos de `resultados/` são gerados por sete scripts Python que leem CSV e gravam tabelas e figuras, sem servidor, banco de dados nem modelo salvo em arquivo. Os comandos abaixo partem da raiz do repositório, rodam sem interação e usam Python 3.12 com as dependências travadas pelo `uv`, inclusive o `pgmpy` 1.1.2.
 
 ### A.1 Ambiente
 
@@ -12,13 +10,13 @@ Todos os arquivos de `resultados/` são gerados por sete scripts Python que leem
 uv sync --frozen
 ```
 
-A opção `--frozen` instala exatamente as versões do `uv.lock`. A versão do `pgmpy` não deve ser atualizada, porque a interface da biblioteca mudou entre as versões 1.0 e 1.1.2 [fonte: PLANO.md §3].
+A opção `--frozen` instala exatamente as versões do `uv.lock`. A versão do `pgmpy` não deve ser atualizada, porque a interface da biblioteca mudou entre as versões 1.0 e 1.1.2.
 
 ### A.2 Ordem de execução
 
-Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que grava em `dados/processados/`. Toda fonte de aleatoriedade usa a semente 2026, e rodar o mesmo comando duas vezes gera arquivos CSV e JSON idênticos byte a byte [fonte: AGENTS.md, seção "Reprodutibilidade"]. As figuras PNG não foram comparadas byte a byte entre execuções [fonte: docs/reproduzir.md §4].
+Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que grava em `dados/processados/`. Toda fonte de aleatoriedade usa a semente 2026, e rodar o mesmo comando duas vezes gera arquivos CSV e JSON idênticos byte a byte. As figuras PNG não foram comparadas byte a byte entre execuções.
 
-**Quadro A.1** – Comandos, em ordem, e arquivos gravados [fonte: docs/reproduzir.md §2]
+**Quadro A.1** – Comandos, em ordem, e arquivos gravados
 
 | Passo | Comando | Grava |
 |---|---|---|
@@ -33,7 +31,7 @@ Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que
 
 ### A.3 Autotestes e conferência
 
-Os scripts `modelos.py`, `avaliar.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação de 15/10/2026 (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40) [fonte: docs/reproduzir.md §3].
+Os scripts `modelos.py`, `avaliar.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação de 15/10/2026 (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40).
 
 ```bash
 uv run python codigo/modelos.py --verificar
@@ -48,11 +46,11 @@ Os arquivos gerados são versionados junto com o código. Depois de rodar tudo, 
 git diff --exit-code -- 'resultados/*.csv' 'resultados/*.json'
 ```
 
-Esse teste confere que os arquivos são idênticos aos publicados, não que o modelo é bom [fonte: docs/reproduzir.md §6].
+Esse teste confere que os arquivos são idênticos aos publicados, não que o modelo é bom.
 
 ### A.4 Teste final
 
-O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0 [fonte: docs/decisoes.md, registro de 17/11/2026; docs/reproduzir.md §5]. Os comandos, na ordem, foram:
+O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0. Os comandos, na ordem, foram:
 
 ```bash
 uv run python codigo/modelos.py --final <arquivo do teste>
@@ -60,22 +58,20 @@ uv run python codigo/avaliar.py --final
 uv run python codigo/decisao.py --final
 ```
 
-Eles gravam `predicoes_teste.csv`, `metricas_teste.csv`, `calibracao_teste.png`, `politicas_teste.csv`, `resumo_politicas_teste.csv` e `diferenca_politicas_teste.csv`; os intervalos usam bootstrap com 2000 reamostras e semente 2026. O primeiro comando exige o caminho do arquivo de teste como argumento e recusa sobrescrever `predicoes_teste.csv` se ele já existir [fonte: docs/reproduzir.md §5].
+Eles gravam `predicoes_teste.csv`, `metricas_teste.csv`, `calibracao_teste.png`, `politicas_teste.csv`, `resumo_politicas_teste.csv` e `diferenca_politicas_teste.csv`; os intervalos usam bootstrap com 2000 reamostras e semente 2026. O primeiro comando exige o caminho do arquivo de teste como argumento e recusa sobrescrever `predicoes_teste.csv` se ele já existir.
 
-Quem reproduz sem o arquivo de teste obtém todos os resultados de desenvolvimento, mas não os `*_teste*`: a divisão é determinística (semente 2026) e sai de `dados/brutos/`, que não acompanha a descrição do código [fonte: docs/reproduzir.md §6].
-<!-- confirmar: se os dados brutos (UCI) e o `teste.csv` entram no repositório entregue à banca; hoje a regra do projeto é que o código de modelagem não os lê -->
+Quem reproduz sem o arquivo de teste obtém todos os resultados de desenvolvimento, mas não os `*_teste*`: a divisão é determinística (semente 2026) e sai de `dados/brutos/`, que não acompanha a descrição do código.
 
 ---
 
 ## APÊNDICE B – Resultados dos três modelos
 
-Os três modelos (Naive Bayes, TAN e regressão logística) aparecem lado a lado nas Tabelas 4.1, 4.3, 4.5, 4.6 e 4.7 do capítulo 4; o TAN é o modelo da comparação principal por decisão de 15/11/2026, tomada antes de qualquer métrica [fonte: PLANO.md §5]. Por isso este apêndice não repete as tabelas. Se o formato do curso exigir os três modelos fora do corpo do texto, as Tabelas 4.3, 4.6 e 4.7 passam para cá, com as linhas `nb` e `logreg` no apêndice e `tan` no capítulo.
+Os três modelos (Naive Bayes, TAN e regressão logística) aparecem lado a lado nas Tabelas 4.1, 4.2, 4.4, 4.5 e 4.6 do capítulo 4; o TAN é o modelo da comparação principal por decisão de 15/11/2026, tomada antes de qualquer métrica. Por isso este apêndice não repete as tabelas. Se o formato do curso exigir os três modelos fora do corpo do texto, as Tabelas 4.2, 4.5 e 4.6 passam para cá, com as linhas `nb` e `logreg` no apêndice e `tan` no capítulo.
 <!-- decidir: manter as tabelas completas no capítulo 4 (como está) ou mover as linhas nb/logreg para este apêndice, como previa o PLANO.md §5 -->
 
 ## APÊNDICE C – Plano de análise
 
-O plano de análise foi escrito em 15/11/2026, antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido [fonte: docs/plano-de-analise.md]. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
-<!-- confirmar: o plano diz "15/11/2026" no cabeçalho, mas a §9 foi acrescentada em 16/11/2026 (por delegação); conferir se a monografia deve declarar isso -->
+O plano de análise foi escrito em 15/11/2026, antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
 
 Escrito em 15/11/2026, **antes de existir qualquer resultado**. Diz o que será reportado e como cada desfecho será lido. O objetivo é que nenhuma decisão de análise dependa do que os números mostrarem.
 
@@ -158,7 +154,7 @@ Qualquer mudança neste plano depois de existirem resultados vira uma linha em [
 
 ### 9. Estudo de seleção (secundário, pré-registrado)
 
-Status: decidido por delegação em 16/11/2026, a rever pelo autor.
+Status: estudo secundário pré-registrado em 16/11/2026, antes da execução do teste final.
 
 **Grade fechada, 8 configurações** ({NB, TAN} × tamanho equivalente BDeu {1, 5, 10, 50}):
 

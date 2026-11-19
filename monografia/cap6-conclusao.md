@@ -6,11 +6,11 @@ Este trabalho perguntou (1) se uma política que separa a estimativa de risco da
 
 A primeira parte é respondida pela construção da política, e não pelo desempenho dos modelos. Como a utilidade esperada de cada ação é linear na probabilidade estimada *p* de o caso ser ruim, a escolha da ação de maior utilidade equivale a uma regra de limiares sobre *p* (Capítulo 3, Seção 3.7). Com a matriz demonstrativa aprovada pelo orientador, com valores não calibrados com dados reais, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60. Dadas a matriz em `config/utilidade.json` e a coluna de probabilidade, qualquer pessoa obtém a ação de cada caso e as fronteiras. A resposta à primeira parte é, portanto, afirmativa, com uma ressalva que o próprio plano registra: essa propriedade vale para qualquer escore de probabilidade e não distingue a rede bayesiana da regressão logística.
 
-Quanto aos objetivos de sensibilidade e de demonstração (Seção 1.3), os limiares se movem com a perda e o custo da análise (Tabela 4.8) e a demonstração mostra um caso (Tabela 4.9); nenhum valor foi escolhido.
+Quanto aos objetivos de sensibilidade e de demonstração (Seção 1.3), os limiares se movem com a perda e o custo da análise (Tabela 4.7) e a demonstração mostra um caso (Tabela 4.8); nenhum valor foi escolhido.
 
 ## 6.2 Efeito medido nas ações e na utilidade média
 
-A segunda parte é respondida pelo conjunto de teste, aberto uma única vez em 17/11/2026 sobre o *commit* de congelamento 49d77ff, com 200 casos, dos quais 60 ruins. O critério de leitura é a diferença pareada de utilidade média entre a política de três ações por utilidade esperada e o corte 0,5 de duas ações, com intervalo de 95% por *bootstrap* (Tabela 4.7); o nível de 95% segue a ressalva da Seção 5.2.
+A segunda parte é respondida pelo conjunto de teste, aberto uma única vez em 17/11/2026 sobre o *commit* de congelamento 49d77ff, com 200 casos, dos quais 60 ruins. O critério de leitura é a diferença pareada de utilidade média entre a política de três ações por utilidade esperada e o corte 0,5 de duas ações, com intervalo de 95% por *bootstrap* (Tabela 4.6); o nível de 95% segue a ressalva da Seção 5.2.
 
 Na comparação principal, com o TAN, a diferença foi de 22,5, com intervalo de 9,2 a 37,2. Pela regra pré-registrada, observa-se diferença a favor da política de três ações, com intervalo que exclui zero; não se afirma causa. Nas ações, a política de três ações aprovou 92, rejeitou 48 e encaminhou 60 casos para análise manual, contra 145 aprovações e 55 rejeições do corte 0,5; os 60 casos que mudaram de ação são exatamente os encaminhados para análise manual.
 
