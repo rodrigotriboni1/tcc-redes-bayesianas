@@ -12,3 +12,5 @@ python3 monografia/defesa/verify.py monografia/defesa/Defesa_TCC_Rodrigo_rascunh
 ```
 
 O arquivo **não foi renderizado**: quebras de linha, sobreposições e legibilidade das figuras só aparecem ao abrir no PowerPoint ou no Keynote. Os campos em amarelo (titulação do orientador, data e local, e-mail e link do repositório) são do autor.
+
+O .pptx final foi pós-processado para tirar as etiquetas de arquivo; build.js regenera a versão anterior, com as etiquetas.
