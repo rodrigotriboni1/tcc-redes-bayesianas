@@ -252,7 +252,7 @@ Conferida com pandas (`uv run python -I -c`, só leitura) em 18/11/2026.
 | 7, A4 | resultados/sensibilidade.csv | 400/40 | 0,100 / 0,600 |
 | 7 | resultados/sensibilidade.csv | 200/70 | 0,333 / 0,333 |
 | 7, A4 | resultados/sensibilidade.csv | 400/80 e 400/100 | 0,200 / 0,200 |
-| A4 | resultados/sensibilidade.csv | 800/50 | 0,063 / 0,5 (da Tabela 4.8) |
+| A4 | resultados/sensibilidade.csv | 800/50 | 0,063 / 0,5 (da Tabela 4.7) |
 | 8 | resultados/metricas_dev.csv | roc_auc_media nb / logreg / tan | 0,789 / 0,788 / 0,742 |
 | 8 | resultados/metricas_dev.csv | roc_auc_desvio tan | 0,049 |
 | 8, A1 | resultados/metricas_dev.csv | ece_media nb / tan / logreg | 0,093 / 0,152 / 0,095 |
