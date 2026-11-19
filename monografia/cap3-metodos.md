@@ -8,7 +8,7 @@ Este capítulo descreve a base de dados, o protocolo de divisão e validação, 
 
 Utiliza-se a base South German Credit \cite{gromping2019}, versão corrigida da German Credit Data \cite{hofmann1994}, disponibilizada no repositório da UCI \cite{uci573}. A base contém 1000 registros, 20 variáveis preditoras e a variável-alvo risco do crédito, com 300 casos classificados como ruins e 700 como bons. A codificação do alvo é invertida em relação ao usual: o valor 0 indica crédito ruim e o valor 1, crédito bom; a classe positiva adotada em todo o trabalho é a classe ruim, e toda probabilidade reportada refere-se à probabilidade de o caso ser ruim.
 
-Das 20 variáveis preditoras, três são contínuas — duração do crédito, valor do crédito e idade — e as 17 restantes já são categóricas. No texto e nas tabelas de resultados, adotam-se os nomes traduzidos para o português; os nomes originais em alemão são mantidos apenas no código-fonte e na Tabela 1 para referência à base original. O identificador `record_id` é removido antes de qualquer etapa de modelagem.
+Das 20 variáveis preditoras, três são contínuas (duração do crédito, valor do crédito e idade) e as 17 restantes já são categóricas. No texto e nas tabelas de resultados, adotam-se os nomes traduzidos para o português; os nomes originais em alemão são mantidos apenas no código-fonte e na Tabela 1 para referência à base original. O identificador `record_id` é removido antes de qualquer etapa de modelagem.
 
 **Tabela 3.1** – Dicionário das variáveis. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n = 800), calculado a partir de `dados/processados/dev.csv`; os códigos e seus significados seguem o codetable.txt da UCI (South German Credit (UPDATE), https://archive.ics.uci.edu/dataset/573/south+german+credit+update), traduzidos para o português.
 
@@ -66,7 +66,7 @@ O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os m
 
 No conjunto de desenvolvimento, adota-se validação cruzada estratificada em 5 partições, com semente 2026. Cada partição é usada uma vez como validação enquanto as outras quatro compõem o treino, de modo que cada caso recebe uma predição de um modelo que não o viu. As métricas de desenvolvimento são reportadas como média e desvio entre as 5 partições.
 
-Todas as constantes — partições, faixas, tamanho equivalente e grade da sensibilidade — foram fixadas por convenção, e não por desempenho.
+Todas as constantes (partições, faixas, tamanho equivalente e grade da sensibilidade) foram fixadas por convenção, e não por desempenho.
 
 ## 3.4 Discretização
 
@@ -142,7 +142,7 @@ Fonte: `config/utilidade.json`, com *c* = 40.
 
 As hipóteses da matriz são: valores demonstrativos, não calibrados com dados reais, e um analista que sempre acerta o estado do cliente. A matriz demonstrativa foi aprovada pelo orientador, com valores não calibrados com dados reais.
 
-Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar. A contribuição pretendida não é uma regra de tipo distinto do limiar, mas a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento.
+Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar. A contribuição pretendida é a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento.
 
 Estimativas de probabilidade bem calibradas são necessárias quando a decisão leva em conta custos \cite{zadrozny2001}.
 
@@ -176,4 +176,4 @@ Relatam-se obrigatoriamente as 8 configurações, o número de comparações (8)
 
 ## 3.11 Ambiente e reprodutibilidade
 
-O experimento é composto por sete *scripts* Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo. O projeto exige Python 3.12 ou superior. A execução local usou Python 3.12.13 (saída de `uv run python --version`); `uv.lock` e `pyproject.toml` fixam apenas `requires-python = ">=3.12"`, e não há `.python-version`. As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências fixadas pelo gerenciador `uv`. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão registrada no *commit*. As figuras PNG não são comparadas byte a byte. O passo a passo completo está no Apêndice A. O teste final usou o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, teste rodado em 17/11/2026.
+O experimento é composto por sete *scripts* Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo. O projeto exige Python 3.12 ou superior. A execução local usou Python 3.12.13 (saída de `uv run python --version`); `uv.lock` e `pyproject.toml` fixam apenas `requires-python = ">=3.12"`, e não há `.python-version`. As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências fixadas pelo gerenciador `uv`. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão registrada no *commit*. As figuras PNG não são comparadas byte a byte. O passo a passo completo está no Apêndice A.
