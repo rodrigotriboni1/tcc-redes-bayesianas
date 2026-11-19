@@ -34,13 +34,13 @@ export function Limiares({ dados }: { dados: Dados }) {
           <CardContent>
             <div className="h-96" role="img" aria-label={`Retas de utilidade esperada. Limiar inferior ${prob(inferior)}, superior ${prob(superior)}.`}>
               <ResponsiveContainer>
-                <LineChart data={pontos} margin={{ top: 24, right: 24, left: 8, bottom: 16 }}>
+                <LineChart data={pontos} margin={{ top: 28, right: 24, left: 8, bottom: 16 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="p" type="number" domain={[0, 1]} tickFormatter={prob} tick={{ fontSize: 14 }}
                     label={{ value: 'P(ruim)', position: 'insideBottom', offset: -8 }} />
                   <YAxis tickFormatter={utilidade} tick={{ fontSize: 14 }} />
                   <Tooltip formatter={(v) => utilidade(Number(v))} labelFormatter={(v) => `P(ruim) = ${prob(Number(v))}`} />
-                  <Legend verticalAlign="top" />
+                  <Legend verticalAlign="bottom" wrapperStyle={{ paddingTop: 24 }} />
                   {PRIORIDADE.map((a) => (
                     <Line key={a} dataKey={a} name={NOME_ACAO[a]} stroke={COR_ACAO[a]} strokeWidth={3} dot={false} isAnimationActive={false} />
                   ))}

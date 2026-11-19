@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Sidebar, SidebarContent, SidebarGroup, SidebarHeader, SidebarInset, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { useDados } from '@/lib/dados'
 import { Caso } from '@/telas/Caso'
@@ -7,14 +7,22 @@ import { Politicas } from '@/telas/Politicas'
 import { Resultados } from '@/telas/Resultados'
 
 const TELAS = [
-  { titulo: 'Resultados do teste', Tela: Resultados },
-  { titulo: 'Limiares e utilidade esperada', Tela: Limiares },
-  { titulo: 'Política de 3 ações vs corte 0,5', Tela: Politicas },
-  { titulo: 'Um caso', Tela: Caso },
+  { hash: '#/resultados', titulo: 'Resultados do teste', Tela: Resultados },
+  { hash: '#/limiares', titulo: 'Limiares e utilidade esperada', Tela: Limiares },
+  { hash: '#/politicas', titulo: 'Política de 3 ações vs corte 0,5', Tela: Politicas },
+  { hash: '#/caso', titulo: 'Um caso', Tela: Caso },
 ]
 
 export default function App() {
-  const [atual, setAtual] = useState(0)
+  // A tela atual fica no hash da URL (#/limiares etc.), para links diretos.
+  const daUrl = () => Math.max(0, TELAS.findIndex((t) => t.hash === window.location.hash))
+  const [atual, setAtualEstado] = useState(daUrl)
+  useEffect(() => {
+    const ouvir = () => setAtualEstado(daUrl())
+    window.addEventListener('hashchange', ouvir)
+    return () => window.removeEventListener('hashchange', ouvir)
+  }, [])
+  const setAtual = (i: number) => { window.location.hash = TELAS[i].hash }
   const { dados, erro } = useDados()
   const { titulo, Tela } = TELAS[atual]
   return (

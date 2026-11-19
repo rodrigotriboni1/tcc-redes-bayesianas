@@ -1,4 +1,4 @@
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, CartesianGrid, LabelList, Legend, ResponsiveContainer, XAxis, YAxis } from 'recharts'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { MODELOS, NOME_MODELO, type Dados } from '@/lib/dados'
@@ -50,8 +50,9 @@ export function Politicas({ dados }: { dados: Dados }) {
                       <YAxis type="category" dataKey="regra" width={90} tick={{ fontSize: 14 }} />
                       <Legend />
                       {(['aprovar', 'analise_manual', 'rejeitar'] as const).map((a) => (
-                        <Bar key={a} dataKey={a} name={NOME_ACAO[a]} stackId="acoes" fill={COR_ACAO[a]} isAnimationActive={false}
-                          label={{ position: 'center', fill: '#fff', fontSize: 13 }} />
+                        <Bar key={a} dataKey={a} name={NOME_ACAO[a]} stackId="acoes" fill={COR_ACAO[a]} isAnimationActive={false}>
+                          <LabelList dataKey={a} position="center" fill="#fff" fontSize={13} formatter={(v) => (Number(v) > 0 ? v : '')} />
+                        </Bar>
                       ))}
                     </BarChart>
                   </ResponsiveContainer>
