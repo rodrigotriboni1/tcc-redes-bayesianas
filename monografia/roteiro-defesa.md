@@ -34,7 +34,7 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 - **Título-ação:** Na regra de escore com ponto de corte, estimar o risco e escolher a ação ficam fundidos, e os custos ficam implícitos
 - **Exibição:** diagrama de duas caixas. À esquerda, "hoje": caso → escore → corte → aprovar/rejeitar (uma caixa só). À direita, "proposta": caso → **camada de risco** (P(ruim)) → **camada de decisão** (custos) → ação. Destaque azul na seta entre as duas camadas da direita.
 - **Texto no slide (≈25 palavras):** "Escore + corte: prática da indústria, interpretável. / Custos não aparecem na regra. / Proposta: risco por rede bayesiana; ação por utilidade esperada."
-- **Citação no slide:** (THOMAS, 2000; SIDDIQI, 2012; PEARL, 1988)
+- **Citação no slide:** (THOMAS, 2000; SIDDIQI, 2006; PEARL, 1988)
 - **So what:** o problema é de arquitetura da decisão, não de acurácia.
 - **Notas de fala:** "Na concessão de crédito, um modelo dá um escore e o escore é comparado com um corte; é a prática descrita por Thomas e por Siddiqi. Nessa regra, duas coisas diferentes viram uma: a probabilidade de o crédito ser ruim e a escolha do que fazer. O corte carrega os custos de errar, mas não os mostra. Redes bayesianas, no sentido de Pearl, servem para a primeira tarefa; para a segunda, uso a utilidade esperada. O trabalho testa essa separação num estudo de caso."
 

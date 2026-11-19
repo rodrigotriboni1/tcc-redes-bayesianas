@@ -2,7 +2,7 @@
 
 ## 1.1 Contexto
 
-Na concessão de crédito, decisões automatizadas costumam apoiar-se em modelos de escore que atribuem pesos a variáveis do solicitante, em geral por regressão logística, e a decisão de aprovar ou rejeitar resulta da comparação desse escore com um ponto de corte \cite{thomas2000,siddiqi2012}. A interpretabilidade e a facilidade de auditoria explicam a adoção dessa prática pela indústria \cite{thomas2000,siddiqi2012}. 
+Na concessão de crédito, decisões automatizadas costumam apoiar-se em modelos de escore que atribuem pesos a variáveis do solicitante, em geral por regressão logística, e a decisão de aprovar ou rejeitar resulta da comparação desse escore com um ponto de corte \cite{thomas2000,siddiqi2006}. A interpretabilidade e a facilidade de auditoria explicam a adoção dessa prática pela indústria \cite{thomas2000,siddiqi2006}. 
 
 Nesse arranjo, duas tarefas de natureza distinta ficam fundidas em uma única regra. A primeira é estimar o risco do caso, isto é, a probabilidade de um desfecho desfavorável dada a evidência observada. A segunda é escolher uma ação diante dessa estimativa, o que depende dos custos e benefícios de cada combinação de ação e desfecho. Quando o ponto de corte é fixado sem referência explícita a esses custos, o critério que de fato governa a recomendação permanece implícito, e a sensibilidade da decisão a mudanças nos critérios de negócio não pode ser examinada.
 

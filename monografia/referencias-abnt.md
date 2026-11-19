@@ -3,7 +3,7 @@
 <!-- Formato ABNT NBR 6023 (autor-data). Gerado de referencias.bib; só campos do .bib. -->
 <!-- normas ABNT não citadas retiradas da lista: abnt6023, abnt10520, abnt14724 -->
 
-ANKAN, Ankur; TEXTOR, Johannes. pgmpy: A Python Toolkit for Bayesian Networks. **Journal of Machine Learning Research**, v. 25, n. 265, p. 1–8, 2024.
+ANKAN, Ankur; TEXTOR, Johannes. pgmpy: a Python toolkit for Bayesian networks. **Journal of Machine Learning Research**, v. 25, n. 265, p. 1–8, 2024.
 <!-- ankan2024: Fonte: CITATION.cff do pgmpy (preferred-citation). Autor decidiu citar esta em 17/11/2026. Artigo 265 conferido em jmlr.org/papers/v25/23-0487.html. -->
 
 BRIER, Glenn W. Verification of forecasts expressed in terms of probability. **Monthly Weather Review**, v. 78, n. 1, p. 1–3, 1950.
@@ -25,7 +25,7 @@ ELKAN, Charles. The foundations of cost-sensitive learning. In: INTERNATIONAL JO
 FRIEDMAN, Nir; GEIGER, Dan; GOLDSZMIDT, Moises. Bayesian network classifiers. **Machine Learning**, v. 29, n. 2–3, p. 131–163, 1997. DOI: 10.1023/A:1007465528199.
 <!-- friedman1997: Metadados conferidos em 17/11/2026 (OpenAlex, DOI 10.1023/A:1007465528199); texto não lido. -->
 
-GRÖMPING, Ulrike. **South German Credit Data**: Correcting a Widely Used Data Set. Berlin: Beuth University of Applied Sciences Berlin, 2019. (Reports in Mathematics, Physics and Chemistry, 4/2019). Disponível em: https://www1.beuth-hochschule.de/FB_II/reports/Report-2019-004.pdf. Acesso em: 10 nov. 2026.
+GRÖMPING, Ulrike. **South German Credit Data**: correcting a widely used data set. Berlin: Beuth University of Applied Sciences Berlin, 2019. (Reports in Mathematics, Physics and Chemistry, 4/2019). Disponível em: https://www1.beuth-hochschule.de/FB_II/reports/Report-2019-004.pdf. Acesso em: 10 nov. 2026.
 <!-- gromping2019: VERIFICAR: nome da série do relatório e da instituição (Beuth University of Applied Sciences Berlin, hoje BHT). -->
 
 GUO, Chuan et al. On calibration of modern neural networks. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 34., 2017. **Proceedings** [...]. PMLR, 2017. p. 1321–1330. (Proceedings of Machine Learning Research, v. 70).
@@ -48,10 +48,10 @@ HOWARD, Ronald A.; MATHESON, James E. Influence diagrams. **Decision Analysis**,
 JENSEN, Finn V.; NIELSEN, Thomas D. **Bayesian Networks and Decision Graphs**. 2. ed. New York: Springer, 2007.
 <!-- jensen2007: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->
 
-KAUFMAN, Shachar et al. Leakage in data mining: Formulation, detection, and avoidance. **ACM Transactions on Knowledge Discovery from Data**, v. 6, n. 4, p. 1–21, 2012.
+KAUFMAN, Shachar et al. Leakage in data mining: formulation, detection, and avoidance. **ACM Transactions on Knowledge Discovery from Data**, v. 6, n. 4, p. 1–21, 2012.
 <!-- kaufman2012: VERIFICAR: número do artigo (15) e paginação (1–21). -->
 
-KOLLER, Daphne; FRIEDMAN, Nir. **Probabilistic Graphical Models**: Principles and Techniques. Cambridge: MIT Press, 2009.
+KOLLER, Daphne; FRIEDMAN, Nir. **Probabilistic Graphical Models**: principles and techniques. Cambridge: MIT Press, 2009.
 <!-- koller2009: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->
 
 NAEINI, Mahdi Pakdaman; COOPER, Gregory F.; HAUSKRECHT, Milos. Obtaining well calibrated probabilities using Bayesian binning. In: AAAI CONFERENCE ON ARTIFICIAL INTELLIGENCE, 29., 2015. **Proceedings** [...]. AAAI Press, 2015. p. 2901–2907.
@@ -74,8 +74,8 @@ PLATT, John C. Probabilistic outputs for support vector machines and comparisons
 RUSSELL, Stuart; NORVIG, Peter. **Artificial Intelligence**: a modern approach. 3. ed. Upper Saddle River: Prentice Hall, 2010.
 <!-- russell2010: VERIFICAR: trocada em 15/11/2026 da tradução brasileira para o original em inglês (3ª edição); título, editora, cidade e ano escritos de memória; conferir no original. -->
 
-SIDDIQI, Naeem. **Credit Risk Scorecards**: developing and implementing intelligent credit scoring. Hoboken: John Wiley & Sons, 2012.
-<!-- siddiqi2012: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->
+SIDDIQI, Naeem. **Credit Risk Scorecards**: developing and implementing intelligent credit scoring. Hoboken: John Wiley & Sons, 2006.
+<!-- siddiqi2006: Bloco "referências da proposta": conferir edição e páginas no exemplar usado. -->
 
 THOMAS, Lyn C. A survey of credit and behavioural scoring: forecasting financial risk of lending to consumers. **International Journal of Forecasting**, v. 16, n. 2, p. 149–172, 2000.
 <!-- thomas2000: Bloco "referências da proposta": conferir no original. -->
@@ -120,7 +120,7 @@ ZADROZNY, Bianca; ELKAN, Charles. Transforming classifier scores into accurate m
 | pedregosa2011 | cap3 | usada |
 | platt1999 | cap2, cap5 | usada |
 | russell2010 | cap2, cap3 | usada |
-| siddiqi2012 | cap1, cap2 | usada |
+| siddiqi2006 | cap1, cap2 | usada |
 | thomas2000 | cap1, cap2 | usada |
 | uci573 | cap3 | usada |
 | zadrozny2001 | cap2, cap3, cap5 | usada |

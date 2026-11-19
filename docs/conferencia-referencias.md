@@ -1,6 +1,6 @@
 # Conferência de `monografia/referencias.bib`
 
-> **Estado atual (17-18/11/2026).** `ankan2015` foi substituída por `ankan2024` (Ankan & Textor, JMLR 25(265)). O `.bib` não tem `edition` em `siddiqi2012` (removido por decisão do autor). `zadrozny2001` e as entradas heckerman/friedman/chow foram atualizadas na 2ª e 3ª conferência. O resumo "26/2/1" abaixo é da 1ª conferência.
+> **Estado atual (17-18/11/2026).** `ankan2015` foi substituída por `ankan2024` (Ankan & Textor, JMLR 25(265)). O `.bib` não tem `edition` em `siddiqi2006` (removido por decisão do autor). `zadrozny2001` e as entradas heckerman/friedman/chow foram atualizadas na 2ª e 3ª conferência. O resumo "26/2/1" abaixo é da 1ª conferência.
 
 Conferido em 17/11/2026 contra Crossref, páginas dos editores e catálogos. O `.bib` não foi alterado: a confirmação e a retirada dos `% VERIFICAR` são do autor.
 
@@ -25,7 +25,7 @@ Resumo: 26 BATE, 2 DIVERGE, 1 NÃO ACHEI.
 | jensen2007 | Jensen & Nielsen; 2ª ed.; Springer, New York; 2007 | Título, autores, Springer New York, 2007 conferem; número da edição não confirmado | BATE | https://api.crossref.org/works/10.1007/978-0-387-68282-2 |
 | russell2010 | Russell & Norvig; 3ª ed.; Prentice Hall, Upper Saddle River; 2010 | Idem (c2010; Wikipédia espelho dá 2009) | BATE | https://search.worldcat.org/oclc/359890490 |
 | howard2005 | Howard & Matheson; Decision Analysis 2(3), 127--143; 2005 | Idem | BATE | https://api.crossref.org/works/10.1287/deca.1050.0020 |
-| siddiqi2012 | Siddiqi; Credit Risk Scorecards: Developing and Implementing Intelligent Credit Scoring; 2ª ed.; Wiley, Hoboken; 2012 | Crossref: o título com esse subtítulo é a 1ª edição (ISBN 978-0-471-75451-0; 2012 é a data da versão online). A 2ª edição tem outro título: Intelligent Credit Scoring: Building and Implementing Better Credit Risk Scorecards (Wiley, 2016/2017) | DIVERGE | https://api.crossref.org/works/10.1002/9781119201731 ; https://api.crossref.org/works/10.1002/9781119282396 |
+| siddiqi2006 | Siddiqi; Credit Risk Scorecards: Developing and Implementing Intelligent Credit Scoring; 2ª ed.; Wiley, Hoboken; 2012 | Crossref: o título com esse subtítulo é a 1ª edição (ISBN 978-0-471-75451-0; 2012 é a data da versão online). A 2ª edição tem outro título: Intelligent Credit Scoring: Building and Implementing Better Credit Risk Scorecards (Wiley, 2016/2017) | DIVERGE | https://api.crossref.org/works/10.1002/9781119201731 ; https://api.crossref.org/works/10.1002/9781119282396 |
 | thomas2000 | Thomas; Int. J. Forecasting 16(2), 149--172; 2000 | Idem | BATE | https://api.crossref.org/works/10.1016/s0169-2070(00)00034-0 |
 | hofmann1994 | Hofmann; Statlog (German Credit Data); 1994; UCI | UCI id 144, criador Hans Hofmann, ano 1994; URL atual é /dataset/144/statlog+german+credit+data (o do .bib é o antigo) | BATE | https://archive.ics.uci.edu/api/dataset?id=144 |
 | friedman1997 | Friedman, Geiger, Goldszmidt; Machine Learning 29(2--3), 131--163; 1997 | Idem | BATE | https://api.crossref.org/works/10.1023/a:1007465528199 |
@@ -40,7 +40,7 @@ Resumo: 26 BATE, 2 DIVERGE, 1 NÃO ACHEI.
 
 ## Divergências e pendências
 
-- **siddiqi2012**: o título com o subtítulo "Developing and Implementing Intelligent Credit Scoring" é da 1ª edição (Wiley, Hoboken; ISBN 978-0-471-75451-0). A 2ª edição se chama *Intelligent Credit Scoring: Building and Implementing Better Credit Risk Scorecards* (Wiley, 2016/2017). Corrigir para uma das duas: 1ª edição sem `edition` e com o ano do exemplar usado (conferir na folha de rosto), ou 2ª edição com o título novo e ano 2017 (o Crossref registra 23/12/2016, online).
+- **siddiqi2006**: o título com o subtítulo "Developing and Implementing Intelligent Credit Scoring" é da 1ª edição (Wiley, Hoboken; ISBN 978-0-471-75451-0). A 2ª edição se chama *Intelligent Credit Scoring: Building and Implementing Better Credit Risk Scorecards* (Wiley, 2016/2017). Corrigir para uma das duas: 1ª edição sem `edition` e com o ano do exemplar usado (conferir na folha de rosto), ou 2ª edição com o título novo e ano 2017 (o Crossref registra 23/12/2016, online).
 - **uci573**: o nome atual no repositório é "South German Credit" (sem "(UPDATE)", que é só o final do URL). O ano 2020 vem do campo de criação do registro; o texto da UCI indica doação em 28/11/2019. Autor corporativo não consta: o registro não lista criadores (a autoria é de Grömping). DOI: 10.24432/C5QG88. Sugestão: título "South German Credit", e o autor decide entre 2019 e 2020.
 - **platt1999**: páginas 61--74 e ano 1999 não foram confirmados; fontes dão 1999 e 2000. Conferir no capítulo 5 do livro.
 
