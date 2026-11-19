@@ -27,7 +27,7 @@ Estrutura exigida pela FEELT: capa, folha de rosto, sumário, listas, resumo e a
 ## 1 Introdução
 
 <!-- fonte: proposta (docs/proposta/), PLANO.md itens 1 e 2, docs/plano-de-analise.md seção 1 -->
-<!-- refs: thomas2000, siddiqi2012, pearl1988 -->
+<!-- refs: thomas2000, siddiqi2006, pearl1988 -->
 
 - 1.1 Contexto: decisão automatizada mistura estimativa de risco e escolha de ação
 - 1.2 Pergunta de pesquisa (as duas partes)
@@ -49,7 +49,7 @@ Estrutura exigida pela FEELT: capa, folha de rosto, sumário, listas, resumo e a
 - 2.6 Utilidade esperada <!-- refs: russell2010, jensen2007, howard2005, koller2009 -->
 - 2.7 Limiares derivados dos custos <!-- refs: elkan2001 --> (a exigência de probabilidade calibrada vem da literatura, não do experimento)
 - 2.8 Opção de rejeição <!-- refs: chow1970 -->
-- 2.9 Escore de crédito e *next best action* <!-- refs: thomas2000, siddiqi2012, hand1997 -->
+- 2.9 Escore de crédito e *next best action* <!-- refs: thomas2000, siddiqi2006, hand1997 -->
 
 <!-- pendente: as 15 referências a conferir no original antes de citar -->
 

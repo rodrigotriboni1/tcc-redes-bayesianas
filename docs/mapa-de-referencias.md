@@ -16,7 +16,7 @@ Regra do trabalho (`uso-de-ia.md`): toda citação sai do original lido, com pá
 
 | Seção | O que precisa ser sustentado | Referências |
 |---|---|---|
-| 1 Introdução | Decisão automatizada mistura risco e ação; escore de crédito como prática | `thomas2000`, `siddiqi2012`, `pearl1988` |
+| 1 Introdução | Decisão automatizada mistura risco e ação; escore de crédito como prática | `thomas2000`, `siddiqi2006`, `pearl1988` |
 | 2.1 Redes bayesianas | Definição, grafo, tabelas de probabilidade, independência condicional | `pearl1988`, `koller2009`, `russell2010` |
 | 2.2 Naive Bayes e TAN | Classificadores bayesianos; árvore de dependência | `friedman1997`, `chowliu1968` |
 | 2.3 Aprendizado de parâmetros | Estimação bayesiana, prior BDeu, contagens pequenas | `koller2009`, `heckerman1995` |
@@ -25,7 +25,7 @@ Regra do trabalho (`uso-de-ia.md`): toda citação sai do original lido, com pá
 | 2.6 Utilidade esperada e diagramas de influência | Critério de máxima utilidade esperada; nós de decisão e de utilidade | `russell2010`, `jensen2007`, `howard2005`, `koller2009` |
 | 2.7 Limiares derivados de custos | Com probabilidade calibrada, a decisão ótima é um limiar que sai da matriz de custos | `elkan2001` |
 | 2.8 Opção de rejeição | Terceira ação (análise manual) como rejeição com custo | `chow1970` |
-| 2.9 Escore de crédito e next best action | Regressão logística e scorecard como referência da indústria | `thomas2000`, `siddiqi2012`, `hand1997` |
+| 2.9 Escore de crédito e next best action | Regressão logística e scorecard como referência da indústria | `thomas2000`, `siddiqi2006`, `hand1997` |
 | 3.1 Base de dados | Origem e correção da base | `hofmann1994`, `gromping2019`, `uci573` |
 | 3.2 Divisão e validação | Vazamento de informação; validação cruzada | `kaufman2012` |
 | 3.3 Modelos e ferramentas | Bibliotecas usadas | `ankan2024`, `pedregosa2011` |
@@ -43,7 +43,7 @@ As seções 2.7 e 2.8 sustentam a afirmação central do trabalho (item 5 do `PL
 | `russell2010` | Russell e Norvig, *Artificial Intelligence: A Modern Approach* (3ª ed., original) | Proposta | título, editora, cidade e ano (trocados da tradução para o original, de memória) | Capítulos de raciocínio probabilístico e de decisões simples | 2.1, 2.6 |
 | `pearl1988` | Pearl, *Probabilistic Reasoning in Intelligent Systems* | Proposta | — | Só citação de origem | 1, 2.1 |
 | `howard2005` | Howard e Matheson, *Influence diagrams* | Proposta | a proposta cita a reimpressão de 2005 do trabalho original de 1984 | Artigo inteiro | 2.6 |
-| `siddiqi2012` | Siddiqi, *Credit Risk Scorecards* | Proposta | — | Capítulos de desenvolvimento do scorecard e de ponto de corte | 1, 2.9 |
+| `siddiqi2006` | Siddiqi, *Credit Risk Scorecards* | Proposta | — | Capítulos de desenvolvimento do scorecard e de ponto de corte | 1, 2.9 |
 | `thomas2000` | Thomas, *A survey of credit and behavioural scoring* | Proposta | — | Artigo inteiro | 1, 2.9 |
 | `hofmann1994` | Base German Credit original | Proposta | — | Página da UCI | 3.1 |
 | `brier1950` | Brier, escore de Brier | Proposta | — | Artigo (3 páginas) | 2.5, 3.4 |
