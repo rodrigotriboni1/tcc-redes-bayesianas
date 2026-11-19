@@ -50,7 +50,7 @@ Há uma segunda razão para cautela: a comparação com o corte 0,5 não testa "
 
 ## 5.6 Tamanho do teste
 
-O teste tem 200 casos, dos quais 60 ruins. Com tão poucos casos da classe positiva, diferenças pequenas entre modelos ou políticas são indistinguíveis de ruído. No resultado, os intervalos da diferença pareada (ressalva da Seção 5.2) não incluíram zero em nenhum modelo, mas são largos: no TAN, vão de 9,2 a 37,2. Já as diferenças de ROC-AUC entre modelos no teste ficaram todas abaixo de 0,03 e são tratadas como ruído (Seção 5.2).
+O teste tem 200 casos, dos quais 60 ruins. Com tão poucos casos da classe positiva, diferenças pequenas entre modelos ou políticas são indistinguíveis de ruído. No resultado, os intervalos da diferença pareada (ressalva da Seção 5.2) não incluíram zero em nenhum modelo, mas são largos: no TAN, vão de 9,2 a 37,2.
 
 ## 5.7 Modelo e representação variam juntos
 
