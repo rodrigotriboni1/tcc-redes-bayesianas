@@ -64,11 +64,7 @@ O intervalo por *bootstrap* do teste final reamostra os casos de teste com os mo
 
 A calibração das probabilidades é medida, mas não corrigida (decisão P1). Métodos de correção, como a sigmoide de Platt e a regressão isotônica \cite{platt1999,zadrozny2002,niculescu2005}, são citados na fundamentação sem aplicação. Como a política consome a probabilidade diretamente, um erro de calibração alto, como o do TAN no desenvolvimento, entra sem correção nas ações escolhidas. Isso é um desvio em relação à proposta, que prometia calibrar.
 
-## 5.10 Escopo das entregas
-
-A análise exploratória se limita a uma tabela de descrição da base no Capítulo 3, sem *script* próprio (decisão P12). A demonstração mostra a conta da decisão (risco, utilidade de cada ação e fronteiras), mas não uma justificativa textual da recomendação (decisão P15); o caso da Tabela 4.9 foi escolhido por ser o primeiro do arquivo, não por ser representativo. A interface de uma tela, se existir, será construída só depois do experimento pronto e apenas lerá arquivos já gerados.
-
-## 5.11 Direções futuras
+## 5.10 Direções futuras
 
 As direções a seguir decorrem das limitações acima, não das métricas do desenvolvimento, e não há promessa sobre o resultado de nenhuma delas:
 
