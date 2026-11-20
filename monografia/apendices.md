@@ -66,8 +66,6 @@ Quem reproduz sem o arquivo de teste obtém todos os resultados de desenvolvimen
 
 ## APÊNDICE B – Resultados dos três modelos
 
-Os três modelos (Naive Bayes, TAN e regressão logística) aparecem lado a lado nas Tabelas 4.1, 4.2, 4.4, 4.5 e 4.6 do capítulo 4; o TAN é o modelo da comparação principal por decisão de 15/11/2026, tomada antes de qualquer métrica. Por isso este apêndice não repete as tabelas. Se o formato do curso exigir os três modelos fora do corpo do texto, as Tabelas 4.2, 4.5 e 4.6 passam para cá, com as linhas `nb` e `logreg` no apêndice e `tan` no capítulo.
-<!-- decidir: manter as tabelas completas no capítulo 4 (como está) ou mover as linhas nb/logreg para este apêndice, como previa o PLANO.md §5 -->
 
 ## APÊNDICE C – Plano de análise
 
