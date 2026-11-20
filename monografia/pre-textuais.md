@@ -196,5 +196,4 @@ LISTA DE SIGLAS E ABREVIATURAS........ p. __
 **APÊNDICES**........ p. __
 
 - APÊNDICE A – Como reproduzir os resultados........ p. __
-- APÊNDICE B – Resultados dos três modelos........ p. __
-- APÊNDICE C – Plano de análise........ p. __
+- APÊNDICE B – Plano de análise........ p. __
