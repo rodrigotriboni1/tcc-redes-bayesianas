@@ -64,10 +64,7 @@ Quem reproduz sem o arquivo de teste obtém todos os resultados de desenvolvimen
 
 ---
 
-## APÊNDICE B – Resultados dos três modelos
-
-
-## APÊNDICE C – Plano de análise
+## APÊNDICE B – Plano de análise
 
 O plano de análise foi escrito em 15/11/2026, antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
 
