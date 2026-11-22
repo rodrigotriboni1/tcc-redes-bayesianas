@@ -870,6 +870,7 @@ As direções a seguir decorrem das limitações acima, não das métricas do de
 - avaliar políticas com dados que registrem o desfecho das ações não tomadas, condição para falar em efeito, e não só em simulação;
 - comparar modelos sob a mesma representação das variáveis, separando modelo e representação;
 - repetir a decomposição entre a ação adicional e o corte de referência (Seção 4.7) com uma matriz levantada com especialistas, já que a feita aqui usa a matriz demonstrativa;
+- medir a sensibilidade das ações à calibração, recalibrando em dados separados daqueles em que a política é avaliada e sem alterar a análise primária;
 - estimar a incerteza incluindo a variação do treino.
 
 O teste final não acrescenta direções, e seu resultado não motiva mudança de modelo, parâmetro, faixa ou variável.
