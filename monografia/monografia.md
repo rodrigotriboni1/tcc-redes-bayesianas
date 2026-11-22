@@ -390,7 +390,7 @@ Neste trabalho, entende-se por *next best action* (próxima melhor ação) a aç
 
 <!-- Entradas do.bib marcadas "% VERIFICAR" ou "A CONFERIR" só podem ser citadas depois de conferidas no original (PLANO.md §9). -->
 
-Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas em 18/11/2026, após sua abertura, conforme a Seção 3.6; duas análises exploratórias posteriores foram decididas em 22/11/2026 (Seções 4.7 e 4.8).
+Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas após sua abertura, conforme a Seção 3.6; duas análises exploratórias posteriores foram decididas depois dos resultados (Seções 4.7 e 4.8).
 
 ## 3.1 Base de dados
 
@@ -448,7 +448,7 @@ Os tercis acima são calculados sobre todo o conjunto de desenvolvimento, apenas
 
 A base é dividida de forma estratificada, com semente 2026, em um conjunto de desenvolvimento, com 800 casos (240 ruins), e um conjunto de teste, com 200 casos (60 ruins). Uma divisão anterior, com semente 42, foi descartada porque seu conjunto de teste já havia sido usado para avaliar a regressão logística em trabalho anterior.
 
-O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, após um *commit* de congelamento do código. O teste foi executado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, com os três comandos do caminho `--final`. Os *scripts* de modelagem leem exclusivamente o conjunto de desenvolvimento. Em 22/11/2026, depois de conhecido o resultado, o comando `decisao.py --final` foi executado de novo sobre as predições já gravadas, sem reabrir o arquivo do teste, para a análise exploratória da Seção 4.7; os seis arquivos anteriores não mudaram.
+O conjunto de teste permanece fechado durante todo o desenvolvimento. Todos os modelos, inclusive o de referência, são avaliados nele uma única vez, após um *commit* de congelamento do código. O teste foi executado uma única vez, sobre o *commit* de congelamento 49d77ff0eec74de98d7ce7ec83a9d0d2907bb207, com os três comandos do caminho `--final`. Os *scripts* de modelagem leem exclusivamente o conjunto de desenvolvimento. Depois de conhecido o resultado, o comando `decisao.py --final` foi executado de novo sobre as predições já gravadas, sem reabrir o arquivo do teste, para a análise exploratória da Seção 4.7; os seis arquivos anteriores não mudaram.
 
 ## 3.3 Validação cruzada
 
@@ -504,7 +504,7 @@ em que $B_b$ é o conjunto de casos cuja $p_k$ cai na faixa $b$, e $\bar{y}_b$ e
 
 No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por *bootstrap* com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993}. O intervalo não cobre a variação devida ao treino.
 
-As regras principais de leitura foram fixadas em 15/11/2026, antes dos resultados; houve complementações documentadas em 18/11/2026, após a abertura do teste (Apêndice B), e duas análises exploratórias decididas em 22/11/2026, descritas nas Seções 4.7 e 4.8. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
+As regras principais de leitura foram fixadas antes dos resultados; houve complementações documentadas após a abertura do teste (Apêndice B), e duas análises exploratórias decididas depois dos resultados, descritas nas Seções 4.7 e 4.8. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
 
 O limite de 0,03 vale só para ROC-AUC: a PR-AUC é descrita sem conclusão de ruído, e a diferença pareada de utilidade é lida pelo intervalo de 95%, por decisão do autor registrada em docs/decisoes.md.
 
@@ -566,11 +566,11 @@ Relatam-se obrigatoriamente as 8 configurações, o número de comparações (8)
 
 O experimento é composto por sete *scripts* Python que leem CSV e gravam tabelas e figuras, sem modelo salvo em arquivo. O projeto exige Python 3.12 ou superior. A execução local usou Python 3.12.13 (saída de `uv run python --version`); `uv.lock` e `pyproject.toml` fixam apenas `requires-python = ">=3.12"`, e não há `.python-version`. As bibliotecas são `pgmpy` 1.1.2, `scikit-learn` \cite{pedregosa2011}, `pandas` e `matplotlib`, com dependências fixadas pelo gerenciador `uv`. Toda fonte de aleatoriedade usa a semente 2026, e duas execuções do mesmo comando geram arquivos CSV e JSON idênticos byte a byte. Os arquivos de resultado são versionados com o código, e a reprodução é conferida pela comparação com a versão registrada no *commit*. As figuras PNG não são comparadas byte a byte. O passo a passo completo está no Apêndice A.
 
-Conferências realizadas. Além dos modos `--verificar` e do teste da camada de decisão, as saídas foram conferidas em uma reimplementação independente em NumPy (sem uso do `pgmpy`, do `scikit-learn` nem do `pandas`), versionada em `codigo/auditoria_independente.py`. Sobre as predições já gravadas do desenvolvimento e do conjunto de teste (sem abrir o arquivo com as linhas do teste), foram recalculados: escore de Brier, *log loss*, ECE de dez faixas, ROC-AUC e PR-AUC, ações escolhidas e utilidade média das políticas (três ações, duas ações com limiar 0,20 e corte 0,50). Também foram conferidos, no desenvolvimento, a divisão estratificada em cinco partições, a árvore do TAN em cada partição (informação mútua condicional à classe e árvore geradora máxima) e a estimação dos parâmetros com prior BDeu ($N' = 5$) seguida de inferência exata para *Naive Bayes* e TAN. Os valores coincidiram com os arquivos gravados (diferenças numéricas abaixo de $10^{-12}$, ações e utilidades idênticas, cinco partições com 160 casos e 48 ruins e 19 arestas entre variáveis em cada partição, todas coincidentes com `tan_arestas.csv`). As probabilidades do teste, que dependem do arquivo com as linhas do teste, não foram recalculadas por outro código: só as métricas e as políticas sobre elas. A reprodução completa do ambiente travado e dos arquivos de resultado foi executada também em ambiente Linux limpo via integração contínua (GitHub Actions, em 22/11/2026). Os arquivos de desenvolvimento gerados coincidiram com os versionados: os demais CSV e JSON ficaram idênticos byte a byte, e os cinco que dependem da regressão logística (predições, métricas, políticas, evidência incompleta e predições com variável oculta) diferiram só nos últimos dígitos, em até $4{,}3 \times 10^{-8}$ nas probabilidades e $4{,}8 \times 10^{-6}$ em colunas em unidades de utilidade, com as mesmas ações e contagens. A regressão logística não reproduz bit a bit entre plataformas, e a comparação byte a byte vale na máquina do autor. Embora essas conferências eliminem a dependência exclusiva das bibliotecas do experimento e do ambiente local do autor, trata-se de verificação automatizada do próprio autor e não substitui uma revisão de código por terceiros.
+Conferências realizadas. Além dos modos `--verificar` e do teste da camada de decisão, as saídas foram conferidas em uma reimplementação independente em NumPy (sem uso do `pgmpy`, do `scikit-learn` nem do `pandas`), versionada em `codigo/auditoria_independente.py`. Sobre as predições já gravadas do desenvolvimento e do conjunto de teste (sem abrir o arquivo com as linhas do teste), foram recalculados: escore de Brier, *log loss*, ECE de dez faixas, ROC-AUC e PR-AUC, ações escolhidas e utilidade média das políticas (três ações, duas ações com limiar 0,20 e corte 0,50). Também foram conferidos, no desenvolvimento, a divisão estratificada em cinco partições, a árvore do TAN em cada partição (informação mútua condicional à classe e árvore geradora máxima) e a estimação dos parâmetros com prior BDeu ($N' = 5$) seguida de inferência exata para *Naive Bayes* e TAN. Os valores coincidiram com os arquivos gravados (diferenças numéricas abaixo de $10^{-12}$, ações e utilidades idênticas, cinco partições com 160 casos e 48 ruins e 19 arestas entre variáveis em cada partição, todas coincidentes com `tan_arestas.csv`). As probabilidades do teste, que dependem do arquivo com as linhas do teste, não foram recalculadas por outro código: só as métricas e as políticas sobre elas. A reprodução completa do ambiente travado e dos arquivos de resultado foi executada também em ambiente Linux limpo via integração contínua (GitHub Actions). Os arquivos de desenvolvimento gerados coincidiram com os versionados: os demais CSV e JSON ficaram idênticos byte a byte, e os cinco que dependem da regressão logística (predições, métricas, políticas, evidência incompleta e predições com variável oculta) diferiram só nos últimos dígitos, em até $4{,}3 \times 10^{-8}$ nas probabilidades e $4{,}8 \times 10^{-6}$ em colunas em unidades de utilidade, com as mesmas ações e contagens. A regressão logística não reproduz bit a bit entre plataformas, e a comparação byte a byte vale na máquina do autor. Embora essas conferências eliminem a dependência exclusiva das bibliotecas do experimento e do ambiente local do autor, trata-se de verificação automatizada do próprio autor e não substitui uma revisão de código por terceiros.
 
 # 4 RESULTADOS
 
-Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6, 4.11, 4.12 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". A Tabela 4.13 também usa só o desenvolvimento, mas é posterior ao plano (Seção 4.8). O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
+Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6, 4.11, 4.12 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". A Tabela 4.13 também usa só o desenvolvimento, mas é posterior ao plano (Seção 4.8). O conjunto de teste final foi aberto uma única vez, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
 
 Nas tabelas de métricas (4.1 e 4.9), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato. A Tabela 4.2 traz o valor no conjunto de teste com intervalo de 95% por *bootstrap*. Os valores são arredondados a três casas, salvo indicação.
 
@@ -769,7 +769,7 @@ Como a mesma configuração foi escolhida em todas as partições externas, a li
 
 ## 4.7 Análise exploratória posterior ao teste: política de duas ações
 
-Esta seção relata uma análise exploratória feita depois da abertura do teste e de conhecido o resultado da comparação principal, e não substitui essa comparação. Ela foi decidida em 22/11/2026 e registrada antes de rodar (`docs/decisoes.md`; Apêndice B.5). A política de duas ações (`ue2`) escolhe entre aprovar e rejeitar pela utilidade esperada da matriz; seu limiar, *p* = *G*/(*G* + *L*) = 100/500 = 0,2 (Seção 2.7), vem da matriz. A comparação separa duas fontes da diferença de 22,5: a ação análise manual (política de três ações contra `ue2`) e o corte de referência 0,5, que não é o limiar de duas ações da matriz (`ue2` contra o corte 0,5).
+Esta seção relata uma análise exploratória feita depois da abertura do teste e de conhecido o resultado da comparação principal, e não substitui essa comparação. Ela foi decidida e registrada antes de rodar (`docs/decisoes.md`; Apêndice B.5). A política de duas ações (`ue2`) escolhe entre aprovar e rejeitar pela utilidade esperada da matriz; seu limiar, *p* = *G*/(*G* + *L*) = 100/500 = 0,2 (Seção 2.7), vem da matriz. A comparação separa duas fontes da diferença de 22,5: a ação análise manual (política de três ações contra `ue2`) e o corte de referência 0,5, que não é o limiar de duas ações da matriz (`ue2` contra o corte 0,5).
 
 A leitura foi definida antes de rodar, para cada diferença: se o intervalo de 95% exclui zero, descreve-se diferença observada a favor de uma das políticas, sem afirmar causa; se inclui zero, não há evidência de diferença com 200 casos e 60 ruins, sem concluir que as políticas são iguais.
 
@@ -823,7 +823,7 @@ Os números valem para este cenário simétrico, no desenvolvimento e sem interv
 
 # 5 DISCUSSÃO E LIMITAÇÕES
 
-Este capítulo interpreta os resultados do Capítulo 4 e declara as limitações do experimento. A interpretação segue o plano inicial de análise, considerando também as complementações registradas após a abertura do teste e explicitadas na Seção 3.6. O conjunto de teste final (200 casos, 60 ruins) foi avaliado uma única vez, em 17/11/2026, sobre o *commit* de congelamento 49d77ff; seus números estão nas Tabelas 4.2, 4.5 e 4.6 e na Figura 4.2, e são lidos aqui pelas mesmas regras.
+Este capítulo interpreta os resultados do Capítulo 4 e declara as limitações do experimento. A interpretação segue o plano inicial de análise, considerando também as complementações registradas após a abertura do teste e explicitadas na Seção 3.6. O conjunto de teste final (200 casos, 60 ruins) foi avaliado uma única vez, sobre o *commit* de congelamento 49d77ff; seus números estão nas Tabelas 4.2, 4.5 e 4.6 e na Figura 4.2, e são lidos aqui pelas mesmas regras.
 
 ## 5.1 Leitura do desenvolvimento
 
@@ -845,7 +845,7 @@ Os resultados de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10, 4.13) v
 
 **Brier e calibração.** O Brier do TAN no teste foi 0,215, maior que o da taxa base, 0,210: pelo critério do plano, o TAN **não foi melhor que prever a taxa base** no teste (comparação pontual, sem inferência estatística). NB (0,199) e logística (0,191) ficaram abaixo da taxa base. O ECE foi 0,115 (NB), 0,157 (TAN) e 0,078 (regressão logística) (Figura 4.2). A calibração foi apenas medida, sem correção (Seção 5.9); essas probabilidades entram como estão na política. Como o Brier do TAN fica acima da taxa base e seu ECE é o maior dos três, a probabilidade do TAN, usada diretamente como número na utilidade esperada, carrega erro de escala: a utilidade esperada que ele produz deve ser lida com cautela como valor absoluto, e a diferença de 22,5 é uma medida simulada sobre o rótulo observado, não uma indicação de que o TAN deva ser usado. Com as mesmas fronteiras, o número de casos encaminhados à análise manual varia entre os modelos (60 no TAN, 85 no *Naive Bayes* e 111 na regressão logística, Tabela 4.5), o que reflete a distribuição das probabilidades de cada um.
 
-**Políticas.** Na comparação principal, com o TAN (decisão P5), a diferença pareada de utilidade média (`ue` − `limiar`) foi 22,5, com intervalo de 95% de 9,2 a 37,2 (Tabela 4.6). O intervalo exclui zero, de modo que, pela regra de leitura do plano (intervalo de 95%, §8, decidida em 18/11/2026), o resultado é **a favor da política de três ações**, sem afirmação de causa. NB e regressão logística aparecem nas tabelas, sem destaque na leitura principal; os intervalos do NB (29,5; de 13,1 a 46,3) e da regressão logística (38,3; de 20,2 a 56,4) também excluem zero. A leitura carrega as ressalvas das Seções 5.4 e 5.5 (vantagem prevista pela matriz, analista infalível, matriz demonstrativa e utilidade simulada sobre o rótulo observado). O resultado não indica qual modelo usar nem que a política seria vantajosa fora deste experimento.
+**Políticas.** Na comparação principal, com o TAN (decisão P5), a diferença pareada de utilidade média (`ue` − `limiar`) foi 22,5, com intervalo de 95% de 9,2 a 37,2 (Tabela 4.6). O intervalo exclui zero, de modo que, pela regra de leitura do plano (intervalo de 95%, §8, decidida depois da abertura do teste), o resultado é **a favor da política de três ações**, sem afirmação de causa. NB e regressão logística aparecem nas tabelas, sem destaque na leitura principal; os intervalos do NB (29,5; de 13,1 a 46,3) e da regressão logística (38,3; de 20,2 a 56,4) também excluem zero. A leitura carrega as ressalvas das Seções 5.4 e 5.5 (vantagem prevista pela matriz, analista infalível, matriz demonstrativa e utilidade simulada sobre o rótulo observado). O resultado não indica qual modelo usar nem que a política seria vantajosa fora deste experimento.
 
 ## 5.3 Estudo de seleção
 
@@ -912,7 +912,7 @@ Quanto aos objetivos de sensibilidade e de demonstração (Seção 1.3), os limi
 
 ## 6.2 Efeito medido nas ações e na utilidade média
 
-A segunda parte é respondida pelo conjunto de teste, aberto uma única vez em 17/11/2026, com 200 casos, dos quais 60 ruins. O critério de leitura é a diferença pareada de utilidade média entre a política de três ações por utilidade esperada e o corte 0,5 de duas ações, com intervalo de 95% por *bootstrap* (Tabela 4.6); o nível de 95% segue a decisão do autor registrada na §8 do plano de análise.
+A segunda parte é respondida pelo conjunto de teste, aberto uma única vez, com 200 casos, dos quais 60 ruins. O critério de leitura é a diferença pareada de utilidade média entre a política de três ações por utilidade esperada e o corte 0,5 de duas ações, com intervalo de 95% por *bootstrap* (Tabela 4.6); o nível de 95% segue a decisão do autor registrada na §8 do plano de análise.
 
 Na comparação principal, com o TAN, a diferença foi de 22,5, com intervalo de 9,2 a 37,2. O intervalo bootstrap da diferença pareada simulada exclui zero e, neste conjunto de teste, a diferença observada é a favor da política de três ações; esse achado não demonstra benefício operacional ou causal. Nas ações, a política de três ações aprovou 92, rejeitou 48 e encaminhou 60 casos para análise manual, contra 145 aprovações e 55 rejeições do corte 0,5; os 60 casos que mudaram de ação são exatamente os encaminhados para análise manual.
 
@@ -1090,7 +1090,7 @@ Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que
 
 ### A.3 Autotestes e conferência
 
-Os scripts `modelos.py`, `avaliar.py`, `decisao.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação de 15/10/2026 (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40).
+Os scripts `modelos.py`, `avaliar.py`, `decisao.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação da proposta (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40).
 
 ```bash
 uv run python codigo/modelos.py --verificar
@@ -1111,7 +1111,7 @@ Esse teste confere que os arquivos são idênticos aos publicados, não que o mo
 
 ### A.4 Teste final
 
-O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0. Em 22/11/2026, o último comando foi executado de novo, sobre as predições já gravadas e sem reabrir o arquivo do teste, para gravar as duas tabelas da Seção 4.7; os seis arquivos anteriores permaneceram idênticos (soma de verificação MD5 conferida). Os comandos, na ordem, foram:
+O conjunto de teste foi usado uma única vez, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0. Depois, o último comando foi executado de novo, sobre as predições já gravadas e sem reabrir o arquivo do teste, para gravar as duas tabelas da Seção 4.7; os seis arquivos anteriores permaneceram idênticos (soma de verificação MD5 conferida). Os comandos, na ordem, foram:
 
 ```bash
 uv run python codigo/modelos.py --final <arquivo do teste>
@@ -1127,9 +1127,9 @@ Quem reproduz sem o arquivo de teste obtém todos os resultados de desenvolvimen
 
 ## APÊNDICE B – Plano de análise
 
-O plano de análise foi escrito em 15/11/2026, antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
+O plano de análise foi escrito antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
 
-Escrito em 15/11/2026, **antes de existir qualquer resultado**. Diz o que será reportado e como cada desfecho será lido. O objetivo é que nenhuma decisão de análise dependa do que os números mostrarem.
+Escrito **antes de existir qualquer resultado**. Diz o que será reportado e como cada desfecho será lido. O objetivo é que nenhuma decisão de análise dependa do que os números mostrarem.
 
 Fontes: [PLANO.md](../PLANO.md), [decisoes.md](decisoes.md) e [criterios-de-aceite.md](criterios-de-aceite.md). Este arquivo não cria decisão de modelo: só fixa como ler o que o experimento produzir. Itens que dependem de um número e ainda não têm dono estão marcados **a confirmar pelo autor**.
 
@@ -1203,14 +1203,14 @@ Tudo acima vale exceto o estudo da §9, que é secundário, pré-registrado e ro
 
 Qualquer mudança neste plano depois de existirem resultados vira uma linha em [decisoes.md](decisoes.md), com data e motivo, **antes** de rodar de novo. A mudança também é declarada no texto como desvio do plano de análise.
 
-### 8. Decidido pelo autor em 18/11/2026
+### 8. Decidido pelo autor depois da abertura do teste
 
-- O intervalo de 95% é o critério de leitura da diferença (seção 4), o mesmo nível do bootstrap das métricas. Decidido em 18/11/2026: confirma o que já estava escrito.
-- O limite de 0,03 de AUC, que vem do plano, vale só para ROC-AUC. PR-AUC é apenas descrita, sem conclusão de ruído. Decidido em 18/11/2026; registro em `docs/decisoes.md`.
+- O intervalo de 95% é o critério de leitura da diferença (seção 4), o mesmo nível do bootstrap das métricas. Decidido depois da abertura do teste: confirma o que já estava escrito.
+- O limite de 0,03 de AUC, que vem do plano, vale só para ROC-AUC. PR-AUC é apenas descrita, sem conclusão de ruído. Decidido depois da abertura do teste; registro em `docs/decisoes.md`.
 
 ### 9. Estudo de seleção (secundário, pré-registrado)
 
-Status: estudo secundário pré-registrado em 16/11/2026, antes da execução do teste final.
+Status: estudo secundário pré-registrado antes da execução do teste final.
 
 **Grade fechada, 8 configurações** ({NB, TAN} × tamanho equivalente BDeu {1, 5, 10, 50}):
 

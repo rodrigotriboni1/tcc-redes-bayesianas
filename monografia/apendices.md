@@ -34,7 +34,7 @@ Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que
 
 ### A.3 Autotestes e conferência
 
-Os scripts `modelos.py`, `avaliar.py`, `decisao.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação de 15/10/2026 (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40).
+Os scripts `modelos.py`, `avaliar.py`, `decisao.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação da proposta (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40).
 
 ```bash
 uv run python codigo/modelos.py --verificar
@@ -55,7 +55,7 @@ Esse teste confere que os arquivos são idênticos aos publicados, não que o mo
 
 ### A.4 Teste final
 
-O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0. Em 22/11/2026, o último comando foi executado de novo, sobre as predições já gravadas e sem reabrir o arquivo do teste, para gravar as duas tabelas da Seção 4.7; os seis arquivos anteriores permaneceram idênticos (soma de verificação MD5 conferida). Os comandos, na ordem, foram:
+O conjunto de teste foi usado uma única vez, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0. Depois, o último comando foi executado de novo, sobre as predições já gravadas e sem reabrir o arquivo do teste, para gravar as duas tabelas da Seção 4.7; os seis arquivos anteriores permaneceram idênticos (soma de verificação MD5 conferida). Os comandos, na ordem, foram:
 
 ```bash
 uv run python codigo/modelos.py --final <arquivo do teste>
@@ -71,9 +71,9 @@ Quem reproduz sem o arquivo de teste obtém todos os resultados de desenvolvimen
 
 ## APÊNDICE B – Plano de análise
 
-O plano de análise foi escrito em 15/11/2026, antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
+O plano de análise foi escrito antes de existir qualquer resultado, e fixa o que será reportado e como cada desfecho será lido. Segue a cópia integral do documento do repositório, com os títulos rebaixados um nível; os links relativos remetem a arquivos do repositório.
 
-Escrito em 15/11/2026, **antes de existir qualquer resultado**. Diz o que será reportado e como cada desfecho será lido. O objetivo é que nenhuma decisão de análise dependa do que os números mostrarem.
+Escrito **antes de existir qualquer resultado**. Diz o que será reportado e como cada desfecho será lido. O objetivo é que nenhuma decisão de análise dependa do que os números mostrarem.
 
 Fontes: [PLANO.md](../PLANO.md), [decisoes.md](decisoes.md) e [criterios-de-aceite.md](criterios-de-aceite.md). Este arquivo não cria decisão de modelo: só fixa como ler o que o experimento produzir. Itens que dependem de um número e ainda não têm dono estão marcados **a confirmar pelo autor**.
 
@@ -147,14 +147,14 @@ Tudo acima vale exceto o estudo da §9, que é secundário, pré-registrado e ro
 
 Qualquer mudança neste plano depois de existirem resultados vira uma linha em [decisoes.md](decisoes.md), com data e motivo, **antes** de rodar de novo. A mudança também é declarada no texto como desvio do plano de análise.
 
-### 8. Decidido pelo autor em 18/11/2026
+### 8. Decidido pelo autor depois da abertura do teste
 
-- O intervalo de 95% é o critério de leitura da diferença (seção 4), o mesmo nível do bootstrap das métricas. Decidido em 18/11/2026: confirma o que já estava escrito.
-- O limite de 0,03 de AUC, que vem do plano, vale só para ROC-AUC. PR-AUC é apenas descrita, sem conclusão de ruído. Decidido em 18/11/2026; registro em `docs/decisoes.md`.
+- O intervalo de 95% é o critério de leitura da diferença (seção 4), o mesmo nível do bootstrap das métricas. Decidido depois da abertura do teste: confirma o que já estava escrito.
+- O limite de 0,03 de AUC, que vem do plano, vale só para ROC-AUC. PR-AUC é apenas descrita, sem conclusão de ruído. Decidido depois da abertura do teste; registro em `docs/decisoes.md`.
 
 ### 9. Estudo de seleção (secundário, pré-registrado)
 
-Status: estudo secundário pré-registrado em 16/11/2026, antes da execução do teste final.
+Status: estudo secundário pré-registrado antes da execução do teste final.
 
 **Grade fechada, 8 configurações** ({NB, TAN} × tamanho equivalente BDeu {1, 5, 10, 50}):
 
