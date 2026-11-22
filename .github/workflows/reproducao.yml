@@ -39,6 +39,7 @@ jobs:
           uv run python codigo/modelos.py --selecao
           uv run python codigo/avaliar.py --selecao
           uv run python codigo/decisao.py
+          uv run python codigo/decisao.py --calibracao
           uv run python codigo/sensibilidade.py
       - name: Auditoria independente
         run: uv run python codigo/auditoria_independente.py
