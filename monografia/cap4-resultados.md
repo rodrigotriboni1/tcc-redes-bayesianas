@@ -1,6 +1,6 @@
 # 4 RESULTADOS
 
-Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6, 4.11, 4.12 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
+Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6, 4.11, 4.12 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". A Tabela 4.13 também usa só o desenvolvimento, mas é posterior ao plano (Seção 4.8). O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
 
 Nas tabelas de métricas (4.1 e 4.9), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato. A Tabela 4.2 traz o valor no conjunto de teste com intervalo de 95% por *bootstrap*. Os valores são arredondados a três casas, salvo indicação.
 
@@ -134,7 +134,7 @@ A Tabela 4.7 mostra, para alguns pares de perda e custo da análise manual, os l
 | 400 | 100 | 0,2 | 0,2 |
 | 800 | 50 | 0,063 | 0,5 |
 
-Com custo zero, a faixa de análise manual cobre todo o intervalo de 0 a 1 (linha 400, 0). Quando os dois limiares coincidem, a faixa desaparece e a política se reduz a duas ações; isso ocorre, por exemplo, para perda 200 com custo a partir de 70 e para perda 400 com custo a partir de 80. A Figura 4.3 mostra a tabela inteira. Não há regra da §4 para esta análise, e este texto não escolhe valor de custo nem de perda. Essa sensibilidade é à matriz: ela não mede o efeito de um erro de calibração das probabilidades, discutido na Seção 5.9.
+Com custo zero, a faixa de análise manual cobre todo o intervalo de 0 a 1 (linha 400, 0). Quando os dois limiares coincidem, a faixa desaparece e a política se reduz a duas ações; isso ocorre, por exemplo, para perda 200 com custo a partir de 70 e para perda 400 com custo a partir de 80. A Figura 4.3 mostra a tabela inteira. Não há regra da §4 para esta análise, e este texto não escolhe valor de custo nem de perda. Essa sensibilidade é à matriz: ela não mede o efeito de um erro de calibração das probabilidades, que a Seção 4.8 mede no desenvolvimento e a Seção 5.9 discute.
 
 **Figura 4.3** – Limiares da política em função da perda e do custo da análise manual (`resultados/sensibilidade.png`)
 
@@ -228,3 +228,25 @@ Com o TAN, a diferença de 22,5 entre a política de três ações e o corte 0,5
 No *Naive Bayes*, na regressão logística e na seleção aninhada, a diferença entre a política de três ações e a de duas ações também exclui zero (11,0, 9,3 e 18,4). A diferença entre a política de duas ações e o corte 0,5 exclui zero no *Naive Bayes* (18,5) e na regressão logística (29,0) e inclui zero na seleção aninhada (16,0; −0,5 a 33,5), caso em que não há evidência de diferença.
 
 Esses números herdam as ressalvas das Seções 5.4 e 5.5 (matriz demonstrativa, analista infalível, simulação sobre o rótulo observado) e as de um teste com 200 casos. A política de duas ações não é adotada nem recomendada por causa deste resultado, e a comparação principal e a matriz não mudam.
+
+## 4.8 Sensibilidade das ações ao erro de calibração: análise posterior ao plano
+
+Esta seção relata uma análise feita no desenvolvimento, depois do plano, para responder à observação de que a calibração foi medida e não corrigida (Seção 5.9). Ela não treina nem recalibra modelo, não usa o teste e não altera a análise primária. Para cada modelo, a probabilidade de ruim *p* de cada um dos 800 casos é trocada por *p* − ECE, *p* e *p* + ECE, em que o ECE é o erro esperado de calibração médio do modelo no desenvolvimento (0,093 no NB, 0,152 no TAN e 0,095 na regressão logística; Tabela 4.1), e a ação de maior utilidade esperada é refeita com a matriz demonstrativa. O deslocamento não é cortado em [0, 1], porque a ação só depende de *p* frente às fronteiras 0,10 e 0,60. A utilidade média é a realizada: a ação deslocada aplicada ao estado verdadeiro de cada caso. O comando é `uv run python codigo/decisao.py --calibracao`, e o resultado está em `resultados/sensibilidade_calibracao_dev.csv`.
+
+**Tabela 4.13** – Ações e utilidade média no desenvolvimento com *p* deslocada pelo ECE do modelo (n = 800)
+
+| Modelo | Cenário | Aprovar | Rejeitar | Análise manual | Utilidade média | Casos que mudam de ação |
+|---|---|---|---|---|---|---|
+| NB | *p* − ECE | 395 | 121 | 284 | 27,3 | 171 |
+| NB | *p* (base) | 274 | 171 | 355 | 32,6 | 0 |
+| NB | *p* + ECE | 15 | 216 | 569 | 30,8 | 304 |
+| TAN | *p* − ECE | 476 | 107 | 217 | 16,4 | 185 |
+| TAN | *p* (base) | 361 | 177 | 262 | 22,3 | 0 |
+| TAN | *p* + ECE | 0 | 234 | 566 | 28,3 | 418 |
+| Regressão logística | *p* − ECE | 391 | 91 | 318 | 28,5 | 199 |
+| Regressão logística | *p* (base) | 243 | 142 | 415 | 30,9 | 0 |
+| Regressão logística | *p* + ECE | 3 | 200 | 597 | 30,8 | 298 |
+
+Um erro do tamanho do ECE muda a ação de 171 a 418 dos 800 casos (21% a 52%), conforme o modelo e o sentido. No TAN, o deslocamento para cima tira todas as aprovações (361 para 0) e leva 566 casos à análise manual. A utilidade média não segue uma direção única: com *p* − ECE ela cai nos três modelos (27,3, 16,4 e 28,5); com *p* + ECE ela cai no NB (30,8), sobe no TAN (28,3) e fica quase igual na regressão logística (30,8). Uma leitura compatível com a alta do TAN, não testada aqui, é que o deslocamento encaminha mais casos à análise manual, cujo analista a matriz supõe infalível (Seção 5.5).
+
+Os números valem para este cenário simétrico, no desenvolvimento e sem intervalo. O erro real de calibração não é um deslocamento constante: o ECE é uma média de diferenças em módulo, e a probabilidade pode estar alta numas faixas e baixa em outras (Seção 5.9). A Tabela 4.13 dá, portanto, uma ordem de grandeza da sensibilidade, e não o efeito de recalibrar. Ela não é usada para escolher modelo, parâmetro ou matriz, e os resultados dos Capítulos 4 e 5 seguem com as probabilidades sem correção.
