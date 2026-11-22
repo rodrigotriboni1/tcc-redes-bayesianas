@@ -68,8 +68,8 @@ PEARL, Judea. **Probabilistic Reasoning in Intelligent Systems**: networks of pl
 PEDREGOSA, Fabian et al. Scikit-learn: Machine learning in Python. **Journal of Machine Learning Research**, v. 12, p. 2825–2830, 2011.
 <!-- pedregosa2011 -->
 
-PLATT, John C. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In: SMOLA, Alexander J. et al. (ed.). **Advances in Large Margin Classifiers**. Cambridge: MIT Press, 1999. p. 61–74.
-<!-- platt1999: VERIFICAR: ano do livro (1999 na capa; algumas bases citam 2000) e páginas 61–74. -->
+PLATT, John C. Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods. In: SMOLA, Alexander J. et al. (ed.). **Advances in Large Margin Classifiers**. Cambridge: MIT Press, 2000. p. 61–74.
+<!-- platt2000: o ano é o do livro (MIT Press, 2000); o capítulo circulou em 1999 e muitos catálogos citam 1999. Páginas 61–74 não confirmadas em fonte online. -->
 
 RUSSELL, Stuart; NORVIG, Peter. **Artificial Intelligence**: a modern approach. 3. ed. Upper Saddle River: Prentice Hall, 2010.
 <!-- russell2010: VERIFICAR: trocada em 15/11/2026 da tradução brasileira para o original em inglês (3ª edição); título, editora, cidade e ano escritos de memória; conferir no original. -->
@@ -80,7 +80,7 @@ SIDDIQI, Naeem. **Credit Risk Scorecards**: developing and implementing intellig
 THOMAS, Lyn C. A survey of credit and behavioural scoring: forecasting financial risk of lending to consumers. **International Journal of Forecasting**, v. 16, n. 2, p. 149–172, 2000.
 <!-- thomas2000: Bloco "referências da proposta": conferir no original. -->
 
-UCI MACHINE LEARNING REPOSITORY. **South German Credit (UPDATE)**. 2020. Conjunto de dados n. 573. UCI Machine Learning Repository. DOI: 10.24432/C5QG88. Disponível em: https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Acesso em: 10 nov. 2026.
+UCI MACHINE LEARNING REPOSITORY. **South German Credit**. 2020. Conjunto de dados n. 573. UCI Machine Learning Repository. DOI: 10.24432/C5QG88. Disponível em: https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Acesso em: 10 nov. 2026.
 <!-- uci573: Ano 2020 = criação do conjunto na UCI (decidido pelo autor, 17/11/2026). DOI conferido na API da UCI (docs/conferencia-referencias.md). -->
 
 ZADROZNY, Bianca; ELKAN, Charles. Obtaining calibrated probability estimates from decision trees and naive Bayesian classifiers. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 18., 2001. **Proceedings** [...]. [S. l.: s. n.], 2001. p. 609–616.
@@ -118,7 +118,7 @@ ZADROZNY, Bianca; ELKAN, Charles. Transforming classifier scores into accurate m
 | niculescu2005 | cap2, cap5 | usada |
 | pearl1988 | cap1, cap2 | usada |
 | pedregosa2011 | cap3 | usada |
-| platt1999 | cap2, cap5 | usada |
+| platt2000 | cap2, cap5 | usada |
 | russell2010 | cap2, cap3 | usada |
 | siddiqi2006 | cap1, cap2 | usada |
 | thomas2000 | cap1, cap2 | usada |

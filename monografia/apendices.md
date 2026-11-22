@@ -31,12 +31,13 @@ Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que
 
 ### A.3 Autotestes e conferência
 
-Os scripts `modelos.py`, `avaliar.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação de 15/10/2026 (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40).
+Os scripts `modelos.py`, `avaliar.py`, `decisao.py` e `sensibilidade.py` têm o modo `--verificar`, que confere contas com resposta conhecida e não grava nada; `test_decisao.py` usa apenas `assert` e inclui o exemplo da apresentação de 15/10/2026 (com p = 0,20, ganho de 100 e perda de 400, a utilidade esperada de aprovar é 0; com perda de 600, é −40).
 
 ```bash
 uv run python codigo/modelos.py --verificar
 uv run python codigo/avaliar.py --verificar
 uv run python codigo/sensibilidade.py --verificar
+uv run python codigo/decisao.py --verificar
 uv run python codigo/test_decisao.py
 ```
 
@@ -50,7 +51,7 @@ Esse teste confere que os arquivos são idênticos aos publicados, não que o mo
 
 ### A.4 Teste final
 
-O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0. Os comandos, na ordem, foram:
+O conjunto de teste foi usado uma única vez, em 17/11/2026, sobre o commit de congelamento `49d77ff`, e todos os comandos terminaram com código de saída 0. Em 22/11/2026, o último comando foi executado de novo, sobre as predições já gravadas e sem reabrir o arquivo do teste, para gravar as duas tabelas da Seção 4.7; os seis arquivos anteriores permaneceram idênticos (soma de verificação MD5 conferida). Os comandos, na ordem, foram:
 
 ```bash
 uv run python codigo/modelos.py --final <arquivo do teste>

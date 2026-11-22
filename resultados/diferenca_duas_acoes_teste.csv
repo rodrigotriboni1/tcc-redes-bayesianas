@@ -1,0 +1,13 @@
+modelo,comparacao,dif_utilidade_media,dif_ic_inf,dif_ic_sup,n_acao_diferente
+nb,ue - limiar,29.5,13.1,46.30249999999998,85
+nb,ue - ue2,11.0,2.5,20.9,85
+nb,ue2 - limiar,18.5,2.0,36.0,48
+tan,ue - limiar,22.5,9.2,37.202499999999986,60
+tan,ue - ue2,9.0,1.8,17.4,60
+tan,ue2 - limiar,13.5,0.4875000000000007,28.5,33
+logreg,ue - limiar,38.3,20.195,56.40249999999998,111
+logreg,ue - ue2,9.3,0.5975000000000001,19.002499999999987,111
+logreg,ue2 - limiar,29.0,10.0,48.5,57
+sel,ue - limiar,34.4,16.4,52.5,93
+sel,ue - ue2,18.4,7.5,30.0,93
+sel,ue2 - limiar,16.0,-0.5124999999999993,33.5,53

@@ -70,13 +70,21 @@ sys.exit(1 if ruins else 0)
 PY
 fi
 
-# 7. Resultados do teste final: ou nenhum, ou exatamente os 6 esperados.
+# 7. Resultados do teste final: ou nenhum, ou os 6 esperados.
 #    Desde 18/11/2026 (teste final rodado pelo autor) eles podem ser commitados.
+#    Desde 22/11/2026 o --final de decisao.py grava também as 2 tabelas da política de duas ações
+#    (decisão registrada em docs/decisoes.md). Elas são opcionais, mas vêm sempre juntas.
 if compgen -G "resultados/*_teste*" >/dev/null; then
   esperados="calibracao_teste.png diferenca_politicas_teste.csv metricas_teste.csv politicas_teste.csv predicoes_teste.csv resumo_politicas_teste.csv"
+  duas_acoes="duas_acoes_teste.csv diferenca_duas_acoes_teste.csv"
   for e in $esperados; do [ -f "resultados/$e" ] || falha "falta resultados/$e (resultados do teste final incompletos)"; done
+  for e in $duas_acoes; do
+    if [ -f "resultados/duas_acoes_teste.csv" ] || [ -f "resultados/diferenca_duas_acoes_teste.csv" ]; then
+      [ -f "resultados/$e" ] || falha "falta resultados/$e (as 2 tabelas da política de duas ações vêm juntas)"
+    fi
+  done
   for f in resultados/*_teste*; do
-    case " $esperados " in *" $(basename "$f") "*) ;; *) falha "sobra $f (não é um dos 6 resultados do teste final)" ;; esac
+    case " $esperados $duas_acoes " in *" $(basename "$f") "*) ;; *) falha "sobra $f (não é um dos resultados do teste final)" ;; esac
   done
 fi
 
