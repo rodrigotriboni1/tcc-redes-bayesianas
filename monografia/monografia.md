@@ -85,6 +85,8 @@ Tabela 4.11 – Utilidade média por regra, análise exploratória posterior ao 
 
 Tabela 4.13 – Ações e utilidade média no desenvolvimento com *p* deslocada pelo ECE do modelo (n = 800)........ p. __
 
+Tabela 4.14 – Taxa de acerto *q* do analista em que a política de três ações iguala cada referência, no desenvolvimento (n = 800)........ p. __
+
 ## LISTA DE QUADROS
 
 Quadro 3.1 – Matriz de utilidade demonstrativa........ p. __
@@ -171,6 +173,7 @@ LISTA DE SIGLAS E ABREVIATURAS........ p. __
 - 4.6 Estudo de seleção (secundário)........ p. __
 - 4.7 Análise exploratória posterior ao teste: política de duas ações........ p. __
 - 4.8 Sensibilidade das ações ao erro de calibração: análise posterior ao plano........ p. __
+- 4.9 Sensibilidade da comparação ao erro do analista: análise posterior ao plano........ p. __
 **5 DISCUSSÃO E LIMITAÇÕES**........ p. __
 
 - 5.1 Leitura do desenvolvimento........ p. __
@@ -236,7 +239,13 @@ A avaliação do modelo de risco é feita separadamente da avaliação da polít
 
 O trabalho é um experimento composto por *scripts* que leem arquivos de dados e gravam tabelas e figuras. Não desenvolve um produto operacional, painel web, servidor, banco de dados ou modelo de linguagem. A matriz de utilidade é demonstrativa: não representa a política de nenhuma instituição, e o trabalho não usa dados nem sistemas proprietários.
 
-O trabalho também não propõe uma regra de tipo distinto do limiar: como a utilidade esperada de cada ação é uma reta em `p`, a política equivale a uma regra de limiares sobre `p`, resultado conhecido da teoria da decisão \cite{chow1970,elkan2001}, e a derivação dos limiares a partir dos custos não é apresentada como novidade teórica. A contribuição deste trabalho tem outra natureza e três partes. O que já era conhecido: a forma da regra e os limiares derivados da matriz. O que se implementa: um fluxo reprodutível com *Naive Bayes*, TAN e regressão logística, uma matriz de utilidade configurável, a análise de sensibilidade dos limiares e as conferências de reprodução descritas no Capítulo 3. O que se aprende empiricamente, com 200 casos de teste e 60 ruins e sob as ressalvas dos Capítulos 3 e 5: no teste, o TAN não foi melhor que a taxa base no Brier e teve o maior erro de calibração, e a diferença de utilidade simulada entre as duas políticas depende da matriz, do analista idealizado e do corte de referência. A parte 1 da pergunta vale para qualquer escore e não distingue a rede da regressão logística. Os resultados não se generalizam a outras bases nem validam uma política real de concessão.
+O trabalho também não propõe uma regra de tipo distinto do limiar: como a utilidade esperada de cada ação é uma reta em `p`, a política equivale a uma regra de limiares sobre `p`, resultado conhecido da teoria da decisão \cite{chow1970,elkan2001}, e a derivação dos limiares a partir dos custos não é apresentada como novidade teórica. A contribuição deste trabalho tem outra natureza e três partes:
+
+1. Já conhecido: a forma da regra e os limiares derivados da matriz.
+2. Implementação própria: um fluxo reprodutível com *Naive Bayes*, TAN e regressão logística, uma matriz de utilidade configurável, a análise de sensibilidade dos limiares e as conferências de reprodução descritas no Capítulo 3.
+3. Observado, com 200 casos de teste e 60 ruins e sob as ressalvas dos Capítulos 3 e 5: no teste, o TAN não foi melhor que a taxa base no Brier e teve o maior erro de calibração, e a diferença de utilidade simulada entre as duas políticas depende da matriz, do analista idealizado e do corte de referência (Seções 4.7, 4.9 e 5.5).
+
+A parte 1 da pergunta vale para qualquer escore e não distingue a rede da regressão logística. Os resultados não se generalizam a outras bases nem validam uma política real de concessão.
 
 ## 1.5 Mudanças em relação à proposta
 
@@ -390,7 +399,7 @@ Neste trabalho, entende-se por *next best action* (próxima melhor ação) a aç
 
 <!-- Entradas do.bib marcadas "% VERIFICAR" ou "A CONFERIR" só podem ser citadas depois de conferidas no original (PLANO.md §9). -->
 
-Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas após sua abertura, conforme a Seção 3.6; duas análises exploratórias posteriores foram decididas depois dos resultados (Seções 4.7 e 4.8).
+Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas após sua abertura, conforme a Seção 3.6; três análises exploratórias posteriores foram decididas depois dos resultados (Seções 4.7 a 4.9).
 
 ## 3.1 Base de dados
 
@@ -504,7 +513,7 @@ em que $B_b$ é o conjunto de casos cuja $p_k$ cai na faixa $b$, e $\bar{y}_b$ e
 
 No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por *bootstrap* com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993}. O intervalo não cobre a variação devida ao treino.
 
-As regras principais de leitura foram fixadas antes dos resultados; houve complementações documentadas após a abertura do teste (Apêndice B), e duas análises exploratórias decididas depois dos resultados, descritas nas Seções 4.7 e 4.8. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
+As regras principais de leitura foram fixadas antes dos resultados; houve complementações documentadas após a abertura do teste (Apêndice B), e três análises exploratórias decididas depois dos resultados, descritas nas Seções 4.7 a 4.9. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
 
 O limite de 0,03 vale só para ROC-AUC: a PR-AUC é descrita sem conclusão de ruído, e a diferença pareada de utilidade é lida pelo intervalo de 95%, por decisão do autor registrada em docs/decisoes.md.
 
@@ -570,7 +579,7 @@ Conferências realizadas. Além dos modos `--verificar` e do teste da camada de 
 
 # 4 RESULTADOS
 
-Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6, 4.11, 4.12 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". A Tabela 4.13 também usa só o desenvolvimento, mas é posterior ao plano (Seção 4.8). O conjunto de teste final foi aberto uma única vez, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
+Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6, 4.11, 4.12 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". As Tabelas 4.13 e 4.14 também usam só o desenvolvimento, mas são posteriores ao plano (Seções 4.8 e 4.9). O conjunto de teste final foi aberto uma única vez, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
 
 Nas tabelas de métricas (4.1 e 4.9), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato. A Tabela 4.2 traz o valor no conjunto de teste com intervalo de 95% por *bootstrap*. Os valores são arredondados a três casas, salvo indicação.
 
@@ -821,13 +830,31 @@ Um erro do tamanho do ECE muda a ação de 171 a 418 dos 800 casos (21% a 52%), 
 
 Os números valem para este cenário simétrico, no desenvolvimento e sem intervalo. O erro real de calibração não é um deslocamento constante: o ECE é uma média de diferenças em módulo, e a probabilidade pode estar alta numas faixas e baixa em outras (Seção 5.9). A Tabela 4.13 dá uma ordem de grandeza da sensibilidade, não o efeito de recalibrar. Ela não é usada para escolher modelo, parâmetro ou matriz, e os resultados dos Capítulos 4 e 5 seguem com as probabilidades sem correção.
 
+## 4.9 Sensibilidade da comparação ao erro do analista: análise posterior ao plano
+
+A análise a seguir foi feita no desenvolvimento, depois do plano, em resposta à observação de que a política de três ações supõe um analista que nunca erra (Seção 5.5). Ela não treina modelo, não usa o teste e não altera a análise primária. Foi decidida e registrada em `docs/decisoes.md` antes de rodar (Apêndice B.5). A política fica como está, com as fronteiras 0,10 e 0,60. Muda só o analista: um caso encaminhado à análise manual é decidido corretamente com probabilidade *q* e de forma errada com probabilidade 1 − *q*, a mesma nos dois estados do cliente. Essa simetria é uma hipótese do autor. O custo da análise, 40, e as utilidades de errar vêm da matriz (Seção 3.7): o analista que erra paga o custo e recebe o resultado da ação errada, −40 ao rejeitar um cliente bom e −440 ao aprovar um ruim. A utilidade média da política é uma reta em *q*, e a Tabela 4.14 mostra, para cada modelo, o valor de *q* em que ela iguala a da política de duas ações (limiar 0,2, Seção 4.7) e a do corte 0,5. Não há grade de valores de *q*: o ponto de equilíbrio é calculado. O comando é `uv run python codigo/decisao.py --analista`, e o resultado está em `resultados/sensibilidade_analista_dev.csv`.
+
+**Tabela 4.14** – Taxa de acerto *q* do analista em que a política de três ações iguala cada referência, no desenvolvimento (n = 800)
+
+| Modelo | *q* contra duas ações | *q* contra o corte 0,5 | Utilidade com *q* = 1 | Utilidade com *q* = 0 |
+|---|---|---|---|---|
+| NB | 0,863 | 0,680 | 32,6 | −55,3 |
+| TAN | 0,846 | 0,629 | 22,3 | −46,1 |
+| Regressão logística | 0,894 | 0,719 | 30,9 | −66,0 |
+
+Com um analista que sempre acerta (*q* = 1), a utilidade média da política de três ações é 32,6 no NB, 22,3 no TAN e 30,9 na regressão logística (a mesma da linha *p* (base) da Tabela 4.13), contra 20,6, 11,8 e 20,6 da política de duas ações e 4,5, −3,1 e 3,6 do corte 0,5. Para continuar acima da política de duas ações, o analista precisa acertar mais de 0,863 dos casos encaminhados no NB, 0,846 no TAN e 0,894 na regressão logística. Contra o corte 0,5, os valores são 0,680, 0,629 e 0,719. Nenhum equilíbrio fica abaixo de 0,5, a taxa de acerto de um analista que decide ao acaso. Com *q* = 0, a utilidade média da política de três ações é negativa nos três modelos (−55,3, −46,1 e −66,0).
+
+O resultado é desfavorável à robustez da política de três ações. Ela só supera a de duas ações se o analista acertar mais de 0,846 a 0,894 dos casos encaminhados, conforme o modelo, e só supera o corte 0,5 se acertar mais de 0,629 a 0,719. A vantagem observada nos Capítulos 4 e 5 supõe *q* = 1 e, no desenvolvimento, depende de um analista que acerte acima desses valores. Abaixo deles, a política de três ações tem utilidade média menor que a da referência.
+
+Os números valem para este erro simétrico, no desenvolvimento, sem intervalo e sob a matriz demonstrativa. Um analista real pode errar mais em um estado do que no outro. A Tabela 4.14 não escolhe modelo, parâmetro nem matriz, e os resultados dos Capítulos 4 e 5 seguem com o analista idealizado.
+
 # 5 DISCUSSÃO E LIMITAÇÕES
 
 Este capítulo interpreta os resultados do Capítulo 4 e declara as limitações do experimento. A interpretação segue o plano inicial de análise, considerando também as complementações registradas após a abertura do teste e explicitadas na Seção 3.6. O conjunto de teste final (200 casos, 60 ruins) foi avaliado uma única vez, sobre o *commit* de congelamento 49d77ff; seus números estão nas Tabelas 4.2, 4.5 e 4.6 e na Figura 4.2, e são lidos aqui pelas mesmas regras.
 
 ## 5.1 Leitura do desenvolvimento
 
-Os resultados de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10, 4.13) vêm só dos 800 casos de desenvolvimento, por validação cruzada em 5 partições. Não têm intervalo de confiança, e os desvios entre partições são da mesma ordem de várias das diferenças entre modelos. Por isso, a leitura a seguir se limita a aplicar as regras da §4 do plano.
+Os resultados de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10, 4.13, 4.14) vêm só dos 800 casos de desenvolvimento, por validação cruzada em 5 partições. Não têm intervalo de confiança, e os desvios entre partições são da mesma ordem de várias das diferenças entre modelos. Por isso, a leitura a seguir se limita a aplicar as regras da §4 do plano.
 
 **Desempenho preditivo.** A diferença de ROC-AUC entre *Naive Bayes* e regressão logística é 0,001 (0,789 contra 0,788). Pela regra descritiva do plano (Seção 3.6), diferença menor que 0,03 é tratada como ruído, sem apontar vencedor; isso não demonstra que os dois modelos sejam equivalentes. O TAN teve desempenho pior que o NB nas cinco métricas (ROC-AUC e PR-AUC menores; Brier, *log loss* e ECE maiores) (Tabela 4.1), com ROC-AUC de 0,742 e desvio de 0,049 entre partições. As diferenças para o NB (0,047) e para a regressão logística (0,046) passam de 0,03, de modo que a regra de ruído não se aplica; o plano não prevê outra regra para esse caso. O resultado entra no texto como saiu, e não motivou alteração do TAN, de seus parâmetros nem das faixas da análise primária. Como o TAN é o modelo da comparação principal, fixado antes de qualquer métrica (decisão P5), o resultado pesa sobre o trabalho, mas a escolha não é revista: revê-la seria o ajuste ao resultado que o plano de análise pretende impedir.
 
@@ -865,7 +892,7 @@ A base não traz o resultado das ações que não foram tomadas. A utilidade de 
 
 ## 5.5 Matriz demonstrativa e analista infalível
 
-A matriz de utilidade (+100, −400, custo da análise *c* = 40) é demonstrativa, não calibrada com dados reais, e foi aprovada pelo orientador apenas para fins demonstrativos. Ela supõe que o analista da análise manual sempre acerta o estado do cliente: aprova os bons, recusa os ruins e só paga o custo *c*.
+A matriz de utilidade (+100, −400, custo da análise *c* = 40) é demonstrativa, não calibrada com dados reais, e foi aprovada pelo orientador apenas para fins demonstrativos. Ela supõe que o analista da análise manual sempre acerta o estado do cliente: aprova os bons, recusa os ruins e só paga o custo *c*. A Seção 4.9 mede quanto essa hipótese pesa: no desenvolvimento e com erro simétrico, a política de três ações só supera a de duas ações se o analista acertar mais de 0,846 a 0,894 dos casos encaminhados, conforme o modelo, e só supera o corte 0,5 se acertar mais de 0,629 a 0,719.
 
 Essa hipótese tem uma consequência direta para a comparação de duas regras (Tabelas 4.4 a 4.6): **a política de três ações não pode ter menor utilidade esperada máxima calculada pelo modelo do que a mesma política restrita às duas ações originais; isso não garante superioridade empírica em todos os conjuntos de teste, particularmente sob erros de calibração.** A análise manual é uma ação adicional que, com analista infalível, oferece um resultado intermediário quase sem risco; a política de três ações (`ue`) esperada só a escolhe quando, pelo modelo, ela vale mais que aprovar e que rejeitar \cite{chow1970}. O corte 0,5 não tem acesso a essa ação. Uma vantagem da política de três ações (`ue`) na comparação de duas regras é, assim, em grande parte consequência da matriz e do conjunto de ações, não evidência sobre a rede bayesiana nem sobre o critério da utilidade esperada. Por esse motivo a comparação é descrita como "política de três ações por utilidade esperada contra corte 0,5 de duas ações", sem linguagem causal (decisão P8).
 
@@ -891,7 +918,7 @@ A calibração das probabilidades é medida, mas não corrigida (decisão P1). M
 
 As direções a seguir decorrem das limitações acima, não das métricas do desenvolvimento, e não há promessa sobre o resultado de nenhuma delas:
 
-- substituir a matriz demonstrativa por valores levantados com especialistas e modelar o erro do analista na análise manual, o que permitiria examinar a comparação sem a vantagem prevista pela matriz discutida na Seção 5.5;
+- substituir a matriz demonstrativa por valores levantados com especialistas e levantar também, com especialistas, o erro do analista na análise manual, que pode ser assimétrico entre os estados (a Seção 4.9 mediu só um erro simétrico), o que permitiria examinar a comparação sem a vantagem prevista pela matriz discutida na Seção 5.5;
 - avaliar políticas com dados que registrem o desfecho das ações não tomadas, condição para falar em efeito, e não só em simulação;
 - comparar modelos sob a mesma representação das variáveis, separando modelo e representação;
 - repetir a decomposição entre a ação adicional e o corte de referência (Seção 4.7) com uma matriz levantada com especialistas, já que a feita aqui usa a matriz demonstrativa;
@@ -906,7 +933,11 @@ Este trabalho perguntou (1) se uma política que separa a estimativa de risco da
 
 ## 6.1 Limiares explícitos e reprodutíveis
 
-A primeira parte é respondida pela construção da política, não pelo desempenho dos modelos. Como a utilidade esperada de cada ação é linear na probabilidade estimada *p* de o caso ser ruim, a escolha da ação de maior utilidade equivale a uma regra de limiares sobre *p* (Capítulo 3, Seção 3.7). Com a matriz demonstrativa, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60. Dadas a matriz em `config/utilidade.json` e a coluna de probabilidade, qualquer pessoa obtém a ação de cada caso e as fronteiras. A resposta à primeira parte é, portanto, afirmativa, com uma ressalva que o próprio plano registra: essa propriedade vale para qualquer escore de probabilidade e não distingue a rede bayesiana da regressão logística. Por isso a contribuição deste trabalho não está na derivação, que é conhecida \cite{chow1970,elkan2001}, e sim em implementá-la de forma reproduzível, medi-la com três modelos e registrar o que se aprendeu: no teste, o TAN não foi melhor que a taxa base no Brier e teve o maior erro de calibração, e a diferença de utilidade entre as políticas depende da matriz, do analista idealizado e do corte de referência (Capítulo 5).
+A primeira parte é respondida pela construção da política, não pelo desempenho dos modelos. Como a utilidade esperada de cada ação é linear na probabilidade estimada *p* de o caso ser ruim, a escolha da ação de maior utilidade equivale a uma regra de limiares sobre *p* (Capítulo 3, Seção 3.7). Com a matriz demonstrativa, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60. Dadas a matriz em `config/utilidade.json` e a coluna de probabilidade, qualquer pessoa obtém a ação de cada caso e as fronteiras. A resposta à primeira parte é, portanto, afirmativa, com uma ressalva que o próprio plano registra: essa propriedade vale para qualquer escore de probabilidade e não distingue a rede bayesiana da regressão logística. Por isso a contribuição deste trabalho tem três partes:
+
+1. Já conhecido: a derivação dos limiares, que não é contribuição deste trabalho \cite{chow1970,elkan2001}.
+2. Implementação própria: a derivação implementada de forma reproduzível e medida com três modelos.
+3. Observado: no teste, o TAN não foi melhor que a taxa base no Brier e teve o maior erro de calibração, e a diferença de utilidade entre as políticas depende da matriz, do analista idealizado e do corte de referência (Seção 4.9 e Capítulo 5).
 
 Quanto aos objetivos de sensibilidade e de demonstração (Seção 1.3), os limiares se movem com a perda e o custo da análise (Tabela 4.7) e a demonstração mostra um caso (Tabela 4.8); nenhum valor foi escolhido.
 
@@ -916,7 +947,7 @@ A segunda parte é respondida pelo conjunto de teste, aberto uma única vez, com
 
 Na comparação principal, com o TAN, a diferença foi de 22,5, com intervalo de 9,2 a 37,2. O intervalo bootstrap da diferença pareada simulada exclui zero e, neste conjunto de teste, a diferença observada é a favor da política de três ações; esse achado não demonstra benefício operacional ou causal. Nas ações, a política de três ações aprovou 92, rejeitou 48 e encaminhou 60 casos para análise manual, contra 145 aprovações e 55 rejeições do corte 0,5; os 60 casos que mudaram de ação são exatamente os encaminhados para análise manual.
 
-Vale a ressalva da Seção 5.5: a diferença mistura modelo, representação e conjunto de ações, e não é chamada de efeito da regra nem do modelo. Na análise exploratória posterior ao teste (Seção 4.7), a diferença de 22,5 do TAN se decompõe em 9,0 entre a política de três ações e a de duas ações com limiar 0,2, e 13,5 entre esta e o corte 0,5; os dois intervalos excluem zero, o segundo por pouco (limite inferior de 0,5). Como a base não registra o desfecho das ações não tomadas, trata-se de uma simulação metodológica, não da validação de uma política real.
+Vale a ressalva da Seção 5.5: a diferença mistura modelo, representação e conjunto de ações, e não é chamada de efeito da regra nem do modelo. Na análise exploratória posterior ao teste (Seção 4.7), a diferença de 22,5 do TAN se decompõe em 9,0 entre a política de três ações e a de duas ações com limiar 0,2, e 13,5 entre esta e o corte 0,5; os dois intervalos excluem zero, o segundo por pouco (limite inferior de 0,5). Como a base não registra o desfecho das ações não tomadas, trata-se de uma simulação metodológica, não da validação de uma política real. Na análise do analista que erra (Seção 4.9), feita só no desenvolvimento e com erro simétrico, a política de três ações só supera a de duas ações se o analista acertar mais de 0,846 a 0,894 dos casos encaminhados, conforme o modelo, e só supera o corte 0,5 se acertar mais de 0,629 a 0,719. A vantagem observada supõe um analista que acerta sempre e, no desenvolvimento, depende de um analista que acerte acima desses valores.
 
 Quanto ao risco estimado, o teste mostrou diferenças de ROC-AUC entre os três modelos de 0,001 a 0,022, todas abaixo de 0,03 e, pela regra descritiva do plano, tratadas como ruído, sem apontar vencedor. O Brier do TAN, 0,215, foi maior que o da taxa base, 0,210: no teste, o TAN não foi melhor que prever a taxa base. As PR-AUC foram 0,490 (*Naive Bayes*), 0,480 (TAN) e 0,500 (regressão logística), contra 0,300 da taxa base; por decisão do autor registrada em docs/decisoes.md, essa métrica não tem regra de ruído e os valores são apenas descritos. O ECE foi 0,115, 0,157 e 0,078, respectivamente, e foi apenas medido. Os resultados de desenvolvimento e os do teste são distintos e não se substituem (Seção 4.1).
 
@@ -1084,6 +1115,7 @@ Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que
 | Evidência incompleta | `uv run python codigo/modelos.py --ocultar`, depois `uv run python codigo/avaliar.py --ocultar` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` |
 | Camada de decisão | `uv run python codigo/decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` |
 | Sensibilidade à calibração (posterior ao plano) | `uv run python codigo/decisao.py --calibracao` | `sensibilidade_calibracao_dev.csv` |
+| Sensibilidade ao erro do analista (posterior ao plano) | `uv run python codigo/decisao.py --analista` | `sensibilidade_analista_dev.csv` |
 | Sensibilidade | `uv run python codigo/sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` |
 | Estudo de seleção (secundário) | `uv run python codigo/modelos.py --selecao`, depois `uv run python codigo/avaliar.py --selecao` | `predicoes_selecao.csv`, `selecao_dev.csv`, `selecao_escolha.csv` |
 | Demonstração | `uv run python codigo/demo.py <record_id> [--modelo nb\|tan\|logreg]` | nada; imprime no terminal |

@@ -36,7 +36,13 @@ A avaliação do modelo de risco é feita separadamente da avaliação da polít
 
 O trabalho é um experimento composto por *scripts* que leem arquivos de dados e gravam tabelas e figuras. Não desenvolve um produto operacional, painel web, servidor, banco de dados ou modelo de linguagem. A matriz de utilidade é demonstrativa: não representa a política de nenhuma instituição, e o trabalho não usa dados nem sistemas proprietários.
 
-O trabalho também não propõe uma regra de tipo distinto do limiar: como a utilidade esperada de cada ação é uma reta em `p`, a política equivale a uma regra de limiares sobre `p`, resultado conhecido da teoria da decisão \cite{chow1970,elkan2001}, e a derivação dos limiares a partir dos custos não é apresentada como novidade teórica. A contribuição deste trabalho tem outra natureza e três partes. O que já era conhecido: a forma da regra e os limiares derivados da matriz. O que se implementa: um fluxo reprodutível com *Naive Bayes*, TAN e regressão logística, uma matriz de utilidade configurável, a análise de sensibilidade dos limiares e as conferências de reprodução descritas no Capítulo 3. O que se aprende empiricamente, com 200 casos de teste e 60 ruins e sob as ressalvas dos Capítulos 3 e 5: no teste, o TAN não foi melhor que a taxa base no Brier e teve o maior erro de calibração, e a diferença de utilidade simulada entre as duas políticas depende da matriz, do analista idealizado e do corte de referência. A parte 1 da pergunta vale para qualquer escore e não distingue a rede da regressão logística. Os resultados não se generalizam a outras bases nem validam uma política real de concessão.
+O trabalho também não propõe uma regra de tipo distinto do limiar: como a utilidade esperada de cada ação é uma reta em `p`, a política equivale a uma regra de limiares sobre `p`, resultado conhecido da teoria da decisão \cite{chow1970,elkan2001}, e a derivação dos limiares a partir dos custos não é apresentada como novidade teórica. A contribuição deste trabalho tem outra natureza e três partes:
+
+1. Já conhecido: a forma da regra e os limiares derivados da matriz.
+2. Implementação própria: um fluxo reprodutível com *Naive Bayes*, TAN e regressão logística, uma matriz de utilidade configurável, a análise de sensibilidade dos limiares e as conferências de reprodução descritas no Capítulo 3.
+3. Observado, com 200 casos de teste e 60 ruins e sob as ressalvas dos Capítulos 3 e 5: no teste, o TAN não foi melhor que a taxa base no Brier e teve o maior erro de calibração, e a diferença de utilidade simulada entre as duas políticas depende da matriz, do analista idealizado e do corte de referência (Seções 4.7, 4.9 e 5.5).
+
+A parte 1 da pergunta vale para qualquer escore e não distingue a rede da regressão logística. Os resultados não se generalizam a outras bases nem validam uma política real de concessão.
 
 ## 1.5 Mudanças em relação à proposta
 
