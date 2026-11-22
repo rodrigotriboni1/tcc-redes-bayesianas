@@ -50,11 +50,11 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 ### Slide 4 — Dados e protocolo (1:30)
 
 - **Título-ação:** 1.000 casos da South German Credit: 800 para desenvolver em 5 partições e 200 de teste, abertos uma única vez
-- **Exibição:** barra horizontal dividida: 800 dev (240 ruins) em 5 blocos de 160; 200 teste (60 ruins) separado, com cadeado e a data "aberto 1× em 17/11/2026, *commit* 49d77ff".
+- **Exibição:** barra horizontal dividida: 800 dev (240 ruins) em 5 blocos de 160; 200 teste (60 ruins) separado, com cadeado e a nota "aberto 1×, *commit* 49d77ff".
 - **Texto no slide (≈30 palavras):** "Divisão estratificada, semente 2026. / Validação cruzada estratificada, 5 partições. / 3 contínuas em 3 faixas por tercis, cortes só no treino. / Classe positiva: ruim (30%)."
 - **Citação no slide:** (GRÖMPING, 2019)
 - **So what:** o teste não influenciou nenhuma escolha.
-- **Notas de fala:** "A base é a South German Credit, a versão corrigida por Grömping da base alemã citada na proposta. São 1.000 casos; separei 800 para desenvolvimento, com 240 ruins, e 200 para teste, com 60 ruins [resultados/predicoes_teste.csv, kredit: 60 zeros em 200 linhas]. No desenvolvimento usei validação cruzada estratificada em 5 partições, semente 2026. As três variáveis contínuas viram três faixas por tercis, com cortes aprendidos só no treino; no teste, os cortes vêm do desenvolvimento inteiro [resultados/cortes.json]. O teste foi aberto uma única vez, em 17/11/2026, depois do *commit* de congelamento."
+- **Notas de fala:** "A base é a South German Credit, a versão corrigida por Grömping da base alemã citada na proposta. São 1.000 casos; separei 800 para desenvolvimento, com 240 ruins, e 200 para teste, com 60 ruins [resultados/predicoes_teste.csv, kredit: 60 zeros em 200 linhas]. No desenvolvimento usei validação cruzada estratificada em 5 partições, semente 2026. As três variáveis contínuas viram três faixas por tercis, com cortes aprendidos só no treino; no teste, os cortes vêm do desenvolvimento inteiro [resultados/cortes.json]. O teste foi aberto uma única vez, depois do *commit* de congelamento."
 
 ### Slide 5 — Modelos (1:30)
 
@@ -193,7 +193,7 @@ ABNT curta, 13 pt (do arquivo monografia/referencias-abnt.md):
 ### A6 — Houve vazamento?
 
 - **Título-ação:** O teste ficou fechado até o congelamento; o único vazamento é brando e está declarado
-- **Resposta curta:** "Cortes das faixas aprendidos só no treino de cada partição; teste aberto uma vez, em 17/11/2026, sobre o *commit* 49d77ff. O espaço de estados de cada variável usa todos os valores do desenvolvimento inteiro, para uma categoria rara não quebrar a inferência; não usa o rótulo, mas é um vazamento brando, declarado [decisões P10; plano-de-análise §6, item 6]. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado antes."
+- **Resposta curta:** "Cortes das faixas aprendidos só no treino de cada partição; teste aberto uma vez, sobre o *commit* 49d77ff. O espaço de estados de cada variável usa todos os valores do desenvolvimento inteiro, para uma categoria rara não quebrar a inferência; não usa o rótulo, mas é um vazamento brando, declarado [decisões P10; plano-de-análise §6, item 6]. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado antes."
 
 ### A7 — A vantagem da política de três ações é garantida?
 
@@ -240,7 +240,7 @@ Títulos-ação em sequência:
 
 ## Tabela de conferência: slide → arquivo/coluna → valor
 
-Conferida com pandas (`uv run python -I -c`, só leitura) em 18/11/2026.
+Conferida com pandas (`uv run python -I -c`, só leitura).
 
 | Slide | Arquivo | Linha / coluna | Valor |
 |---|---|---|---|
@@ -273,7 +273,7 @@ Conferida com pandas (`uv run python -I -c`, só leitura) em 18/11/2026.
 | A1 | resultados/selecao_dev.csv | log_loss_media tan_ess1 / tan_ess50 | 0,825 / 0,583 |
 | A1 | resultados/tan_arestas.csv | arestas por fold; origem = verw | 39 cada; 9, 8, 8, 7, 8 |
 
-Números que **não** vêm de CSV: data 17/11/2026 e *commit* 49d77ff (docs/decisoes.md §1, via monografia §3.2); 800 dev / 240 ruins (monografia §3.2; não conferido em `dados/processados/dev.csv`, que este plano não abriu).
+Números que **não** vêm de CSV: *commit* 49d77ff (docs/decisoes.md §1, via monografia §3.2); 800 dev / 240 ruins (monografia §3.2; não conferido em `dados/processados/dev.csv`, que este plano não abriu).
 
 ---
 
@@ -301,5 +301,5 @@ Números que **não** vêm de CSV: data 17/11/2026 e *commit* 49d77ff (docs/deci
 5. Nome por extenso da faculdade na capa (a monografia marca "confirmar").
 6. Se o estudo de seleção (slide 12) fica no corpo ou vai para o apêndice.
 7. Se cita no slide R as entradas ainda marcadas para conferência (ELKAN, 2001 "A CONFERIR NO ORIGINAL"; GRÖMPING, 2019 "VERIFICAR").
-8. O campo `hipoteses` de `config/utilidade.json` foi atualizado em 22/11/2026: agora diz que a matriz foi aceita pelo orientador em 18/11/2026 apenas para fins demonstrativos, como a monografia e o slide 6.
+8. O campo `hipoteses` de `config/utilidade.json` foi atualizado: agora diz que a matriz foi aceita pelo orientador apenas para fins demonstrativos, como a monografia e o slide 6.
 9. Na monografia, o estudo de seleção aparece como "decidido por delegação, a rever pelo autor"; os slides e notas omitem essa expressão. Confirmar se o autor já revisou e como quer dizer isso à banca.
