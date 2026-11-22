@@ -22,8 +22,16 @@ metricas_dev.csv, sem número escrito aqui) e refaz a ação de cada caso. A aç
 abre o teste. Análise posterior ao plano (a decisão P1 é "calibração só medida"): não altera o
 protocolo primário nem as saídas dos outros modos.
 
+Com --analista, mede no dev quanto a taxa de acerto q do analista pode cair antes de a política de três
+ações (ue) deixar de superar a de duas ações (ue2) e o corte 0,5. A política fica fixa; só o analista
+muda: um caso encaminhado à análise manual é decidido certo com probabilidade q e errado com 1 − q, com
+erro simétrico (hipótese do autor: rejeita um bom ou aprova um ruim). O custo da análise e as utilidades
+de errar vêm da matriz. A utilidade média é uma reta em q, então o q de equilíbrio sai em forma fechada,
+sem grade de valores. Não treina nada e não abre o teste. Análise posterior ao plano e ao teste: não
+altera o protocolo primário nem as saídas dos outros modos.
+
 Entradas:
-  resultados/predicoes_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg
+  resultados/predicoes_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg (também com --analista)
   resultados/predicoes_teste.csv record_id,kredit,p_nb,p_tan,p_logreg[,p_sel] (só com --final)
   resultados/metricas_dev.csv   modelo,...,ece_media (só com --calibracao)
   config/utilidade.json         matriz de utilidade U(ação, estado) e hipóteses
@@ -36,11 +44,13 @@ Saídas:
   resultados/duas_acoes_teste.csv           modelo,regra,utilidade_media,n_*,IC por regra: ue, ue2, limiar (só com --final)
   resultados/diferenca_duas_acoes_teste.csv modelo,comparacao,dif_utilidade_media,dif_ic_inf,dif_ic_sup,n_acao_diferente (só com --final)
   resultados/sensibilidade_calibracao_dev.csv  modelo,cenario,deslocamento,n_*,utilidade_media,n_acao_muda_vs_base (só com --calibracao)
+  resultados/sensibilidade_analista_dev.csv    modelo,comparacao,utilidade_concorrente,utilidade_tres_acoes_q0,utilidade_tres_acoes_q1,q_equilibrio,leitura (só com --analista)
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/decisao.py          grava as saídas do dev
   uv run python codigo/decisao.py --final  grava só as saídas do teste
   uv run python codigo/decisao.py --calibracao  grava só a sensibilidade das ações ao erro de calibração, no dev
+  uv run python codigo/decisao.py --analista  grava só o q de equilíbrio do analista, no dev
   uv run python codigo/decisao.py --verificar  roda os autotestes e não grava nada
 """
 import json
@@ -177,6 +187,42 @@ def ler_ece():
     return {m: float(ece[m]) for m in MODELOS}
 
 
+def custo_analise(u):
+    """Custo da análise manual: rejeitar.ruim − analise_manual.ruim."""
+    return u["rejeitar"]["ruim"] - u["analise_manual"]["ruim"]
+
+
+def conferir_matriz_analista(u):
+    """Termina com erro se analise_manual.bom não for aprovar.bom menos o custo da análise."""
+    if u["analise_manual"]["bom"] != u["aprovar"]["bom"] - custo_analise(u):
+        sys.exit("ERRO: config/utilidade.json: analise_manual.bom deve ser aprovar.bom menos o custo da análise")
+
+
+def calcular_analista(pred, u):
+    """q de equilíbrio do analista: a utilidade média de ue com taxa de acerto q é A + B·q, e o q que a iguala
+    à de cada concorrente (ue2, limiar) é (Uc − A) / B. Erro do analista: rejeita um bom ou aprova um ruim."""
+    conferir_matriz_analista(u)
+    c = custo_analise(u)
+    erro = {"bom": u["rejeitar"]["bom"] - c, "ruim": u["aprovar"]["ruim"] - c}
+    estado = ["ruim" if k == 0 else "bom" for k in pred["kredit"]]  # kredit: 0 = ruim, 1 = bom
+    linhas = []
+    for m in MODELOS:
+        p = pred[f"p_{m}"]
+        n = len(p)
+        ue = [ordenar(x, u)[0] for x in p]
+        manual = [i for i, a in enumerate(ue) if a == "analise_manual"]
+        a0 = (sum(u[a][e] for a, e in zip(ue, estado) if a != "analise_manual") + sum(erro[estado[i]] for i in manual)) / n  # utilidade com q = 0
+        b = sum(u["analise_manual"][estado[i]] - erro[estado[i]] for i in manual) / n  # inclinação em q
+        for nome, acoes in [("ue2", [acao_duas(x, u) for x in p]), ("limiar", [limiar(x) for x in p])]:
+            uc = sum(u[a][e] for a, e in zip(acoes, estado)) / n
+            q = (uc - a0) / b if b > 0 else None  # sem casos em análise manual, não há equilíbrio
+            leitura = "sem_casos_em_analise_manual" if q is None else "tres_acoes_vence_sempre" if q < 0 else "tres_acoes_perde_sempre" if q > 1 else "equilibrio"
+            linhas.append({"modelo": m, "comparacao": f"ue - {nome}", "utilidade_concorrente": uc,
+                           "utilidade_tres_acoes_q0": a0, "utilidade_tres_acoes_q1": a0 + b,
+                           "q_equilibrio": q if leitura == "equilibrio" else "", "leitura": leitura})
+    return pd.DataFrame(linhas)
+
+
 def ler(entrada, final=False):
     """Lê as predições e termina com erro se faltar coluna, não houver linhas ou alguma p_* for inválida."""
     if not entrada.exists():
@@ -266,6 +312,13 @@ def main_calibracao():
     print(f"Gravado {SAIDA / 'sensibilidade_calibracao_dev.csv'}")
 
 
+def main_analista():
+    """Grava sensibilidade_analista_dev.csv; lê só as predições do dev e a matriz."""
+    tabela = calcular_analista(ler(PREDICOES), carregar_utilidade())
+    tabela.to_csv(SAIDA / "sensibilidade_analista_dev.csv", index=False)
+    print(f"Gravado {SAIDA / 'sensibilidade_analista_dev.csv'}")
+
+
 def verificar():
     """Autoteste do --final com arquivo falso montado do dev, com e sem p_sel; não grava nada."""
     u = carregar_utilidade()
@@ -309,6 +362,27 @@ def verificar():
     assert (c.loc[("nb", "base"), ["n_aprovar", "n_analise_manual", "n_rejeitar"]] == [1, 1, 0]).all()
     assert (c.loc[("nb", "mais_ece"), ["n_aprovar", "n_analise_manual", "n_rejeitar"]] == [0, 1, 1]).all()
     assert c.loc[("nb", "mais_ece"), "n_acao_muda_vs_base"] == 2 and c.loc[("nb", "menos_ece"), "n_acao_muda_vs_base"] == 0
+    # analista: com q = 1 (A + B) reproduz a utilidade de ue, e o concorrente limiar reproduz a do limiar
+    ana = calcular_analista(falso, u)
+    for m in MODELOS:
+        for regra in ("ue", "limiar"):
+            ref = dev[(dev["modelo"] == m) & (dev["regra"] == regra)].iloc[0]["utilidade_media"]
+            linha = ana[(ana["modelo"] == m) & (ana["comparacao"] == "ue - limiar")].iloc[0]
+            alvo = linha["utilidade_tres_acoes_q1"] if regra == "ue" else linha["utilidade_concorrente"]
+            assert np.isclose(alvo, ref)
+    # analista: com p = 0,55 o caso vai à análise manual; um bom e um ruim dão A = -240, B = 250 e A + B = 10
+    um = calcular_analista(pouco.assign(kredit=[1, 0], **{f"p_{m}": [0.55, 0.55] for m in MODELOS}), u).iloc[0]
+    assert np.isclose(um["utilidade_tres_acoes_q0"], -240) and np.isclose(um["utilidade_tres_acoes_q1"], 10)
+    assert np.isclose(um["utilidade_tres_acoes_q1"] - um["utilidade_tres_acoes_q0"], 250)
+    # analista: matriz inconsistente termina com erro
+    quebrada = {a: dict(v) for a, v in u.items()}
+    quebrada["analise_manual"]["bom"] += 1
+    try:
+        calcular_analista(pouco, quebrada)
+    except SystemExit as e:
+        assert e.code != 0
+    else:
+        raise AssertionError("matriz inconsistente deveria terminar com erro")
     print("verificar: ok")
 
 
@@ -317,9 +391,11 @@ if __name__ == "__main__":
         main(TESTE, "teste")
     elif sys.argv[1:] == ["--calibracao"]:
         main_calibracao()
+    elif sys.argv[1:] == ["--analista"]:
+        main_analista()
     elif sys.argv[1:] == ["--verificar"]:
         verificar()
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/decisao.py [--final | --calibracao | --verificar]")
+        sys.exit("Uso: uv run python codigo/decisao.py [--final | --calibracao | --analista | --verificar]")
     else:
         main()

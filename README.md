@@ -54,6 +54,7 @@ uv run python codigo/modelos.py --ocultar       # evidência incompleta
 uv run python codigo/avaliar.py --ocultar
 uv run python codigo/decisao.py                 # políticas de decisão
 uv run python codigo/decisao.py --calibracao    # sensibilidade das ações ao erro de calibração (dev, análise posterior ao plano)
+uv run python codigo/decisao.py --analista      # q de equilíbrio do analista que erra (dev, análise posterior ao plano)
 uv run python codigo/sensibilidade.py           # variação da matriz de utilidade
 uv run python codigo/modelos.py --selecao       # estudo secundário de seleção
 uv run python codigo/avaliar.py --selecao

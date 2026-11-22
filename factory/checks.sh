@@ -127,6 +127,7 @@ if [ -f codigo/decisao.py ]; then
   rodar codigo/test_decisao.py
   rodar codigo/decisao.py
   tem '--calibracao' decisao.py && rodar codigo/decisao.py --calibracao
+  tem '--analista' decisao.py && rodar codigo/decisao.py --analista
 fi
 if [ -f codigo/sensibilidade.py ]; then
   rodar codigo/sensibilidade.py --verificar
