@@ -1,0 +1,46 @@
+# Reprodução do desenvolvimento em ambiente Linux limpo.
+# Instala o ambiente travado, roda os autotestes e os scripts de desenvolvimento e confere que os
+# arquivos de resultado são idênticos aos commitados. Não roda o --final (o teste é do autor).
+name: Reprodução
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  reproduzir:
+    runs-on: ubuntu-latest
+    env:
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar o uv
+        run: python -m pip install uv==0.11.32
+      - name: Ambiente travado
+        run: uv sync --frozen
+      - name: Autotestes
+        run: |
+          uv run python codigo/modelos.py --verificar
+          uv run python codigo/avaliar.py --verificar
+          uv run python codigo/sensibilidade.py --verificar
+          uv run python codigo/decisao.py --verificar
+          uv run python codigo/test_decisao.py
+      - name: Scripts de desenvolvimento
+        run: |
+          uv run python codigo/modelos.py
+          uv run python codigo/avaliar.py
+          uv run python codigo/modelos.py --ocultar
+          uv run python codigo/avaliar.py --ocultar
+          uv run python codigo/modelos.py --selecao
+          uv run python codigo/avaliar.py --selecao
+          uv run python codigo/decisao.py
+          uv run python codigo/sensibilidade.py
+      - name: Auditoria independente
+        run: uv run python codigo/auditoria_independente.py
+      - name: Resultados idênticos aos commitados
+        run: git diff --exit-code -- 'resultados/*.csv' 'resultados/*.json'
