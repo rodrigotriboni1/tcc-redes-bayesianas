@@ -37,6 +37,7 @@ Os capítulos em `.md` (`resumo.md`, `cap1` a `cap6`, `apendices.md` na parte A)
 
 - O prazo de 30/11 é de entrega das cópias. Pelo regulamento, a defesa só pode ser agendada 15 dias depois, em 15/12 ou depois; vale confirmar a data final do semestre letivo, porque sem defesa no semestre o conceito é "NÃO CONCLUIU".
 - Uma auditoria feita por outra pessoa continua pendente; a reimplementação acima é do mesmo autor, sobre as mesmas saídas.
+- Reprodução em Linux limpo (GitHub Actions, 22/11/2026, PR 96): autotestes, scripts de desenvolvimento e `codigo/auditoria_independente.py` passaram. Os arquivos que dependem da regressão logística diferem dos versionados só nos últimos dígitos (até 4,3e-8 nas probabilidades e 4,8e-6 em colunas em unidades de utilidade); o resto é idêntico byte a byte. A comparação do workflow aceita até 1e-4 em células numéricas e reprova qualquer outra diferença; essa tolerância é decisão a rever pelo autor.
 - `config/utilidade.json` foi atualizado em 22/11: o campo `hipoteses` agora diz que a matriz foi aceita em 18/11/2026 apenas para fins demonstrativos. Os valores não mudaram.
 - Revisar as três escolhas de referência feitas por delegação (UCI 2020, Siddiqi 2006, Platt 2000), registradas em `docs/decisoes.md`.
 - `docs/reproduzir.md` não lista `decisao.py --verificar`, e o passo 10 do `factory/checks.sh` roda `test_decisao.py` e `decisao.py`, mas não `decisao.py --verificar`. O `checks.sh` usa `shasum`, que não existe em Linux. São arquivos do autor.

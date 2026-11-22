@@ -48,7 +48,7 @@ Os arquivos gerados são versionados junto com o código. Depois de rodar tudo, 
 git diff --exit-code -- 'resultados/*.csv' 'resultados/*.json'
 ```
 
-Esse teste confere que os arquivos são idênticos aos publicados, não que o modelo é bom.
+Esse teste confere que os arquivos são idênticos aos publicados, não que o modelo é bom. Em outra plataforma, os arquivos que dependem da regressão logística podem diferir nos últimos dígitos (Seção 3.11).
 
 ### A.4 Teste final
 
