@@ -227,7 +227,7 @@ Com o TAN, a diferença de 22,5 entre a política de três ações e o corte 0,5
 
 No *Naive Bayes*, na regressão logística e na seleção aninhada, a diferença entre a política de três ações e a de duas ações também exclui zero (11,0, 9,3 e 18,4). A diferença entre a política de duas ações e o corte 0,5 exclui zero no *Naive Bayes* (18,5) e na regressão logística (29,0) e inclui zero na seleção aninhada (16,0; −0,5 a 33,5), caso em que não há evidência de diferença.
 
-Esses números herdam as ressalvas das Seções 5.4 e 5.5 (matriz demonstrativa, analista infalível, simulação sobre o rótulo observado) e as de um teste com 200 casos. A política de duas ações não é adotada nem recomendada por causa deste resultado, e a comparação principal e a matriz não mudam.
+Esses números herdam as ressalvas das Seções 5.4 e 5.5 (matriz demonstrativa, analista infalível, simulação sobre o rótulo observado) e as de um teste com 200 casos. A política de duas ações não é adotada nem recomendada por causa deste resultado, e a comparação principal e a matriz não mudam. Foram lidos 12 intervalos (4 modelos e 3 comparações) sem correção para comparações múltiplas; os que excluem zero por pouco, como o do TAN entre a política de duas ações e o corte 0,5 (limite inferior de 0,5), são os mais frágeis a essa leitura.
 
 ## 4.8 Sensibilidade das ações ao erro de calibração: análise posterior ao plano
 
