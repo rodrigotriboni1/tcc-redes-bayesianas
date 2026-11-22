@@ -220,6 +220,24 @@ Depende da issue 08 mergeada.
 
 Fora do escopo: executar sobre o teste de verdade, refazer a seleção, escolher entre `p_sel` e os modelos principais, calibrar.
 
+### 12. Calibração secundária (`modelos.py --calibrar`, `avaliar.py --calibrada`)
+
+Issue 119. Depende das issues 01 e 02 já no `main` e do registro prévio em `docs/decisoes.md` ("Calibração de Platt, análise secundária") mergeado. Análise posterior ao teste: não altera os Capítulos 4 e 5. Os critérios tratam de forma, nunca de resultado.
+
+1. `modelos.py --calibrar` lê só `predicoes_dev.csv` e grava só `predicoes_calibradas_dev.csv`: 800 linhas, colunas `record_id,kredit,fold,p_nb,p_tan,p_logreg`, na ordem de `predicoes_dev.csv`. `record_id`, `kredit` e `fold` iguais aos de `predicoes_dev.csv` linha a linha; `p_*` estritamente entre 0 e 1.
+2. Para cada partição `k` e cada modelo, o ajuste usa só linhas com `fold != k` e a única variável `logit(p)`, com alvo `1 − kredit`, por `LogisticRegression(max_iter=1000)` com o `C` padrão. Nenhuma outra variável, nenhuma outra constante.
+3. Guarda de vazamento em `--verificar`: invertendo `kredit` nas linhas da partição `k`, as `p` calibradas da partição `k` ficam iguais às de antes, a 1e-12.
+4. `--verificar`, recuperação: com 20.000 pares sintéticos (semente 2026, `p` uniforme em [0,05; 0,95], ruim sorteado com `sigmoide(0,5·logit(p) + 1)`), o ajuste devolve inclinação 0,5 ± 0,05 e intercepto 1 ± 0,1.
+5. `--verificar`: se uma `p` de entrada for 0 ou 1, o script termina com código diferente de 0 e mensagem. Sem `clip`.
+6. `avaliar.py --calibrada` não treina (sem `.fit(`), lê só `predicoes_calibradas_dev.csv` e grava `metricas_calibradas_dev.csv` (4 linhas, mesmas colunas de `metricas_dev.csv`) e `calibracao_calibrada_dev.png`.
+7. A linha `taxa_base` de `metricas_calibradas_dev.csv` é igual à de `metricas_dev.csv` a 1e-9.
+8. `roc_auc_media` e `pr_auc_media` de `nb`, `tan` e `logreg` são iguais às de `metricas_dev.csv` a 1e-9, porque a correção é monótona. Se não forem, é motivo para parar e perguntar (inclinação negativa), não para ajustar.
+9. Os demais arquivos de `resultados/` ficam idênticos byte a byte; duas execuções geram arquivos iguais; a descrição do PR não usa "melhor" nem comenta valores.
+
+`factory/checks.sh` ganha duas linhas, uma para cada modo novo, no molde das de `--selecao` (autorizado na issue 119). Nenhuma outra mudança em `factory/`.
+
+Fora do escopo: `--final` e qualquer uso de `predicoes_teste.csv`; regressão isotônica e qualquer outro método; trocar `p` por `p` calibrada em `decisao.py` ou `sensibilidade.py`; escolher entre `p` e `p` calibrada; intervalo por bootstrap; mudar os Capítulos 4 e 5.
+
 ## 5. `factory/checks.sh`
 
 O gate roda o `checks.sh` da cópia principal com a pasta de trabalho no ramo do job, então o ramo não troca o próprio juiz. Ele e um `factory/verificar_saidas.py` são escritos antes da issue 01, já com os blocos das 7 issues; cada bloco só roda se o script existir.
