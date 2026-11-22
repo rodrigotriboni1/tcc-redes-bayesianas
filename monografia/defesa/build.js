@@ -205,7 +205,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   s.addShape(pres.shapes.RIGHT_ARROW, { x: 6.45, y: 4.05, w: 0.4, h: 0.3, fill: { color: C.navy }, line: { color: C.navy } });
   T(s, "ação", { x: 6.9, y: 3.95, w: 0.8, h: 0.45, pt: 20, color: C.corpo, kind: "body" });
   T(s, R("Escore + corte: prática da indústria, interpretável. / Custos não aparecem na regra. / Proposta: risco por rede bayesiana; ação por utilidade esperada.").split(" / "), { ...DIR, h: 3.4, pt: 20, bullet: true, gap: true, kind: "body" });
-  cite(s, R("(THOMAS, 2000; SIDDIQI, 2012; PEARL, 1988)"));
+  cite(s, R("(THOMAS, 2000; SIDDIQI, 2006; PEARL, 1988)"));
   fechar(s, true, { x: DIR.x, y: 5.15, w: DIR.w, h: 1.1 });
 }
 
@@ -214,12 +214,12 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: R("A pergunta tem duas partes: uma propriedade da política e um efeito medido contra o corte 0,5"),
     sowhat: R("a banca sabe o que cada resultado responde."),
-    notas: R("Esta é a pergunta, como está no plano e no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore de probabilidade, inclusive a regressão logística, e não depende do experimento. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada desfecho foram escritas antes de existir qualquer resultado [docs/plano-de-analise.md §1]."),
+    notas: R("Esta é a pergunta, como está no plano e no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore de probabilidade, inclusive a regressão logística, e não depende do experimento. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada desfecho foram escritas no plano de 15/11, antes dos resultados; duas decisões complementares vieram em 18/11, depois da abertura do teste, e o estudo de seleção foi desenhado depois de ver o desenvolvimento [docs/plano-de-analise.md §1]."),
   });
   // A pergunta é o exibidor (citação literal do plano); não entra na contagem de palavras do corpo.
   T(s, R("Uma política que separa a estimativa do risco (rede bayesiana, com calibração medida) da escolha da ação (utilidade esperada) tem (1) limiares explícitos, que qualquer pessoa reproduz a partir da matriz de utilidade e de `p`, e (2) que efeito medido sobre as ações e a utilidade média, em comparação com um limiar fixo de 0,5?"),
     { x: M, y: 1.6, w: UW, h: 2.35, pt: 20, fill: "EAF1FB", line: C.azul, color: C.corpo, kind: "quote" });
-  T(s, R("(1) vale por construção, para qualquer escore. (2) é o que o experimento mede. Leitura fixada antes dos resultados.").split(/(?<=\.) (?=\()|(?<=mede\.) /), { x: M, y: 4.2, w: UW, h: 1.4, pt: 20, bullet: true, kind: "body" });
+  T(s, R("(1) vale por construção, para qualquer escore. (2) é o que o experimento mede. Leitura definida no plano de análise.").split(/(?<=\.) (?=\()|(?<=mede\.) /), { x: M, y: 4.2, w: UW, h: 1.4, pt: 20, bullet: true, kind: "body" });
   fechar(s, true, { x: M, y: 5.75, w: UW, h: 0.45 });
 }
 
@@ -312,14 +312,14 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: t,
     sowhat: R("o TAN, estrutura mais rica, não trouxe ganho aqui; o resultado entra como saiu."),
-    notas: R("No desenvolvimento, a ROC-AUC média foi 0,789 no Naive Bayes, 0,788 na logística e 0,742 no TAN [resultados/metricas_dev.csv, roc_auc_media]. NB e logística diferem em 0,001, abaixo de 0,03, e pela regra pré-registrada é ruído. O TAN ficou abaixo do NB nas cinco métricas; o erro de calibração do TAN foi 0,152, contra 0,093 do NB e 0,095 da logística [metricas_dev.csv, ece_media]. O desvio do TAN entre partições foi 0,049 [roc_auc_desvio]. Não ajustei nada por causa disso: o resultado vai como saiu."),
+    notas: R("No desenvolvimento, a ROC-AUC média foi 0,789 no Naive Bayes, 0,788 na logística e 0,742 no TAN [resultados/metricas_dev.csv, roc_auc_media]. NB e logística diferem em 0,001, abaixo de 0,03, e pela regra descritiva do plano é tratada como ruído. O TAN ficou abaixo do NB nas cinco métricas; o erro de calibração do TAN foi 0,152, contra 0,093 do NB e 0,095 da logística [metricas_dev.csv, ece_media]. O desvio do TAN entre partições foi 0,049 [roc_auc_desvio]. Não ajustei nada por causa disso: o resultado vai como saiu."),
   });
   // "abaixo nas cinco métricas": AUCs menores, Brier/log loss/ECE maiores
   const d = dev;
   if (!(d.tan.roc_auc_media < d.nb.roc_auc_media && d.tan.pr_auc_media < d.nb.pr_auc_media && d.tan.brier_media > d.nb.brier_media && d.tan.log_loss_media > d.nb.log_loss_media && d.tan.ece_media > d.nb.ece_media)) erros.push("slide 8: TAN não fica abaixo do NB nas cinco métricas");
   const ms = ["nb", "tan", "logreg", "taxa_base"], nm = { nb: "NB", tan: "TAN", logreg: "Logística", taxa_base: "Taxa base", sel: "sel" };
   faixas(s, ms.map((m) => `${nm[m]} ${fmt(d[m].roc_auc_media, 3)}`), ms.map((m) => d[m].roc_auc_media - d[m].roc_auc_desvio), ms.map((m) => d[m].roc_auc_media + d[m].roc_auc_desvio), ms.map((m) => m === "tan"), { x: M, y: 1.55, w: 7.2, h: 4.3 }, { min: 0.4, max: 0.9, passo: 0.1, titulo: "ROC-AUC média ± 1 desvio (5 partições)" });
-  T(s, "NB − logística: 0,001 → ruído", { x: M, y: 5.9, w: 7.2, h: 0.45, pt: 20, color: C.azul, kind: "body" });
+  T(s, "NB − logística: 0,001 → abaixo de 0,03", { x: M, y: 5.9, w: 7.2, h: 0.45, pt: 20, color: C.azul, kind: "body" });
   const body = R("ROC-AUC: NB 0,789; logística 0,788; TAN 0,742 (desvio 0,049). / ECE do TAN 0,152 (NB 0,093). / Média de 5 partições, sem intervalo.");
   chk("slide 8", body, [[d.nb.roc_auc_media, 3], [d.logreg.roc_auc_media, 3], [d.tan.roc_auc_media, 3], [d.tan.roc_auc_desvio, 3], [d.tan.ece_media, 3], [d.nb.ece_media, 3]]);
   chk("slide 8 notas", s._notas, [[d.logreg.ece_media, 3]]);
@@ -329,7 +329,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
 
 // 9 — Teste: discriminação
 {
-  const t = R("No teste, as diferenças de ROC-AUC entre os três modelos ficaram entre 0,001 e 0,022, abaixo de 0,03: pela regra, são ruído");
+  const t = R("No teste, as diferenças de ROC-AUC entre os três modelos ficaram entre 0,001 e 0,022, abaixo de 0,03: pela regra, são tratadas como ruído");
   const a = tst.nb.roc_auc, b = tst.tan.roc_auc, c = tst.logreg.roc_auc;
   const difs = [Math.abs(a - c), Math.abs(a - b), Math.abs(c - b)];
   chk("slide 9", t, [[Math.min(...difs), 3], [Math.max(...difs), 3]]);
@@ -337,7 +337,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: t,
     sowhat: R("o teste não distingue os modelos pela discriminação."),
-    notas: R("No teste, a ROC-AUC foi 0,728 no NB, 0,706 no TAN e 0,729 na logística [resultados/metricas_teste.csv, roc_auc]. As diferenças são 0,001, 0,021 e 0,022; todas abaixo de 0,03 e, pela regra que fixei antes, ruído. Os intervalos de 95% por *bootstrap* são largos; o do TAN vai de 0,623 a 0,789 [roc_auc_ic_inf, roc_auc_ic_sup]. A PR-AUC foi 0,490, 0,480 e 0,500, contra 0,300 da taxa base [pr_auc]; para ela não fixei regra de ruído, então só descrevo. Também registro que todos caíram em relação ao desenvolvimento; não testei a causa."),
+    notas: R("No teste, a ROC-AUC foi 0,728 no NB, 0,706 no TAN e 0,729 na logística [resultados/metricas_teste.csv, roc_auc]. As diferenças são 0,001, 0,021 e 0,022; todas abaixo de 0,03 e, pela regra descritiva do plano, tratadas como ruído, sem apontar qual modelo é melhor. Os intervalos de 95% por *bootstrap* são largos; o do TAN vai de 0,623 a 0,789 [roc_auc_ic_inf, roc_auc_ic_sup]. A PR-AUC foi 0,490, 0,480 e 0,500, contra 0,300 da taxa base [pr_auc]; para ela não fixei regra de ruído, então só descrevo. Também registro que todos caíram em relação ao desenvolvimento; não testei a causa."),
   });
   chk("slide 9 notas", s._notas, [...difs.map((x) => [x, 3]), [tst.tan.roc_auc_ic_inf, 3], [tst.tan.roc_auc_ic_sup, 3]]);
   const ms = ["nb", "tan", "logreg"], nm = { nb: "NB", tan: "TAN", logreg: "Logística" };
@@ -357,7 +357,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: t,
     sowhat: R("a probabilidade do TAN, que alimenta a decisão principal, não supera a taxa base no teste."),
-    notas: R("O Brier mede o erro da probabilidade. No teste, o do TAN foi 0,215, acima dos 0,210 de quem prevê a taxa base para todo caso [resultados/metricas_teste.csv, brier, linhas tan e taxa_base]. Pela regra pré-registrada, digo: o TAN não foi melhor que prever a taxa base. NB, com 0,199, e logística, com 0,191, ficaram abaixo [brier]. O erro de calibração foi 0,115, 0,157 e 0,078 [ece]. A calibração foi só medida; não corrigi."),
+    notas: R("O Brier mede o erro da probabilidade. No teste, o do TAN foi 0,215, acima dos 0,210 de quem prevê a taxa base para todo caso [resultados/metricas_teste.csv, brier, linhas tan e taxa_base]. Pelo critério do plano, digo: o TAN não foi melhor que prever a taxa base; é uma comparação pontual, sem inferência. NB, com 0,199, e logística, com 0,191, ficaram abaixo [brier]. O erro de calibração foi 0,115, 0,157 e 0,078 [ece]. A calibração foi só medida; não corrigi."),
   });
   const ms = ["nb", "tan", "logreg", "taxa_base"], nm = { nb: "NB", tan: "TAN", logreg: "Logística", taxa_base: "Taxa base" };
   faixas(s, ms.map((m) => `${nm[m]} ${fmt(tst[m].brier, 3)}`), ms.map((m) => tst[m].brier_ic_inf), ms.map((m) => tst[m].brier_ic_sup), ms.map((m) => m === "tan"), { x: M, y: 1.55, w: 7.2, h: 4.3 }, { min: 0.14, max: 0.28, passo: 0.02, titulo: "Brier no teste, IC 95% (bootstrap); menor é melhor" });
@@ -371,9 +371,9 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
 
 // 11 — Política de três ações
 {
-  const ori = R("Com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5 (IC 95% de 9,2 a 37,2), uma vantagem que a matriz garante por construção");
-  // Encurtado: o original passa de 150 caracteres. Mantém número, IC e "por construção".
-  const t = "Com o TAN, as três ações tiveram utilidade média 22,5 maior que o corte 0,5 (IC 95%: 9,2 a 37,2), vantagem que a matriz garante por construção";
+  const ori = R("Com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5 (IC 95% de 9,2 a 37,2), uma vantagem prevista pela matriz, restrita à simulação");
+  // Encurtado: o original passa de 150 caracteres. Mantém número, IC e "prevista pela matriz".
+  const t = "Com o TAN, as três ações tiveram utilidade média 22,5 maior que o corte 0,5 (IC 95%: 9,2 a 37,2), vantagem prevista pela matriz (simulação)";
   relat.encurtado = { ori, novo: t };
   const D = dif.tan;
   chk("slide 11", ori + t, [[D.dif_utilidade_media, 1], [D.dif_ic_inf, 1], [D.dif_ic_sup, 1]]);
@@ -381,7 +381,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: t,
     sowhat: R("responde à parte 2: há efeito medido, mas ele vem da ação extra e da matriz, não da rede."),
-    notas: R("Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a política de três ações ganha do corte por construção; é consequência da matriz e do conjunto de ações, não evidência sobre a rede."),
+    notas: R("Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a matriz prevê vantagem para a política de três ações na utilidade esperada do modelo; a utilidade realizada depende da calibração, e o corte de 0,5 nem é o ótimo de duas ações, que é 0,2. A vantagem é consequência da matriz e do conjunto de ações, não evidência sobre a rede."),
   });
   const ue = res["tan/ue"], li = res["tan/limiar"];
   chk("slide 11 notas", s._notas, [[ue.n_aprovar, 0], [ue.n_rejeitar, 0], [ue.n_analise_manual, 0], [ue.n_mudam_vs_outra_regra, 0], [li.n_aprovar, 0], [li.n_rejeitar, 0]]);
@@ -413,7 +413,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: t,
     sowhat: R("a seleção não muda a leitura; serve para mostrar que o viés foi declarado, não escondido."),
-    notas: R("Depois de ver o TAN abaixo do NB, desenhei um estudo secundário: 8 configurações, NB e TAN com tamanho equivalente 1, 5, 10 e 50, em validação cruzada aninhada. A regra escolheu nb_ess50 nas cinco partições externas e no desenvolvimento inteiro [resultados/selecao_escolha.csv, escolhida]. A ROC-AUC do aninhado, 0,788, difere em 0,001 da referência nb_ess5, 0,789: ruído [selecao_dev.csv, roc_auc_media]. O aninhamento corrige a escolha entre as 8, mas não o fato de a grade ter sido desenhada olhando o desenvolvimento; esse viés está declarado. A análise primária continua com NB e TAN de BDeu 5."),
+    notas: R("Depois de ver o TAN abaixo do NB, desenhei um estudo secundário: 8 configurações, NB e TAN com tamanho equivalente 1, 5, 10 e 50, em validação cruzada aninhada. A regra escolheu nb_ess50 nas cinco partições externas e no desenvolvimento inteiro [resultados/selecao_escolha.csv, escolhida]. A ROC-AUC do aninhado, 0,788, difere em 0,001 da referência nb_ess5, 0,789: abaixo de 0,03, tratada como ruído pela regra do plano [selecao_dev.csv, roc_auc_media]. O aninhamento corrige a escolha entre as 8, mas não o fato de a grade ter sido desenhada olhando o desenvolvimento; esse viés está declarado. A análise primária continua com NB e TAN de BDeu 5."),
   });
   chk("slide 12 notas", s._notas, [[sel.aninhado.roc_auc_media, 3], [sel.nb_ess5.roc_auc_media, 3]]);
   const ms = Object.keys(sel);
@@ -442,9 +442,9 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: t, escuro: true,
     sowhat: R("as duas partes da pergunta respondidas numa tela."),
-    notas: R("Concluindo. Parte 1: separar risco e ação dá limiares explícitos, 0,10 e 0,60 com esta matriz, que qualquer pessoa reproduz; isso vale por construção e não distingue a rede da logística. Parte 2: com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5, com intervalo de 9,2 a 37,2, uma vantagem que a matriz garante por construção. No risco, as diferenças de ROC-AUC foram ruído, e o TAN não foi melhor que a taxa base no Brier. Fico à disposição para perguntas e comentários da banca."),
+    notas: R("Concluindo. Parte 1: separar risco e ação dá limiares explícitos, 0,10 e 0,60 com esta matriz, que qualquer pessoa reproduz; isso vale por construção e não distingue a rede da logística. Parte 2: com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5, com intervalo de 9,2 a 37,2, uma vantagem prevista pela matriz, restrita à simulação. No risco, as diferenças de ROC-AUC ficaram abaixo de 0,03, sem apontar qual modelo é melhor, e o TAN não foi melhor que a taxa base no Brier. Fico à disposição para perguntas e comentários da banca."),
   });
-  const body = R("1. Limiares 0,10 e 0,60 saem da matriz; valem para qualquer escore. / 2. TAN: +22,5 de utilidade média [9,2; 37,2], por construção da matriz. / 3. ROC-AUC: diferenças são ruído; Brier do TAN não melhor que taxa base.");
+  const body = R("1. Limiares 0,10 e 0,60 saem da matriz; valem para qualquer escore. / 2. TAN: +22,5 de utilidade média [9,2; 37,2], prevista pela matriz. / 3. ROC-AUC: diferenças < 0,03, sem apontar qual modelo é melhor; Brier do TAN não melhor que taxa base.");
   chk("slide 14", body, [[lim[0], 2], [lim[1], 2], [dif.tan.dif_utilidade_media, 1], [dif.tan.dif_ic_inf, 1], [dif.tan.dif_ic_sup, 1]]);
   T(s, body.split(" / "), { x: M, y: 1.75, w: UW, h: 3.6, pt: 22, color: C.branco, gap: true, kind: "body" });
   placeholder(s, "[e-mail]", M, 5.85, 4.0);
@@ -510,16 +510,16 @@ apendice("5 partições é convenção fixada antes dos resultados, não escolhi
   "Constante congelada, como as 3 faixas e o BDeu 5 [docs/decisoes.md §2; monografia §3.3]. Com 800 casos, cada partição tem 160 casos de validação e 48 ruins (estratificada). Não testei outros valores para não escolher pelo resultado.", null);
 apendice("O teste ficou fechado até o congelamento; o único vazamento é brando e está declarado",
   "Cortes das faixas aprendidos só no treino de cada partição; teste aberto uma vez, em 17/11/2026, sobre o *commit* 49d77ff. O espaço de estados de cada variável usa todos os valores do desenvolvimento inteiro, para uma categoria rara não quebrar a inferência; não usa o rótulo, mas é um vazamento brando, declarado [decisões P10; plano-de-análise §6, item 6]. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado antes.", null);
-apendice("Com analista infalível, a análise manual garante um resultado intermediário que o corte de duas ações não tem",
-  "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e de rejeitar. O corte 0,5 não tem essa ação, então a política de três ações tende a ganhar dele qualquer que seja o modelo; no teste, as quatro diferenças foram positivas, de 22,5 a 38,3 [diferenca_politicas_teste.csv]. Por isso a diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada.",
+apendice("Com analista infalível, o modelo prevê vantagem para a análise manual; o ganho realizado depende da calibração e do corte de comparação",
+  "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e de rejeitar. Pelo modelo, a política de três ações nunca tem utilidade esperada menor que a de duas. Isso não garante ganho realizado: depende da calibração (ECE do TAN no teste: 0,157, o maior dos três), e o corte 0,5 nem é o ótimo de duas ações (0,2). No teste, as quatro diferenças foram positivas, de 22,5 a 38,3 [diferenca_politicas_teste.csv]. Por isso a diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada.",
   (s) => retasUE(s, { x: M, y: 1.55, w: 5.5, h: 5.0 }, true),
   [[U.analise_manual.bom, 0], [cA, 0], [lim[0], 2], [lim[1], 2], [Math.min(...Object.values(dif).map((o) => o.dif_utilidade_media)), 1], [Math.max(...Object.values(dif).map((o) => o.dif_utilidade_media)), 1]]);
 if (Object.values(dif).some((o) => o.dif_utilidade_media <= 0)) erros.push("A7: nem todas as diferenças são positivas");
-apendice("Com 60 ruins, diferenças pequenas são indistinguíveis de ruído, e por isso a regra de 0,03 foi fixada antes",
-  "O plano já previa que, com 60 ruins, diferença de AUC de 0,02 a 0,03 é ruído [PLANO.md §6]. Os intervalos confirmam: ROC-AUC do TAN de 0,623 a 0,789; diferença de utilidade de 9,2 a 37,2 [metricas_teste.csv; diferenca_politicas_teste.csv]. E o intervalo reamostra só o teste, não o treino, então a incerteza total é maior.",
+apendice("Com 60 ruins, diferenças pequenas dificilmente se separam de ruído, e por isso o plano definiu antes o limite descritivo de 0,03",
+  "O plano já previa que, com 60 ruins, diferença de AUC de 0,02 a 0,03 dificilmente se separa de ruído (limite descritivo, não teste de equivalência) [PLANO.md §6]. Os intervalos confirmam: ROC-AUC do TAN de 0,623 a 0,789; diferença de utilidade de 9,2 a 37,2 [metricas_teste.csv; diferenca_politicas_teste.csv]. E o intervalo reamostra só o teste, não o treino, então a incerteza total é maior.",
   null, [[tst.tan.roc_auc_ic_inf, 3], [tst.tan.roc_auc_ic_sup, 3], [dif.tan.dif_ic_inf, 1], [dif.tan.dif_ic_sup, 1]]);
-apendice("Nenhuma regra pré-registrada separou os modelos no teste, e escolher um seria decidir pelo resultado",
-  "As diferenças de ROC-AUC no teste foram até 0,022, ruído pela regra [metricas_teste.csv]. PR-AUC só descrita. No Brier, só o TAN foi não melhor que a taxa base. A comparação principal usa o TAN porque foi fixada antes (P5), não por desempenho. O estudo de seleção diz o que a regra escolheu, não o que adotar.",
+apendice("Nenhuma regra do plano separou os modelos no teste, e escolher um seria decidir pelo resultado",
+  "As diferenças de ROC-AUC no teste foram até 0,022, tratadas como ruído pela regra descritiva do plano [metricas_teste.csv]. PR-AUC só descrita. No Brier, só o TAN foi não melhor que a taxa base. A comparação principal usa o TAN porque foi fixada antes (P5), não por desempenho. O estudo de seleção diz o que a regra escolheu, não o que adotar.",
   null, [[tst.logreg.roc_auc - tst.tan.roc_auc, 3]]);
 
 if (erros.length) { console.error("BUILD FALHOU:\n- " + erros.join("\n- ")); process.exit(1); }

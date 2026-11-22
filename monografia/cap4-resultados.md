@@ -1,6 +1,6 @@
 # 4 RESULTADOS
 
-Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura de cada resultado segue as regras pré-registradas na §4 do plano de análise (`docs/plano-de-analise.md`), e a interpretação fica para o Capítulo 5.
+Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
 
 Nas tabelas de métricas (4.1 e 4.9), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato. A Tabela 4.2 traz o valor no conjunto de teste com intervalo de 95% por *bootstrap*. Os valores são arredondados a três casas, salvo indicação.
 
@@ -19,10 +19,10 @@ As métricas (Seção 3.6) dos três modelos e da referência de taxa base estã
 
 Aplicando as regras da §4 do plano de análise:
 
-- **ROC-AUC, nb contra logreg.** A diferença é 0,001 (0,7890 contra 0,7880), menor que 0,03. Pela regra pré-registrada, é tratada como ruído e nenhum dos dois modelos se distingue do outro por essa métrica.
+- **ROC-AUC, nb contra logreg.** A diferença é 0,001 (0,7890 contra 0,7880), menor que 0,03. Pela regra do plano de análise, fica abaixo do limite descritivo de 0,03 adotado no plano, sem que isso constitua, por si só, teste estatístico de equivalência entre modelos.
 - **ROC-AUC, nb e logreg contra tan.** As diferenças são 0,047 (nb − tan) e 0,046 (logreg − tan). Ambas passam de 0,03, de modo que a regra de ruído não se aplica a esses pares. O plano não prevê outra regra para esse caso; registra-se ao lado que o desvio do tan entre partições é 0,049. O TAN teve desempenho pior que o NB nas cinco métricas no desenvolvimento (ROC-AUC e PR-AUC menores; Brier, *log loss* e ECE maiores).
 - **Brier contra taxa base.** O Brier médio dos três modelos (nb 0,171; tan 0,200; logreg 0,165) é menor que o da taxa base, 0,210. A condição "igual ou maior que 0,21" não ocorre; a frase "não melhor que prever a taxa base" não é acionada para nenhum modelo.
-- **Calibração.** O ECE do tan, 0,152, é o maior dos três (nb 0,093; logreg 0,095). Conforme a regra pré-registrada e a decisão P1, a calibração é apenas medida e relatada; não há correção. Os diagramas de confiabilidade dos três modelos estão em `resultados/calibracao_dev.png`.
+- **Calibração.** O ECE do tan, 0,152, é o maior dos três (nb 0,093; logreg 0,095). Conforme o plano de análise e a decisão P1, a calibração é apenas medida e relatada; não há correção. Os diagramas de confiabilidade dos três modelos estão em `resultados/calibracao_dev.png`.
 
 **Figura 4.1** – Diagramas de confiabilidade no desenvolvimento (`resultados/calibracao_dev.png`)
 
@@ -44,9 +44,9 @@ Fora a classe, a variável da qual sai o maior número de arestas, em todas as p
 
 Aplicando as regras da §4 do plano de análise ao conjunto de teste:
 
-- **ROC-AUC.** As diferenças entre os três modelos primários são 0,001 (logreg − nb: 0,7287 contra 0,7277), 0,021 (nb − tan: 0,7277 contra 0,7063) e 0,022 (logreg − tan: 0,7287 contra 0,7063). As três são menores que 0,03 e, pela regra pré-registrada, tratadas como ruído: nenhum modelo se distingue dos outros por essa métrica no teste.
+- **ROC-AUC.** As diferenças entre os três modelos primários são 0,001 (logreg − nb: 0,7287 contra 0,7277), 0,021 (nb − tan: 0,7277 contra 0,7063) e 0,022 (logreg − tan: 0,7287 contra 0,7063). As três são menores que 0,03 e, pela regra do plano de análise, consideradas pequenas segundo a regra descritiva de 0,03; essa classificação não demonstra equivalência estatística.
 - **PR-AUC.** Os valores são 0,490 (nb), 0,480 (tan) e 0,500 (logreg), contra 0,300 da taxa base. O limite de 0,03 vale só para ROC-AUC; por decisão do autor registrada em docs/decisoes.md (plano de análise, §8), nenhuma regra é aplicada a essas diferenças e elas são apenas descritas, sem conclusão de ruído.
-- **Brier contra taxa base.** O Brier do tan no teste é 0,215, maior que o da taxa base, 0,210. Pela regra pré-registrada, o tan é **não melhor que prever a taxa base** no conjunto de teste. O nb (0,199) e o logreg (0,191) ficam abaixo de 0,21, e a regra não é acionada para eles.
+- **Brier contra taxa base.** O Brier do tan no teste é 0,215, maior que o da taxa base, 0,210. Pela regra do plano de análise, o tan apresentou escore de Brier pontual maior que o do preditor de taxa base no conjunto de teste; não foi realizada inferência específica sobre a diferença. O nb (0,199) e o logreg (0,191) ficam abaixo de 0,21, e a regra não é acionada para eles.
 - **Calibração.** O ECE é 0,115 (nb), 0,157 (tan) e 0,078 (logreg).
 
 Conforme a decisão P1, é apenas relatado; não há correção. O *log loss* do tan, 0,780, do nb, 0,627, e do sel (secundária), 0,623, são maiores que o da taxa base, 0,611. O plano não tem regra para *log loss* contra a taxa base, e o fato é apenas descrito.
@@ -160,7 +160,7 @@ As probabilidades coincidem com as de `predicoes_dev.csv`, o que é esperado, po
 
 ## 4.6 Estudo de seleção (secundário)
 
-Esta seção relata o estudo secundário e pré-registrado da §9 do plano de análise (Seção 3.10). Ele não altera a análise primária: as Seções 4.1 a 4.4 continuam com NB e TAN de tamanho equivalente BDeu 5.
+Esta seção relata o estudo secundário da §9 (desenhado depois das métricas de desenvolvimento e antes do teste) do plano de análise (Seção 3.10). Ele não altera a análise primária: as Seções 4.1 a 4.4 continuam com NB e TAN de tamanho equivalente BDeu 5.
 
 **Declaração de viés.** Vale a declaração de viés da Seção 3.10.
 
@@ -180,7 +180,7 @@ Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.9 t
 | tan_ess50 | 0,763 (0,036) | 0,569 (0,081) | 0,186 (0,023) | 0,583 (0,066) | 0,115 (0,040) |
 | aninhado | 0,788 (0,028) | 0,613 (0,049) | 0,169 (0,012) | 0,512 (0,033) | 0,093 (0,012) |
 
-**Escolha por partição.** Pela regra pré-registrada (menor *log loss* médio nas partições internas), `nb_ess50` foi escolhida nas cinco partições externas e também no desenvolvimento inteiro. A Tabela 4.10 traz o *log loss* interno da configuração escolhida e das duas configurações de referência.
+**Escolha por partição.** Pela regra da §9 (menor *log loss* médio nas partições internas), `nb_ess50` foi escolhida nas cinco partições externas e também no desenvolvimento inteiro. A Tabela 4.10 traz o *log loss* interno da configuração escolhida e das duas configurações de referência.
 
 **Tabela 4.10** – *Log loss* interno por partição externa, seleção de colunas
 

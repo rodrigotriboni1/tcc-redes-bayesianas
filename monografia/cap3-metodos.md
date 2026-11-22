@@ -2,7 +2,7 @@
 
 <!-- Entradas do.bib marcadas "% VERIFICAR" ou "A CONFERIR" só podem ser citadas depois de conferidas no original (PLANO.md §9). -->
 
-Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. Todas as decisões de análise foram fixadas antes da observação de resultados no conjunto de teste, e a forma de leitura de cada desfecho foi registrada previamente em um plano de análise.
+Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas em 18/11/2026, após sua abertura, conforme a Seção 3.6.
 
 ## 3.1 Base de dados
 
@@ -42,7 +42,7 @@ A base apresenta categorias raras, por exemplo número de créditos no banco = 4
 
 No conjunto de desenvolvimento (n = 800), número de créditos no banco = 4 tem 5 casos e finalidade do crédito = 8 tem 7 casos; as demais categorias pequenas têm de 9 a 35 casos.
 
-A única análise exploratória é a tabela de descrição da base abaixo (contagens e as três variáveis contínuas), elaborada a partir do conjunto de desenvolvimento, sem *script* dedicado.
+A análise exploratória relatada limita-se à tabela descritiva apresentada a seguir (contagens e as três variáveis contínuas), elaborada a partir do conjunto de desenvolvimento, sem *script* dedicado.
 
 **Tabela 3.2** – Descrição do conjunto de desenvolvimento (n = 800), calculada a partir de `dados/processados/dev.csv`.
 
@@ -70,7 +70,7 @@ Todas as constantes (partições, faixas, tamanho equivalente e grade da sensibi
 
 ## 3.4 Discretização
 
-As redes bayesianas utilizadas exigem variáveis discretas. As três variáveis contínuas são discretizadas em 3 faixas por tercis, com cortes aprendidos apenas no treino de cada partição, para evitar vazamento de informação da partição de validação \cite{kaufman2012}. Para o teste final, os cortes são aprendidos no conjunto de desenvolvimento inteiro e gravados em `resultados/cortes.json`.
+As implementações de redes bayesianas discretas adotadas neste trabalho exigem variáveis discretas. As três variáveis contínuas são discretizadas em 3 faixas por tercis, com cortes aprendidos apenas no treino de cada partição, para evitar vazamento de informação da partição de validação \cite{kaufman2012}. Para o teste final, os cortes são aprendidos no conjunto de desenvolvimento inteiro e gravados em `resultados/cortes.json`.
 
 O número de faixas segue essa convenção (ver Seção 3.3).
 
@@ -116,7 +116,7 @@ em que $B_b$ é o conjunto de casos cuja $p_k$ cai na faixa $b$, e $\bar{y}_b$ e
 
 No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por *bootstrap* com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993}. O intervalo não cobre a variação devida ao treino.
 
-Regras de leitura foram fixadas antes de qualquer resultado. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor; Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base".
+As regras principais de leitura foram fixadas em 15/11/2026, antes dos resultados; houve complementações documentadas em 18/11/2026, após a abertura do teste (Apêndice B). Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
 
 O limite de 0,03 vale só para ROC-AUC: a PR-AUC é descrita sem conclusão de ruído, e a diferença pareada de utilidade é lida pelo intervalo de 95%, por decisão do autor registrada em docs/decisoes.md.
 
@@ -140,7 +140,7 @@ A matriz de utilidade é demonstrativa e lida de `config/utilidade.json` (Quadro
 
 Fonte: `config/utilidade.json`, com *c* = 40.
 
-As hipóteses da matriz são: valores demonstrativos, não calibrados com dados reais, e um analista que sempre acerta o estado do cliente. A matriz demonstrativa foi aprovada pelo orientador, com valores não calibrados com dados reais.
+A matriz de utilidade, aprovada pelo orientador para fins demonstrativos, contém valores não calibrados com dados reais e pressupõe que o analista identifique corretamente o estado de cada cliente.
 
 Como a utilidade esperada de cada ação é linear em *p*, a política resultante equivale a uma regra de limiares sobre *p* \cite{elkan2001}. Com a matriz acima, a análise manual é escolhida quando *c*/400 ≤ *p* ≤ 1 − *c*/100; com *c* = 40, a faixa vai de 0,10 a 0,60, e com *c* > 80 a análise manual nunca é escolhida. Empates são resolvidos, com tolerância de 1e-9, pela prioridade análise manual, rejeitar, aprovar. A contribuição pretendida é a derivação explícita dos limiares a partir dos custos, acompanhada da medição da calibração das probabilidades. A exigência de probabilidade calibrada é tomada da literatura, não demonstrada pelo experimento.
 
@@ -148,7 +148,7 @@ Estimativas de probabilidade bem calibradas são necessárias quando a decisão 
 
 ### 3.7.1 Comparação de políticas
 
-A política é calculada para os três modelos e comparada com um limiar fixo de 0,5 de duas ações. A comparação principal, fixada antes de qualquer métrica, usa o TAN; *Naive Bayes* e regressão logística são reportados em apêndice na mesma estrutura. A comparação de duas regras é descrita como "política de três ações por utilidade esperada contra corte 0,5 de duas ações", sem linguagem causal, pois a diferença mistura modelo, representação e conjunto de ações. Com analista infalível, a política de três ações supera o corte de duas ações por construção, o que é declarado junto da tabela.
+A política é calculada para os três modelos e comparada com um limiar fixo de 0,5 de duas ações. A comparação principal, fixada antes de qualquer métrica, usa o TAN; *Naive Bayes* e regressão logística são reportados em apêndice na mesma estrutura. A comparação de duas regras é descrita como "política de três ações por utilidade esperada contra corte 0,5 de duas ações", sem linguagem causal, pois a diferença mistura modelo, representação e conjunto de ações. A inclusão da análise manual aumenta ou mantém a utilidade esperada máxima prevista pelo modelo, mas não garante superioridade em utilidade realizada para todo conjunto de observações; o corte de 0,5 também não é o limiar ótimo de duas ações para essa matriz, o que é declarado junto da tabela. Com a matriz demonstrativa, o limiar de duas ações é 0,2 (Seção 2.7), e não 0,5: o corte de 0,5 é a regra de referência convencional, fixada no plano, e não foi otimizado. Assim, a diferença entre as duas políticas reúne o efeito da ação adicional, o do corte de referência e o do uso da utilidade esperada, e não isola o método decisório.
 
 São medidas a utilidade média, a distribuição das ações e o número de casos que mudam de ação entre as políticas. No teste, reporta-se também a diferença pareada de utilidade média entre a regra de utilidade e o limiar fixo, com intervalo por *bootstrap*. Para a regra de utilidade, registram-se ainda a segunda melhor ação e a diferença de utilidade esperada em relação a ela.
 
@@ -164,7 +164,7 @@ Um *script* de terminal recebe o identificador de um caso, treina novamente o mo
 
 ## 3.10 Estudo de seleção aninhado (secundário)
 
-Como análise secundária, pré-registrada em relação ao teste final, que será revista pelo autor, realiza-se um estudo de seleção de configuração. A análise primária, incluindo a comparação de duas regras com NB e TAN de BDeu 5, não muda.
+Como análise secundária, planejada antes do teste final e depois das métricas de desenvolvimento (declaração de viés abaixo), realiza-se um estudo de seleção de configuração. A análise primária, incluindo a comparação de duas regras com NB e TAN de BDeu 5, não muda.
 
 A grade é fechada, com 8 configurações: {*Naive Bayes*, TAN} × tamanho equivalente BDeu {1, 5, 10, 50}. Ficam fora da grade K2, outras faixas, seleção de variáveis, *hill climbing*, métodos de calibração e reponderação.
 
