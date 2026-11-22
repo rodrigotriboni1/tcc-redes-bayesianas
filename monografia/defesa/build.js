@@ -228,13 +228,13 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: R("1.000 casos da South German Credit: 800 para desenvolver em 5 partições e 200 de teste, abertos uma única vez"),
     sowhat: R("o teste não influenciou nenhuma escolha."),
-    notas: R("A base é a South German Credit, a versão corrigida por Grömping da base alemã citada na proposta. São 1.000 casos; separei 800 para desenvolvimento, com 240 ruins, e 200 para teste, com 60 ruins [resultados/predicoes_teste.csv, kredit: 60 zeros em 200 linhas]. No desenvolvimento usei validação cruzada estratificada em 5 partições, semente 2026. As três variáveis contínuas viram três faixas por tercis, com cortes aprendidos só no treino; no teste, os cortes vêm do desenvolvimento inteiro [resultados/cortes.json]. O teste foi aberto uma única vez, em 17/11/2026, depois do *commit* de congelamento."),
+    notas: R("A base é a South German Credit, a versão corrigida por Grömping da base alemã citada na proposta. São 1.000 casos; separei 800 para desenvolvimento, com 240 ruins, e 200 para teste, com 60 ruins [resultados/predicoes_teste.csv, kredit: 60 zeros em 200 linhas]. No desenvolvimento usei validação cruzada estratificada em 5 partições, semente 2026. As três variáveis contínuas viram três faixas por tercis, com cortes aprendidos só no treino; no teste, os cortes vêm do desenvolvimento inteiro [resultados/cortes.json]. O teste foi aberto uma única vez, depois do *commit* de congelamento."),
   });
   const k = UW / 1000;
   for (let i = 0; i < 5; i++) T(s, "P" + (i + 1), { x: M + i * 160 * k, y: 1.65, w: 160 * k - 0.04, h: 0.7, pt: 20, fill: C.navy, color: C.branco, align: "center", valign: "middle", kind: "body" });
   T(s, "Teste", { x: M + 800 * k + 0.1, y: 1.65, w: 200 * k - 0.1, h: 0.7, pt: 20, fill: C.branco, line: C.azul, color: C.azul, bold: true, align: "center", valign: "middle", kind: "body" });
   T(s, "Dev: 800 (240 ruins)", { x: M, y: 2.45, w: 800 * k, h: 0.4, pt: 20, color: C.navy, kind: "body" });
-  T(s, "Teste: 200 (60 ruins), aberto 1× em 17/11/2026 (49d77ff)", { x: M, y: 2.9, w: UW, h: 0.45, align: "right", pt: 20, color: C.azul, kind: "body" });
+  T(s, "Teste: 200 (60 ruins), aberto 1× (49d77ff)", { x: M, y: 2.9, w: UW, h: 0.45, align: "right", pt: 20, color: C.azul, kind: "body" });
   T(s, R("Divisão estratificada, semente 2026. / Validação cruzada estratificada, 5 partições. / 3 contínuas em 3 faixas por tercis, cortes só no treino. / Classe positiva: ruim (30%).").split(" / "), { x: M, y: 3.6, w: 9.0, h: 2.1, pt: 20, bullet: true, kind: "body" });
   chk("slide 4", "30%", [[tst.taxa_base.pr_auc * 100, 0]]);
   cite(s, R("(GRÖMPING, 2019)"));
@@ -509,7 +509,7 @@ apendice("Mudar perda ou custo desloca os limiares de forma previsível; acima d
 apendice("5 partições é convenção fixada antes dos resultados, não escolhida por desempenho",
   "Constante congelada, como as 3 faixas e o BDeu 5 [docs/decisoes.md §2; monografia §3.3]. Com 800 casos, cada partição tem 160 casos de validação e 48 ruins (estratificada). Não testei outros valores para não escolher pelo resultado.", null);
 apendice("O teste ficou fechado até o congelamento; o único vazamento é brando e está declarado",
-  "Cortes das faixas aprendidos só no treino de cada partição; teste aberto uma vez, em 17/11/2026, sobre o *commit* 49d77ff. O espaço de estados de cada variável usa todos os valores do desenvolvimento inteiro, para uma categoria rara não quebrar a inferência; não usa o rótulo, mas é um vazamento brando, declarado [decisões P10; plano-de-análise §6, item 6]. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado antes.", null);
+  "Cortes das faixas aprendidos só no treino de cada partição; teste aberto uma vez, sobre o *commit* 49d77ff. O espaço de estados de cada variável usa todos os valores do desenvolvimento inteiro, para uma categoria rara não quebrar a inferência; não usa o rótulo, mas é um vazamento brando, declarado [decisões P10; plano-de-análise §6, item 6]. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado antes.", null);
 apendice("Com analista infalível, o modelo prevê vantagem para a análise manual; o ganho realizado depende da calibração e do corte de comparação",
   "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e de rejeitar. Pelo modelo, a política de três ações nunca tem utilidade esperada menor que a de duas. Isso não garante ganho realizado: depende da calibração (ECE do TAN no teste: 0,157, o maior dos três), e o corte 0,5 nem é o ótimo de duas ações (0,2). No teste, as quatro diferenças foram positivas, de 22,5 a 38,3 [diferenca_politicas_teste.csv]. Por isso a diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada.",
   (s) => retasUE(s, { x: M, y: 1.55, w: 5.5, h: 5.0 }, true),
