@@ -158,6 +158,8 @@ A sensibilidade da política aos custos é avaliada calculando-se as fronteiras 
 
 Os valores da grade seguem essa convenção (ver Seção 3.3).
 
+A sensibilidade à calibração é avaliada sem recalibrar. Às probabilidades já gravadas (desenvolvimento e teste) soma-se à log-odds um viés *delta*, de modo que a camada de decisão recebe *p*′ = expit(logit(*p*) + *delta*), com *delta* em {−1; −0,5; −0,25; 0; +0,25; +0,5; +1}; valores positivos fazem o modelo parecer mais pessimista. Nenhum modelo é treinado de novo, nenhum método de correção é aplicado e o rótulo observado não é alterado: a utilidade é medida contra ele, como na análise principal. Deslocar *p* dessa forma equivale a deslocar as fronteiras de decisão sobre a probabilidade original, e as fronteiras equivalentes são gravadas junto com os resultados. A grade foi fixada antes de rodar a análise e não é escolhida a partir de nenhum resultado. No teste, a análise é exploratória e posterior à abertura, e não altera a análise primária (Seção 5.9).
+
 ## 3.9 Demonstração
 
 Um *script* de terminal recebe o identificador de um caso, treina novamente o modelo nas 4 partições que não contêm o caso e mostra o risco estimado, a utilidade esperada de cada ação, as fronteiras e a ação recomendada; o modelo padrão é o TAN. A demonstração mostra a conta, não uma justificativa textual da recomendação.

@@ -26,6 +26,7 @@ Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que
 | Evidência incompleta | `uv run python codigo/modelos.py --ocultar`, depois `uv run python codigo/avaliar.py --ocultar` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` |
 | Camada de decisão | `uv run python codigo/decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` |
 | Sensibilidade | `uv run python codigo/sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` |
+| Sensibilidade à calibração (exploratória; lê predições já gravadas, dev e teste) | `uv run python codigo/decisao.py --calibracao` | `sensibilidade_calibracao_dev.csv`, `sensibilidade_calibracao_teste.csv` |
 | Estudo de seleção (secundário) | `uv run python codigo/modelos.py --selecao`, depois `uv run python codigo/avaliar.py --selecao` | `predicoes_selecao.csv`, `selecao_dev.csv`, `selecao_escolha.csv` |
 | Demonstração | `uv run python codigo/demo.py <record_id> [--modelo nb\|tan\|logreg]` | nada; imprime no terminal |
 
