@@ -157,6 +157,19 @@ Registrada **depois** de rodar, ao contrário da seção anterior: a §7 do [pla
 | 22/11/2026 | Recalibrar (Platt ou regressão isotônica) em dados separados continua fora do protocolo. Fica como direção futura na Seção 5.10, comparável ao deslocamento pelo ECE | A escolha do método depende de número e é do autor (decisão P1, D4); corrigir depois de ver o teste seria ajustar o modelo ao resultado | Autor |
 | 22/11/2026 | Registrar esta análise aqui depois de rodar, e dizer isso no Apêndice B | A §7 do plano exige o registro antes; não foi feito, e o texto declara o desvio em vez de omiti-lo | Autor |
 
+## Sensibilidade ao erro do analista (registrada antes de rodar)
+
+Registrada **antes** de rodar, como pede a §7 do [plano de análise](plano-de-analise.md). A análise é posterior ao plano e ao resultado do teste, e será declarada como tal no texto.
+
+| Data | Decisão | Motivo | Quem |
+|---|---|---|---|
+| 22/11/2026 | Medir, só no desenvolvimento, quanto a taxa de acerto do analista pode cair antes de a política de três ações deixar de superar a de duas ações (limiar 0,20) e o corte 0,5. Saída nova: `sensibilidade_analista_dev.csv`, gravada pelo modo `--analista` de `decisao.py` | Parecer do orientador, ponto 2 e prioridade 2: a política de três ações supõe um analista idealizado, que nunca erra | Autor, a partir da recomendação do agente |
+| 22/11/2026 | A política fica fixa (as fronteiras vêm da matriz, como em `ue`); só o analista muda | Isolar o efeito do analista | Agente, a rever pelo autor |
+| 22/11/2026 | Erro simétrico nos dois estados: o analista que erra rejeita um cliente bom ou aprova um ruim, e os custos de errar vêm da matriz (`c = rejeitar.ruim − analise_manual.ruim`, descontado do resultado de rejeitar ou aprovar) | Não exige número novo do autor | Agente, a rever pelo autor |
+| 22/11/2026 | O resultado é uma taxa de acerto `q` de equilíbrio, calculada em forma fechada (a utilidade média é uma reta em `q`), sem grade de valores | Regra 5 do `AGENTS.md`: escolha que depende de número é do autor | Autor |
+| 22/11/2026 | Leitura: reportado como saiu; sem intervalo; não escolhe modelo, parâmetro nem matriz e não altera a análise primária nem as saídas dos outros modos | Regra 3 do `AGENTS.md` | Autor |
+| 22/11/2026 | Esta linha foi escrita **antes** de rodar `--analista` | §7 do plano de análise | Autor |
+
 ## Esclarecimentos e delegações do autor (22/11/2026)
 
 | Data | Decisão | Motivo | Quem |

@@ -1,0 +1,7 @@
+modelo,comparacao,utilidade_concorrente,utilidade_tres_acoes_q0,utilidade_tres_acoes_q1,q_equilibrio,leitura
+nb,ue - ue2,20.625,-55.25,32.625,0.8634423897581792,equilibrio
+nb,ue - limiar,4.5,-55.25,32.625,0.6799431009957326,equilibrio
+tan,ue - ue2,11.75,-46.1,22.275,0.8460694698354662,equilibrio
+tan,ue - limiar,-3.125,-46.1,22.275,0.6285191956124314,equilibrio
+logreg,ue - ue2,20.625,-66.0,30.875,0.8941935483870967,equilibrio
+logreg,ue - limiar,3.625,-66.0,30.875,0.7187096774193549,equilibrio
