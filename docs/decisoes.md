@@ -8,6 +8,7 @@ Quem decidiu:
 - **Autor**: Rodrigo, em nome próprio.
 - **Autor (proposta do levantamento)**: proposta feita por um subagente em 15/11/2026 e aceita pelo autor em bloco no mesmo dia.
 - **Orientador**: ver "Respostas do orientador (18/11/2026)".
+- **Agente**: escolha de implementação feita por um agente sem o autor ter decidido; vale até o autor rever. Quando o autor a aceita, a coluna diz como.
 
 ## 1. Dados e divisão
 
@@ -141,6 +142,20 @@ Registrada antes de rodar, como pede a §7 do [plano de análise](plano-de-anali
 | 22/11/2026 | Leitura, definida antes de rodar e para cada diferença (`ue − limiar`, `ue − ue2`, `ue2 − limiar`): se o intervalo de 95% exclui zero, "diferença observada a favor de X, com intervalo que exclui zero", sem afirmar causa; se inclui zero, "sem evidência de diferença com 200 casos e 60 ruins", sem concluir que as políticas são iguais; se exclui zero a favor da política de duas ações ou do corte, reportado como saiu | Mesma estrutura da §4 do plano, sem depender do valor observado | Autor |
 | 22/11/2026 | A comparação principal (TAN, `ue` × corte 0,5), a matriz, os modelos e a leitura anterior não mudam, qualquer que seja o resultado. A política de duas ações não é adotada nem recomendada por causa dele | Regras 3 e 5 do `AGENTS.md`: nada se ajusta por métrica; a escolha de política depende de número e é do autor | Autor |
 | 22/11/2026 | `factory/checks.sh`, passo 7: as 2 tabelas novas são opcionais, mas vêm juntas; as 6 do teste continuam obrigatórias | Não reprovar o ramo antes de o autor rodar `--final` e manter a checagem de que não sobra arquivo de teste fora da lista | Autor |
+
+## Sensibilidade das ações à calibração (22/11/2026)
+
+Registrada **depois** de rodar, ao contrário da seção anterior: a §7 do [plano de análise](plano-de-analise.md) pede a linha aqui antes de rodar de novo, e isso não foi feito. A análise é posterior ao plano e ao resultado do teste, e já está declarada como tal na Seção 4.8, na Seção 3.6 e no Apêndice B (B.5) da monografia.
+
+| Data | Decisão | Motivo | Quem |
+|---|---|---|---|
+| 22/11/2026 | Medir a sensibilidade das ações ao erro de calibração com `decisao.py --calibracao`: trocar `p` por `p − ECE`, `p` e `p + ECE` (ECE médio de cada modelo em `metricas_dev.csv`) e refazer a ação de utilidade esperada de cada caso do desenvolvimento. Saída nova: `sensibilidade_calibracao_dev.csv`. Não treina, não recalibra e não abre o teste | Parecer do orientador, ponto 4 (ALTA): quantificar ou discutir a sensibilidade das ações à calibração sem alterar retrospectivamente o protocolo primário. A calibração segue só medida (P1) | Autor, motivado pelo parecer; método recomendado pelo agente e aceito pelo autor |
+| 22/11/2026 | Rodar só nas predições do desenvolvimento (`predicoes_dev.csv`), não nas do teste | O teste já foi aberto uma vez; usá-lo para ver o efeito de uma correção seria ajustar ao resultado (§5, item 1, do plano; regra 3 do `AGENTS.md`) | Autor, a partir da recomendação do agente |
+| 22/11/2026 | O deslocamento `p ± ECE` não é cortado em [0, 1]: a ação só depende de `p` frente às fronteiras da matriz | O `AGENTS.md` proíbe `clip` sobre probabilidades; com `acao_deslocada()` o corte não é necessário | Agente, ao implementar; a rever pelo autor |
+| 22/11/2026 | Implementada como modo `--calibracao` de `decisao.py`, e não como script novo. `factory/checks.sh` passa a rodar o modo, e `auditoria_independente.py` entra em `PERMITIDOS` | O plano limita os scripts a 7 e proíbe outro arquivo em `codigo/`; sem a linha no `checks.sh`, o passo 12 reprovava o arquivo novo ("nenhum script o gera") | Agente, aceito pelo autor no merge do #98 e do #100 |
+| 22/11/2026 | Leitura: cenário simétrico, só no desenvolvimento, sem intervalo; não é recalibração, não escolhe modelo, parâmetro nem matriz, e os resultados dos Capítulos 4 e 5 seguem com as probabilidades sem correção. A utilidade média não segue direção única (Tabela 14 do `.docx`, Tabela 4.13 dos `.md`) | Declarar o limite da medida: o erro real de calibração não é um deslocamento constante | Agente (texto da Seção 4.8), aprovado pelo autor no merge do #99 |
+| 22/11/2026 | Recalibrar (Platt ou regressão isotônica) em dados separados continua fora do protocolo. Fica como direção futura na Seção 5.10, comparável ao deslocamento pelo ECE | A escolha do método depende de número e é do autor (decisão P1, D4); corrigir depois de ver o teste seria ajustar o modelo ao resultado | Autor |
+| 22/11/2026 | Registrar esta análise aqui depois de rodar, e dizer isso no Apêndice B | A §7 do plano exige o registro antes; não foi feito, e o texto declara o desvio em vez de omiti-lo | Autor |
 
 ## Esclarecimentos e delegações do autor (22/11/2026)
 
