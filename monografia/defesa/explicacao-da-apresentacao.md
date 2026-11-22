@@ -54,7 +54,7 @@ Cada termo: o que é, em uma ou duas frases, e uma comparação do dia a dia.
 
 **Utilidade esperada (UE).** É o ganho médio de uma ação, pesando cada resultado pela sua chance: UE = (1 − p) · ganho se bom + p · ganho se ruim. Escolhe-se a ação de maior UE. Analogia: decidir se leva guarda-chuva pesando o incômodo de carregar contra o risco de se molhar.
 
-**Matriz de utilidade.** A tabela com quanto se ganha ou perde em cada combinação de ação e cliente. Aqui: aprovar bom = +100 (G); aprovar ruim = −400 (L); rejeitar = 0; análise manual custa c = 40 e o analista acerta sempre. É demonstrativa: aprovada pelo orientador, não medida em banco real. Analogia: a tabela de preços de um jogo, que você combinou antes de jogar.
+**Matriz de utilidade.** A tabela com quanto se ganha ou perde em cada combinação de ação e cliente. Aqui: aprovar bom = +100 (G); aprovar ruim = −400 (L); rejeitar = 0; análise manual custa c = 40 e o analista acerta sempre. É demonstrativa: aceita pelo orientador apenas para fins demonstrativos, não medida em banco real. Analogia: a tabela de preços de um jogo, que você combinou antes de jogar.
 
 **Limiares 0,10 e 0,60 e de onde vêm.** Com a matriz, cada ação vira uma reta em p:
 - aprovar: 100 · (1 − p) − 400 · p = 100 − 500p
@@ -279,7 +279,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - Os únicos casos que mudaram de decisão foram os 60 mandados ao analista.
 - E isso é esperado pela própria regra, não mérito da rede.
 
-**O que você fala.** "Esta é a comparação principal, fixada antes: TAN com três ações contra o corte 0,5. A diferença de utilidade média foi 22,5, com intervalo de 9,2 a 37,2. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55. Os 60 que mudaram são os da análise manual. Com analista infalível, a matriz prevê vantagem para a política de três ações; o ganho realizado depende da calibração, e o corte 0,5 nem é o ótimo de duas ações (0,2). É efeito da matriz, não evidência sobre a rede."
+**O que você fala.** "Esta é a comparação principal, fixada antes: TAN com três ações contra o corte 0,5. A diferença de utilidade média foi 22,5, com intervalo de 9,2 a 37,2. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55. Os 60 que mudaram são os da análise manual. Com analista infalível, a matriz prevê vantagem para a política de três ações; o ganho realizado depende da calibração, e o corte 0,5 nem é o ótimo de duas ações (0,2). É efeito da matriz, não evidência sobre a rede. Numa análise posterior ao teste, os 22,5 se decompõem em 9,0 pela análise manual e 13,5 por o corte 0,5 não ser o limiar de duas ações."
 
 **Pergunta provável.** "Então o resultado não prova nada?" Resposta: "Prova que, com esta matriz, a ação extra rende mais. Não prova que a rede é boa."
 
@@ -413,7 +413,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 **O que está escrito.** Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e rejeitar. Com as probabilidades do modelo, a política de três ações nunca fica abaixo da mesma política restrita a duas ações; o ganho realizado depende da calibração, e o corte 0,5 nem é o ótimo de duas ações (0,2). As quatro diferenças no teste foram positivas, de 22,5 a 38,3. "A diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada."
 
-**O que quer dizer.** Com as probabilidades do modelo, a ação extra nunca reduz a utilidade esperada. No teste, os quatro modelos tiveram diferença positiva, mas isso depende da calibração e do corte de comparação.
+**O que quer dizer.** Com as probabilidades do modelo, a ação extra nunca reduz a utilidade esperada. No teste, os quatro modelos tiveram diferença positiva, mas isso depende da calibração e do corte de comparação. Medido depois, com o TAN, os 22,5 se dividem em 9,0 (ação extra) e 13,5 (corte 0,5 contra o limiar 0,2).
 
 **O que você fala.** "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa opção é a melhor para o modelo, e o corte 0,5 não a tem. As quatro diferenças no teste foram positivas, de 22,5 a 38,3, mas o ganho realizado depende de as probabilidades estarem calibradas, e o corte 0,5 nem é o ótimo de duas ações (0,2). Não é evidência sobre a rede." (0:50)
 

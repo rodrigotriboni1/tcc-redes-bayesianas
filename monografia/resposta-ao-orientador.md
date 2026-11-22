@@ -1,31 +1,43 @@
-# Resposta à revisão 1 do orientador
+# Resposta às revisões do orientador (revisão 1 e parecer 2)
 
-Arquivo revisado: `TCC_Rodrigo_Final_Revisao_2.docx` (a base é a `Revisão_1` com os apontamentos). Nenhum resultado, hiperparâmetro, semente, faixa, modelo ou valor da matriz foi alterado. As mudanças são de texto; as verificações estão marcadas como tais.
+Arquivo revisado: `TCC_Rodrigo_Final_Revisao_3.docx` (a Revisão 2 incorpora a revisão 1; a Revisão 3 incorpora o parecer 2). Nenhum resultado, hiperparâmetro, semente, faixa, modelo ou valor da matriz foi alterado. As mudanças são de texto, mais uma análise exploratória declarada como posterior ao teste (Seção 4.7). As verificações estão marcadas como tais.
 
-## O que o orientador apontou e o que foi feito
+## Parecer 2 (pontos fracos) e o que foi feito
+
+| Ponto | O que foi feito | Onde |
+|---|---|---|
+| ALTA 1: contribuição pouco diferenciada | A contribuição foi reescrita em três partes: o que já era conhecido (forma da regra e limiares derivados da matriz; Chow, 1970; Elkan, 2001), o que se implementa (fluxo reprodutível, matriz configurável, sensibilidade, conferências) e o que se aprende empiricamente, com ressalvas. A derivação não é apresentada como novidade teórica. | 1.4, 3.7, 6.1 |
+| ALTA 2: comparação favorecida pelo desenho | A política de duas ações com limiar 0,2 foi medida no teste (decisão registrada antes de rodar; análise exploratória posterior ao teste). Com o TAN, os 22,5 se decompõem, de forma descritiva, em 9,0 [1,8; 17,4] entre três e duas ações e 13,5 [0,5; 28,5] entre duas ações e o corte 0,5. Os dois intervalos excluem zero, o segundo por pouco. A parcela atribuída ao corte de referência é maior, mas os intervalos se sobrepõem. A comparação principal não mudou e a política de duas ações não é recomendada. | 3.7.1, 4.7 (Tabelas 12 e 13), 5.5, 6.2, Apêndice B.5 |
+| ALTA 3: desempenho do TAN no teste | O texto liga o Brier acima da taxa base e o maior ECE à decisão: a probabilidade do TAN carrega erro de escala, a utilidade esperada que ele produz deve ser lida com cautela e os 22,5 não indicam que o TAN deva ser usado. O número de casos encaminhados varia entre modelos (60, 85 e 111). | 5.2, 6.3 |
+| ALTA 4: calibração só medida | Só texto, como combinado: um viés de calibração desloca as fronteiras 0,10 e 0,60 como mudar a perda ou o custo; os resultados são condicionais às probabilidades não corrigidas; a sensibilidade da Seção 4.4 é à matriz, não à calibração; recalibrar depois de ver o teste seria ajustar o modelo ao resultado. Nenhuma perturbação nem recalibração foi feita. | 4.4, 5.9 |
+| MÉDIA 5: representações distintas | A discretização em três faixas é convenção, não foi otimizada, descarta informação das contínuas e pode afetar desempenho e calibração das redes; o trabalho não separa esse efeito. | 3.4, 5.7, 6.3 |
+| MÉDIA 6: n = 200 e 60 ruins | O ECE por faixa tem poucos casos e a diferença de ECE entre modelos não tem intervalo. "Favorece" foi trocado por "a diferença observada é a favor". | 5.6, 6.2 |
+| MÉDIA 7: aplicabilidade prática | Blocos "o que o trabalho mostra" e "o que não mostra" (custos reais, desfecho das ações não tomadas, analista real, custo do erro por segmento). A matriz foi "aprovada pelo orientador apenas para fins demonstrativos". | 5.4, 5.5, 6.3 |
+| MÉDIA 8: validação da implementação | Reimplementação independente das saídas do desenvolvimento, em NumPy, fora do repositório: métricas (diferença máxima 1,1e-16), ações e utilidade média (idênticas), partição estratificada refeita (160 casos e 48 ruins em cada), árvore do TAN por informação mútua condicional e árvore geradora máxima (as mesmas 19 arestas nas 5 partições). Nenhuma divergência. O texto declara o que não foi reimplementado (tabelas de probabilidade condicional com BDeu, inferência, teste) e que isso não substitui uma auditoria feita por outra pessoa. | 3.11, Apêndice A.3 |
+
+## Revisão 1 (apontamentos anteriores)
 
 | Apontamento | O que foi feito | Onde |
 |---|---|---|
 | ALTA: "vantagem garantida por construção" | As substituições sugeridas (amarelo para verde) foram aplicadas. A vantagem passou a ser descrita como prevista pela matriz na utilidade esperada do modelo, sem garantia de ganho realizado. | Resumo, abstract, 3.7.1, 5.2, 5.5, Cap. 6 |
-| ALTA: o corte de 0,5 não é o ótimo de duas ações (0,2) | Declarado em 3.7.1 e em 5.5, com a ligação à interpretação dos 22,5: parte da diferença pode vir do corte de referência, e este trabalho não separa as contribuições. A política de utilidade esperada com duas ações e limiar 0,2 entrou como direção futura (5.10), sem medida. | 3.7.1, 5.5, 5.10 |
-| ALTA: separar pré-registro de decisões posteriores | "Pré-registrado" foi trocado por "plano de análise" em todo o texto. O Apêndice B ganhou a §9 (16/11, depois das métricas de desenvolvimento) e uma cronologia. | 1.2, introdução do Cap. 3, 3.6, introdução dos Caps. 4 e 5, 4.1, 5.2, Cap. 6, Apêndice B |
-| ALTA: raiz do TAN no pgmpy 1.1.2 | Verificado no código-fonte (`TreeSearch.py`, linhas 145–150) e nas 5 partições do projeto: a raiz é a coluna de maior soma de informação mútua não condicional, e a soma inclui a classe `kredit`, que nunca fica no topo. O texto foi mantido. | 3.5 |
-| ALTA: políticas com conjuntos de ações diferentes | Texto novo em 3.7.1 e 5.5 (a diferença reúne ação adicional, corte de referência e método). | 3.7.1, 5.5 |
-| ALTA: reprodutibilidade | Conferido: `49d77ff` está no histórico do ramo; `uv.lock` fixa pgmpy 1.1.2; `resultados/` está versionado. Entre `49d77ff` e `cc2badc` (resultados do teste) não houve mudança em código, configuração, dependências nem plano. Não conferido: a presença dos dados em `dados/`. | 3.2, Apêndice B |
-| MÉDIA: linguagem de diferença simulada | Aplicada no resumo, no abstract e na conclusão. | Resumo, abstract, Cap. 6 |
-| MÉDIA: regra de 0,03 não é teste de equivalência | Dita em 3.6 e repetida nos resultados, na discussão e no Apêndice B ("tratada como ruído", "sem apontar qual modelo é melhor"). | 3.6, 4.1, 5.2, B.2, B.4 |
-| MÉDIA: referências | As 26 referências e as citações do texto se correspondem (primeiro autor e ano), sem órfãs. DOI e URL já tinham sido conferidos em 17/11 (`docs/conferencia-referencias.md`); seguem em aberto UCI 573, Siddiqi e Platt (páginas). | Referências |
-| MÉDIA: pré-textuais | O relatório do orientador saiu do arquivo. O documento pede atualização dos campos (sumário e listas) ao abrir. Seguem em aberto: número de páginas e CDU da ficha catalográfica, folha de aprovação (só após a defesa). | Pré-textuais |
+| ALTA: o corte de 0,5 não é o ótimo de duas ações (0,2) | Declarado em 3.7.1 e 5.5 e, agora, medido (ver ALTA 2 do parecer 2). | 3.7.1, 4.7, 5.5 |
+| ALTA: separar pré-registro de decisões posteriores | "Pré-registrado" foi trocado por "plano de análise" em todo o texto. O Apêndice B ganhou a §9 (16/11, depois das métricas de desenvolvimento), a cronologia e, em B.5, a decisão de 22/11. | 1.2, introdução do Cap. 3, 3.2, 3.6, 4, 5, Cap. 6, Apêndice B |
+| ALTA: raiz do TAN no pgmpy 1.1.2 | Verificado no código-fonte (`TreeSearch.py`, linhas 145–150) e nas 5 partições: a raiz é a coluna de maior soma de informação mútua não condicional, e a soma inclui a classe `kredit`, que nunca fica no topo. O texto foi mantido. | 3.5 |
+| ALTA: reprodutibilidade | Conferido: `49d77ff` está no histórico do ramo; `uv.lock` fixa pgmpy 1.1.2; `resultados/` está versionado. Entre `49d77ff` e `cc2badc` não houve mudança em código, configuração, dependências nem plano. Em 22/11, `decisao.py --final` foi executado de novo sobre as predições já gravadas (sem reabrir o arquivo do teste); os seis arquivos anteriores ficaram idênticos (MD5). Não conferido: a presença dos dados em `dados/`. | 3.2, A.4, Apêndice B |
+| MÉDIA: regra de 0,03 não é teste de equivalência | Dita em 3.6 e repetida nos resultados, na discussão e no Apêndice B. | 3.6, 4.1, 5.2, B.2, B.4 |
+| MÉDIA: referências | As 26 referências e as citações do texto se correspondem (primeiro autor e ano), sem órfãs. DOI e URL foram conferidos em 17/11 (`docs/conferencia-referencias.md`); seguem em aberto UCI 573, Siddiqi e Platt (páginas). | Referências |
+| MÉDIA: pré-textuais | O relatório do orientador saiu do arquivo. Seguem em aberto, e são do autor: número de páginas e CDU da ficha catalográfica, folha de aprovação (só após a defesa) e o sumário e as listas definitivos. O sumário e as listas do `.docx` são texto fixo, sem número de página, e os títulos não usam estilos de título; um sumário definitivo exige aplicar os estilos no Word. | Pré-textuais |
 | MÉDIA: equações e figuras | As 11 equações foram comparadas com as definições e com o código (Brier, log loss, ECE de 10 faixas, limiar p* = G/(G+L)). As 3 figuras são idênticas byte a byte às de `resultados/`. | Cap. 2 a 4 |
 
 ## Também atualizados
 
-Os capítulos em `.md` (`resumo.md`, `cap1` a `cap6`), o roteiro, o gerador e o `.pptx` dos slides e a explicação da apresentação, com as mesmas frases. A pergunta provável da banca "A vantagem é garantida?" substituiu "O que significa ganha por construção?".
+Os capítulos em `.md` (`resumo.md`, `cap1` a `cap6`, `apendices.md` na parte A), `auditoria-numeros.md`, o roteiro, o gerador e o `.pptx` dos slides e a explicação da apresentação, com as mesmas frases. A pergunta provável da banca "A vantagem é garantida?" substituiu "O que significa ganha por construção?".
 
-## Para o autor decidir
+## Para o autor decidir ou fazer
 
-- Medir ou não a política de utilidade esperada com duas ações (limiar 0,2) como análise exploratória posterior ao teste. Não foi feito: depende de rodar sobre o teste e é decisão do autor.
 - Confirmar com o orientador se o prazo de 30/11 é entrega das cópias ou defesa (regulamento: 15 dias entre as duas).
-- `config/utilidade.json` ainda diz "Matriz pendente de aprovação do orientador", enquanto o texto diz "aprovada". O arquivo é do autor e não foi alterado.
-- Os parágrafos em amarelo (5.6, "diferenças pequenas dificilmente se distinguem de ruído") são redação própria para trecho marcado sem sugestão.
-- `monografia/monografia.md`, `esqueleto.md` e `apendices.md` (cópia literal do plano) não foram atualizados: são cópias anteriores ou transcrições do plano, e o `.docx` é a referência.
+- Uma auditoria feita por outra pessoa continua pendente; a reimplementação acima é do mesmo autor, sobre as mesmas saídas.
+- `config/utilidade.json` ainda diz "Matriz pendente de aprovação do orientador", enquanto o texto diz "aprovada apenas para fins demonstrativos". O arquivo é do autor e não foi alterado.
+- `docs/reproduzir.md` não lista `decisao.py --verificar`, e o passo 10 do `factory/checks.sh` roda `test_decisao.py` e `decisao.py`, mas não `decisao.py --verificar`. O `checks.sh` usa `shasum`, que não existe em Linux. São arquivos do autor.
+- O parágrafo em amarelo (5.6, "diferenças pequenas dificilmente se distinguem de ruído") é redação própria para trecho marcado sem sugestão.
+- `monografia/monografia.md`, `esqueleto.md` e `apendices.md` (cópia literal do plano, exceto A.3 e A.4) não foram atualizados no resto: o `.docx` é a referência.

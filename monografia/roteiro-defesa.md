@@ -114,7 +114,7 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 - **Exibição (gráfico a gerar):** *forest plot* da diferença pareada `ue − limiar` com IC 95%: TAN (principal, azul, rotulado), NB, logística e sel em cinza; linha vertical em zero. Barra empilhada pequena embaixo, TAN: três ações 92 aprovar / 48 rejeitar / 60 análise manual; corte 0,5: 145 / 55 / 0. Tabelas de origem: `resultados/diferenca_politicas_teste.csv` e `resultados/resumo_politicas_teste.csv` (linhas tan).
 - **Texto no slide (≈35 palavras):** "IC exclui zero → diferença a favor das três ações; sem causa. / Os 60 que mudam = os 60 em análise manual. / Ressalvas: matriz demonstrativa; analista infalível; simulação, não política real."
 - **So what:** responde à parte 2: há efeito medido, mas ele vem da ação extra e da matriz, não da rede.
-- **Notas de fala:** "Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a matriz prevê vantagem para a política de três ações na utilidade esperada do modelo; a utilidade realizada depende da calibração, e o corte de 0,5 nem é o ótimo de duas ações, que é 0,2. A vantagem é consequência da matriz e do conjunto de ações, não evidência sobre a rede."
+- **Notas de fala:** "Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a matriz prevê vantagem para a política de três ações na utilidade esperada do modelo; a utilidade realizada depende da calibração, e o corte de 0,5 nem é o ótimo de duas ações, que é 0,2. A vantagem é consequência da matriz e do conjunto de ações, não evidência sobre a rede. Numa análise exploratória posterior ao teste, a diferença de 22,5 se decompõe, de forma descritiva, em 9,0 pela ação análise manual e 13,5 por o corte 0,5 não ser o limiar de duas ações da matriz."
 
 ### Slide 12 — Estudo de seleção secundário (1:15)
 
@@ -134,7 +134,7 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 
 ### Slide 14 — Conclusões (1:00; fica na tela durante a arguição)
 
-- **Título-ação:** Separar risco e ação dá limiares explícitos por construção; o efeito medido favorece as três ações, sem causa e sem modelo recomendado
+- **Título-ação:** Separar risco e ação dá limiares explícitos por construção; o efeito medido é a favor das três ações, sem causa nem modelo recomendado
 - **Exibição:** fundo navy, três itens numerados, contato no rodapé.
 - **Texto no slide (≈40 palavras):** "1. Limiares 0,10 e 0,60 saem da matriz; valem para qualquer escore. / 2. TAN: +22,5 de utilidade média [9,2; 37,2], prevista pela matriz. / 3. ROC-AUC: diferenças < 0,03, sem apontar qual modelo é melhor; Brier do TAN não melhor que taxa base. / [e-mail] · [link do repositório]"
 - **So what:** as duas partes da pergunta respondidas numa tela.
@@ -230,7 +230,7 @@ Títulos-ação em sequência:
 11. Com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5 (IC 95% de 9,2 a 37,2), uma vantagem prevista pela matriz, restrita à simulação
 12. O estudo de seleção secundário escolheu NB com BDeu 50, a 0,001 de ROC-AUC da referência; a grade foi desenhada depois de ver o desenvolvimento
 13. Os resultados valem para esta base, esta matriz demonstrativa e um analista infalível: é simulação, não política real
-14. Separar risco e ação dá limiares explícitos por construção; o efeito medido favorece as três ações, sem causa e sem modelo recomendado
+14. Separar risco e ação dá limiares explícitos por construção; o efeito medido é a favor das três ações, sem causa nem modelo recomendado
 
 **Resultado: passa.** Ajustes feitos na revisão: (a) o slide 1 tinha só o título oficial, que é rótulo de tema; ganhou o subtítulo-afirmação; (b) o slide 11 dizia só o número, e a banca leria "a proposta é melhor": entrou "que a matriz garante por construção" no próprio título; (c) o slide 3 era "Pergunta de pesquisa" e virou afirmação sobre as duas partes; (d) a estrutura sugerida foi mantida (ordem e número), sem fundir nem cortar slides.
 

@@ -1,6 +1,6 @@
 # 4 RESULTADOS
 
-Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
+Este capítulo relata os resultados. Os números de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) são resultados pré-estudo, obtidos só com os 800 casos de desenvolvimento (validação cruzada estratificada em 5 partições, Capítulo 3, Seções 3.2 e 3.3); os blocos do conjunto de teste (Tabelas 4.2, 4.5, 4.6, 4.11, 4.12 e Figura 4.2) são identificados na legenda pelo rótulo "conjunto de teste (n = 200; 60 ruins)". O conjunto de teste final foi aberto uma única vez, em 17/11/2026, após o *commit* de congelamento 49d77ff. Cada seção remete à seção correspondente do Capítulo 3. A leitura dos resultados segue as regras originais do plano de análise (`docs/plano-de-analise.md`), com as complementações posteriores explicitadas na Seção 3.6, e a interpretação fica para o Capítulo 5.
 
 Nas tabelas de métricas (4.1 e 4.9), os valores são médias e desvios entre as 5 partições. Cada número traz a indicação do arquivo e da coluna de origem, no formato. A Tabela 4.2 traz o valor no conjunto de teste com intervalo de 95% por *bootstrap*. Os valores são arredondados a três casas, salvo indicação.
 
@@ -134,7 +134,7 @@ A Tabela 4.7 mostra, para alguns pares de perda e custo da análise manual, os l
 | 400 | 100 | 0,2 | 0,2 |
 | 800 | 50 | 0,063 | 0,5 |
 
-Com custo zero, a faixa de análise manual cobre todo o intervalo de 0 a 1 (linha 400, 0). Quando os dois limiares coincidem, a faixa desaparece e a política se reduz a duas ações; isso ocorre, por exemplo, para perda 200 com custo a partir de 70 e para perda 400 com custo a partir de 80. A Figura 4.3 mostra a tabela inteira. Não há regra da §4 para esta análise, e este texto não escolhe valor de custo nem de perda.
+Com custo zero, a faixa de análise manual cobre todo o intervalo de 0 a 1 (linha 400, 0). Quando os dois limiares coincidem, a faixa desaparece e a política se reduz a duas ações; isso ocorre, por exemplo, para perda 200 com custo a partir de 70 e para perda 400 com custo a partir de 80. A Figura 4.3 mostra a tabela inteira. Não há regra da §4 para esta análise, e este texto não escolhe valor de custo nem de perda. Essa sensibilidade é à matriz: ela não mede o efeito de um erro de calibração das probabilidades, discutido na Seção 5.9.
 
 **Figura 4.3** – Limiares da política em função da perda e do custo da análise manual (`resultados/sensibilidade.png`)
 
@@ -196,3 +196,35 @@ Foram feitas **8 comparações** (as 8 configurações da grade). A Tabela 4.9 t
 Como a mesma configuração foi escolhida em todas as partições externas, a linha `aninhado` reproduz os valores de `nb_ess50`. A diferença de ROC-AUC entre `aninhado` (0,788) e a configuração de referência `nb_ess5` (0,789) é 0,001, menor que 0,03 e, portanto, tratada como ruído pela regra da §4. A diferença de *log loss* entre as duas é 0,011 (0,512 contra 0,523). Entre as configurações do TAN, o *log loss* médio diminui à medida que o tamanho equivalente aumenta, de 0,825 (`tan_ess1`) a 0,583 (`tan_ess50`); em nenhuma partição uma configuração do TAN foi escolhida.
 
 **Conjunto de teste (n = 200; 60 ruins), análise secundária.** As predições `p_sel` no teste estão em `resultados/predicoes_teste.csv` (coluna `p_sel`), e suas métricas, na linha `sel` da Tabela 4.2. Como define a §9, a diferença principal da escolha é contra a configuração de referência `nb` (NB, BDeu 5): a ROC-AUC de `sel` é 0,720 [0,641; 0,795], contra 0,728 do `nb`; a diferença, 0,008 (nb − sel), é menor que 0,03 e, pela regra da §9, tratada como ruído. De forma apenas descritiva, a diferença contra o `tan` (TAN, BDeu 5, ROC-AUC 0,706) é 0,014 (sel − tan). O *log loss* de `sel` é 0,623, contra 0,627 do `nb` (diferença de 0,005, calculada sobre os valores não arredondados: 0,6273 − 0,6226); o plano não tem regra de leitura para essa diferença, e ela é apenas descrita. O Brier de `sel`, 0,202, é menor que o da taxa base, 0,210. Na política de decisão, a diferença pareada de `sel` é 34,4 [16,4; 52,5] (Tabela 4.6). Esses números relatam quanto a configuração escolhida pela regra difere da configuração de referência no teste; não indicam qual modelo adotar.
+
+## 4.7 Análise exploratória posterior ao teste: política de duas ações
+
+Esta seção relata uma análise exploratória feita depois da abertura do teste e de conhecido o resultado da comparação principal, e não substitui essa comparação. Ela foi decidida em 22/11/2026 e registrada antes de rodar (`docs/decisoes.md`; Apêndice B.5). A política de duas ações (`ue2`) escolhe entre aprovar e rejeitar pela utilidade esperada da matriz; seu limiar, *p* = *G*/(*G* + *L*) = 100/500 = 0,2 (Seção 2.7), vem da matriz. A comparação separa duas fontes da diferença de 22,5: a ação análise manual (política de três ações contra `ue2`) e o corte de referência 0,5, que não é o limiar de duas ações da matriz (`ue2` contra o corte 0,5).
+
+A leitura foi definida antes de rodar, para cada diferença: se o intervalo de 95% exclui zero, descreve-se diferença observada a favor de uma das políticas, sem afirmar causa; se inclui zero, não há evidência de diferença com 200 casos e 60 ruins, sem concluir que as políticas são iguais.
+
+**Tabela 4.11** – Utilidade média por regra, análise exploratória posterior ao teste (n = 200; 60 ruins), valor [intervalo de 95%]
+
+| Modelo | Três ações (`ue`) | Duas ações, limiar 0,2 (`ue2`) | Corte 0,5 (`limiar`) |
+|---|---|---|---|
+| TAN (principal) | 17,5 [−1,4; 35,3] | 8,5 [−12,5; 27,5] | −5,0 [−29,5; 19,5] |
+| NB | 24,0 [7,6; 38,7] | 13,0 [−5,5; 30,0] | −5,5 [−30,5; 19,5] |
+| Regressão logística | 25,3 [10,2; 39,1] | 16,0 [−2,0; 32,0] | −13,0 [−38,5; 12,0] |
+| sel (secundária) | 27,9 [13,4; 40,8] | 9,5 [−9,5; 27,0] | −6,5 [−31,5; 17,5] |
+
+Com o TAN, a utilidade média foi 17,5 na política de três ações, 8,5 na de duas ações com limiar 0,2 e −5,0 no corte 0,5. A política de duas ações aprovou 112 e rejeitou 88 casos; a de três ações aprovou 92, rejeitou 48 e encaminhou 60, e o corte 0,5 aprovou 145 e rejeitou 55.
+
+**Tabela 4.12** – Diferenças pareadas de utilidade média, análise exploratória posterior ao teste (n = 200; 60 ruins), valor [intervalo de 95%]
+
+| Modelo | Três ações − corte 0,5 | Três ações − duas ações | Duas ações − corte 0,5 |
+|---|---|---|---|
+| TAN (principal) | 22,5 [9,2; 37,2] | 9,0 [1,8; 17,4] | 13,5 [0,5; 28,5] |
+| NB | 29,5 [13,1; 46,3] | 11,0 [2,5; 20,9] | 18,5 [2,0; 36,0] |
+| Regressão logística | 38,3 [20,2; 56,4] | 9,3 [0,6; 19,0] | 29,0 [10,0; 48,5] |
+| sel (secundária) | 34,4 [16,4; 52,5] | 18,4 [7,5; 30,0] | 16,0 [−0,5; 33,5] |
+
+Com o TAN, a diferença de 22,5 entre a política de três ações e o corte 0,5 se decompõe, de forma descritiva, em 9,0 (intervalo de 95%: 1,8 a 17,4) entre a política de três ações e a de duas ações com limiar 0,2, e 13,5 (0,5 a 28,5) entre esta e o corte 0,5. Os dois intervalos excluem zero, o segundo por pouco. Pela regra acima, observa-se diferença a favor da política de três ações sobre a de duas ações, e diferença a favor da política de duas ações sobre o corte 0,5, sem afirmar causa. A parcela atribuída ao corte de referência é maior que a atribuída à ação adicional, mas os intervalos se sobrepõem e a decomposição não é um teste.
+
+No *Naive Bayes*, na regressão logística e na seleção aninhada, a diferença entre a política de três ações e a de duas ações também exclui zero (11,0, 9,3 e 18,4). A diferença entre a política de duas ações e o corte 0,5 exclui zero no *Naive Bayes* (18,5) e na regressão logística (29,0) e inclui zero na seleção aninhada (16,0; −0,5 a 33,5), caso em que não há evidência de diferença.
+
+Esses números herdam as ressalvas das Seções 5.4 e 5.5 (matriz demonstrativa, analista infalível, simulação sobre o rótulo observado) e as de um teste com 200 casos. A política de duas ações não é adotada nem recomendada por causa deste resultado, e a comparação principal e a matriz não mudam.

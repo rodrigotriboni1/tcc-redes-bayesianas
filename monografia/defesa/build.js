@@ -381,7 +381,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
   const s = novo({
     titulo: t,
     sowhat: R("responde à parte 2: há efeito medido, mas ele vem da ação extra e da matriz, não da rede."),
-    notas: R("Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a matriz prevê vantagem para a política de três ações na utilidade esperada do modelo; a utilidade realizada depende da calibração, e o corte de 0,5 nem é o ótimo de duas ações, que é 0,2. A vantagem é consequência da matriz e do conjunto de ações, não evidência sobre a rede."),
+    notas: R("Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a matriz prevê vantagem para a política de três ações na utilidade esperada do modelo; a utilidade realizada depende da calibração, e o corte de 0,5 nem é o ótimo de duas ações, que é 0,2. A vantagem é consequência da matriz e do conjunto de ações, não evidência sobre a rede. Numa análise exploratória posterior ao teste, a diferença de 22,5 se decompõe, de forma descritiva, em 9,0 pela ação análise manual e 13,5 por o corte 0,5 não ser o limiar de duas ações da matriz."),
   });
   const ue = res["tan/ue"], li = res["tan/limiar"];
   chk("slide 11 notas", s._notas, [[ue.n_aprovar, 0], [ue.n_rejeitar, 0], [ue.n_analise_manual, 0], [ue.n_mudam_vs_outra_regra, 0], [li.n_aprovar, 0], [li.n_rejeitar, 0]]);
@@ -438,7 +438,7 @@ const DIR = { x: 8.0, y: 1.6, w: W - M - 8.0 };       // coluna de texto
 
 // 14 — Conclusões
 {
-  const t = R("Separar risco e ação dá limiares explícitos por construção; o efeito medido favorece as três ações, sem causa e sem modelo recomendado");
+  const t = R("Separar risco e ação dá limiares explícitos por construção; o efeito medido é a favor das três ações, sem causa nem modelo recomendado");
   const s = novo({
     titulo: t, escuro: true,
     sowhat: R("as duas partes da pergunta respondidas numa tela."),
