@@ -170,6 +170,20 @@ Registrada **antes** de rodar, como pede a §7 do [plano de análise](plano-de-a
 | 22/11/2026 | Leitura: reportado como saiu; sem intervalo; não escolhe modelo, parâmetro nem matriz e não altera a análise primária nem as saídas dos outros modos | Regra 3 do `AGENTS.md` | Autor |
 | 22/11/2026 | Esta linha foi escrita **antes** de rodar `--analista` | §7 do plano de análise | Autor |
 
+## Calibração de Platt, análise secundária (registrada antes de rodar)
+
+Registrada **antes** de rodar, como pede a §7 do [plano de análise](plano-de-analise.md). A análise é posterior ao plano e ao resultado do teste, e será declarada como tal no texto. Issue 119.
+
+| Data | Decisão | Motivo | Quem |
+|---|---|---|---|
+| 22/11/2026 | Medir, só no desenvolvimento, o efeito de uma correção de Platt cruzada (ajuste nas outras 4 partições de `predicoes_dev.csv`, sobre `logit(p)`, com `LogisticRegression(max_iter=1000)` e o `C` padrão) sobre o erro de calibração, o Brier e o log loss dos três modelos. Saídas novas: `predicoes_calibradas_dev.csv`, `metricas_calibradas_dev.csv`, `calibracao_calibrada_dev.png`, pelos modos `modelos.py --calibrar` e `avaliar.py --calibrada` | Complementa a sensibilidade `p ± ECE` de 22/11/2026 com uma correção ajustada, sem tocar o teste | Autor |
+| 22/11/2026 | A calibração do resultado principal continua só medida (P1); os Capítulos 4 e 5 seguem com as probabilidades sem correção. Platt, e não isotônica, e ajuste cruzado, e não aninhado | Corrigir depois de ver o teste e trocar o resultado seria ajustar ao resultado (regra 3 do `AGENTS.md`). A escolha do método depende de número e é do autor (regra 5): ~640 linhas de ajuste por partição são poucas para a isotônica | Autor |
+| 22/11/2026 | Limite declarado: as predições das outras 4 partições vieram de modelos treinados com linhas da partição `k`, então os rótulos de `k` entram de forma indireta no ajuste. O efeito não foi medido | Honestidade sobre o que o ajuste cruzado não isola; a alternativa aninhada exigiria treinar o `logreg` nas partições internas | Autor |
+| 22/11/2026 | Leitura fixada antes de rodar: reportar erro de calibração, Brier e log loss antes e depois, para os três modelos, como saírem, inclusive se piorarem. Não escolher modelo, não adotar a versão calibrada por causa do número e não refazer a política de decisão com ela | Regras 3 e 5 do `AGENTS.md` | Autor |
+| 22/11/2026 | O erro de calibração de 10 faixas sobre ~160 linhas por partição é ruidoso (desvio do TAN de 0,05 em `metricas_dev.csv`); a leitura usa o erro de calibração, o Brier e o log loss juntos | Evitar concluir por uma só medida | Autor |
+| 22/11/2026 | `factory/checks.sh` ganha duas linhas, uma para cada modo novo, no molde das de `--selecao`. Nenhuma outra mudança em `factory/` | Sem elas o gate reprova os CSV novos (G3) | Autor |
+| 22/11/2026 | Esta linha foi escrita **antes** de rodar `--calibrar` | §7 do plano de análise | Autor |
+
 ## Esclarecimentos e delegações do autor (22/11/2026)
 
 | Data | Decisão | Motivo | Quem |
