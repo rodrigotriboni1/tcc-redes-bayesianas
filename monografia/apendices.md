@@ -40,6 +40,7 @@ uv run python codigo/avaliar.py --verificar
 uv run python codigo/sensibilidade.py --verificar
 uv run python codigo/decisao.py --verificar
 uv run python codigo/test_decisao.py
+uv run python codigo/auditoria_independente.py
 ```
 
 Os arquivos gerados são versionados junto com o código. Depois de rodar tudo, a reprodução é confirmada se o comando abaixo não imprimir nada e terminar com código 0:
@@ -48,7 +49,7 @@ Os arquivos gerados são versionados junto com o código. Depois de rodar tudo, 
 git diff --exit-code -- 'resultados/*.csv' 'resultados/*.json'
 ```
 
-Esse teste confere que os arquivos são idênticos aos publicados, não que o modelo é bom.
+Esse teste confere que os arquivos são idênticos aos publicados, não que o modelo é bom. Em outra plataforma, os arquivos que dependem da regressão logística podem diferir nos últimos dígitos (Seção 3.11).
 
 ### A.4 Teste final
 

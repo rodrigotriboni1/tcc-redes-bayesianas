@@ -1,0 +1,92 @@
+# Reprodução do desenvolvimento em ambiente Linux limpo.
+# Instala o ambiente travado, roda os autotestes e os scripts de desenvolvimento e confere que os
+# arquivos de resultado são idênticos aos commitados. Não roda o --final (o teste é do autor).
+name: Reprodução
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  reproduzir:
+    runs-on: ubuntu-latest
+    env:
+      MPLBACKEND: Agg
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Instalar o uv
+        run: python -m pip install uv==0.11.32
+      - name: Ambiente travado
+        run: uv sync --frozen
+      - name: Autotestes
+        run: |
+          uv run python codigo/modelos.py --verificar
+          uv run python codigo/avaliar.py --verificar
+          uv run python codigo/sensibilidade.py --verificar
+          uv run python codigo/decisao.py --verificar
+          uv run python codigo/test_decisao.py
+      - name: Scripts de desenvolvimento
+        run: |
+          uv run python codigo/modelos.py
+          uv run python codigo/avaliar.py
+          uv run python codigo/modelos.py --ocultar
+          uv run python codigo/avaliar.py --ocultar
+          uv run python codigo/modelos.py --selecao
+          uv run python codigo/avaliar.py --selecao
+          uv run python codigo/decisao.py
+          uv run python codigo/sensibilidade.py
+      - name: Auditoria independente
+        run: uv run python codigo/auditoria_independente.py
+      - name: Resultados iguais aos commitados
+        run: |
+          # A regressão logística não reproduz bit a bit entre plataformas: os arquivos que dependem
+          # dela podem diferir nos últimos dígitos (nas probabilidades, na ordem de 1e-8; nas colunas em
+          # unidades de utilidade, até 500 vezes isso). Aceita-se diferença numérica de até 1e-4 em células
+          # numéricas; qualquer outra diferença (texto, ação, contagem, linhas, JSON) reprova.
+          git diff --stat -- 'resultados/*.csv' 'resultados/*.json'
+          python3 - <<'PY'
+          import csv, io, subprocess, sys
+          TOL = 1e-4
+
+          def git(*args):
+              return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
+
+          def comparar(antigo, novo):
+              """(maior diferença numérica, primeiro erro) entre duas versões de um CSV."""
+              a, b = list(csv.reader(io.StringIO(antigo))), list(csv.reader(io.StringIO(novo)))
+              if len(a) != len(b) or a[0] != b[0]:
+                  return 0.0, "cabeçalho ou número de linhas diferente"
+              maior, erro = 0.0, None
+              for i, (la, lb) in enumerate(zip(a, b)):
+                  for ca, cb in zip(la, lb):
+                      if ca == cb:
+                          continue
+                      try:
+                          d = abs(float(ca) - float(cb))
+                      except ValueError:
+                          erro = erro or f"linha {i}: {ca!r} difere de {cb!r}"
+                          continue
+                      maior = max(maior, d)
+                      if d > TOL:
+                          erro = erro or f"linha {i}: {ca} difere de {cb} (diferença {d:.2e})"
+              return maior, erro
+
+          mudados = git("diff", "--name-only", "--", "resultados/*.csv", "resultados/*.json").split()
+          if not mudados:
+              print("Todos os CSV e JSON são idênticos byte a byte aos commitados.")
+          falhou = False
+          for f in mudados:
+              if f.endswith(".json"):
+                  print(f"FALHA {f}: JSON difere")
+                  falhou = True
+                  continue
+              maior, erro = comparar(git("show", f"HEAD:{f}"), open(f).read())
+              print(f"{'FALHA' if erro else 'ok   '} {f}: maior diferença numérica {maior:.2e}" + (f"; {erro}" if erro else ""))
+              falhou = falhou or erro is not None
+          sys.exit(1 if falhou else 0)
+          PY
