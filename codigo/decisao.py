@@ -10,6 +10,11 @@ UE − limiar com intervalo pareado nas mesmas reamostras. Se predicoes_teste.cs
 (modelo secundário escolhido pela seleção), sel entra como quarto modelo: colunas ao final de
 politicas_teste.csv e linhas depois das de logreg no resumo e na diferença. Rodado só pelo autor.
 
+Com --final, grava também a política de utilidade esperada restrita a aprovar e rejeitar (ue2), cujo
+limiar vem da matriz, ao lado de ue (três ações) e do corte 0,5: utilidade média por regra e as
+diferenças pareadas ue − limiar, ue − ue2 e ue2 − limiar, nas mesmas reamostras do bootstrap.
+Análise exploratória posterior ao teste: não substitui a comparação principal.
+
 Entradas:
   resultados/predicoes_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg
   resultados/predicoes_teste.csv record_id,kredit,p_nb,p_tan,p_logreg[,p_sel] (só com --final)
@@ -20,6 +25,8 @@ Saídas:
   resultados/politicas_teste.csv, resumo_politicas_teste.csv  o mesmo no teste (só com --final)
   resultados/diferenca_politicas_teste.csv  modelo,dif_utilidade_media,dif_ic_inf,dif_ic_sup (só com --final)
   com p_sel, as três tabelas do teste ganham sel (colunas ou linhas)
+  resultados/duas_acoes_teste.csv           modelo,regra,utilidade_media,n_*,IC por regra: ue, ue2, limiar (só com --final)
+  resultados/diferenca_duas_acoes_teste.csv modelo,comparacao,dif_utilidade_media,dif_ic_inf,dif_ic_sup,n_acao_diferente (só com --final)
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/decisao.py          grava as saídas do dev
@@ -43,6 +50,8 @@ MODELOS = ["nb", "tan", "logreg"]
 ACOES = ["aprovar", "rejeitar", "analise_manual"]
 # Ordem de desempate: a primeira vence quando as UE empatam.
 PRIORIDADE = ["analise_manual", "rejeitar", "aprovar"]
+# Desempate entre aprovar e rejeitar na política de duas ações: rejeitar vence, como na PRIORIDADE.
+DUAS = ["rejeitar", "aprovar"]
 TOLERANCIA = 1e-9
 REAMOSTRAS = 2000
 SEMENTE = 2026
@@ -85,6 +94,41 @@ def limiar(p):
     """Regra de comparação: aprova se p < 0,5, senão rejeita."""
     conferir_p(p)
     return "aprovar" if p < 0.5 else "rejeitar"
+
+
+def acao_duas(p, u):
+    """Ação de maior UE só entre rejeitar e aprovar; empate (tolerância 1e-9): rejeitar.
+    Equivale a um limiar sobre p derivado da matriz, sem número escrito aqui."""
+    ue = utilidade_esperada(p, u)
+    return next(a for a in DUAS if ue[a] >= max(ue[b] for b in DUAS) - TOLERANCIA)
+
+
+def calcular_duas_acoes(pred, u):
+    """(resumo, diferencas) das regras ue (três ações), ue2 (UE com duas ações) e limiar (corte 0,5).
+    Bootstrap com as mesmas reamostras de calcular(), então ue − limiar reproduz diferenca_politicas_teste.csv."""
+    modelos = MODELOS + ["sel"] * ("p_sel" in pred.columns)
+    estado = ["ruim" if k == 0 else "bom" for k in pred["kredit"]]  # kredit: 0 = ruim, 1 = bom
+    n = len(pred)
+    indices = np.random.default_rng(SEMENTE).integers(0, n, size=(REAMOSTRAS, n))
+    linhas, diferencas = [], []
+    for m in modelos:
+        p = pred[f"p_{m}"]
+        acoes = {"ue": [ordenar(x, u)[0] for x in p], "ue2": [acao_duas(x, u) for x in p], "limiar": [limiar(x) for x in p]}
+        ganho = {r: np.array([u[a][e] for a, e in zip(acoes[r], estado)]) for r in acoes}
+        media = {r: sum(ganho[r].tolist()) / n for r in acoes}
+        for r in acoes:
+            contagem = {f"n_{a}": acoes[r].count(a) for a in ACOES}
+            if r == "ue2":
+                for a in DUAS:
+                    if contagem[f"n_{a}"] == 0:
+                        print(f"AVISO: a ação {a} não aparece em {m}/{r}")
+            inf, sup = np.percentile(ganho[r][indices].mean(axis=1), PERCENTIS)
+            linhas.append({"modelo": m, "regra": r, "utilidade_media": media[r], **contagem, "utilidade_media_ic_inf": inf, "utilidade_media_ic_sup": sup})
+        for a, b in [("ue", "limiar"), ("ue", "ue2"), ("ue2", "limiar")]:
+            inf, sup = np.percentile((ganho[a] - ganho[b])[indices].mean(axis=1), PERCENTIS)
+            diferencas.append({"modelo": m, "comparacao": f"{a} - {b}", "dif_utilidade_media": media[a] - media[b], "dif_ic_inf": inf, "dif_ic_sup": sup,
+                               "n_acao_diferente": sum(x != y for x, y in zip(acoes[a], acoes[b]))})
+    return pd.DataFrame(linhas), pd.DataFrame(diferencas)
 
 
 def ler(entrada, final=False):
@@ -161,7 +205,12 @@ def main(entrada=PREDICOES, sufixo="dev"):
     resumo.to_csv(SAIDA / f"resumo_politicas_{sufixo}.csv", index=False)
     if final:
         diferencas.to_csv(SAIDA / "diferenca_politicas_teste.csv", index=False)
+        duas, dif_duas = calcular_duas_acoes(pred, u)
+        duas.to_csv(SAIDA / "duas_acoes_teste.csv", index=False)
+        dif_duas.to_csv(SAIDA / "diferenca_duas_acoes_teste.csv", index=False)
     print(f"Gravados {SAIDA / f'politicas_{sufixo}.csv'} e {SAIDA / f'resumo_politicas_{sufixo}.csv'}")
+    if final:
+        print(f"Gravados também {SAIDA / 'duas_acoes_teste.csv'} e {SAIDA / 'diferenca_duas_acoes_teste.csv'}")
 
 
 def verificar():
@@ -179,6 +228,20 @@ def verificar():
     assert list(com[2]["modelo"]) == MODELOS + ["sel"]
     # o dev não ganha sel, mesmo com p_sel
     assert list(calcular(falso.assign(p_sel=falso["p_tan"]), u, False)[0].columns) == list(calcular(falso, u, False)[0].columns)
+    # duas ações: reproduz ue e limiar de calcular(), fecha a conta da diferença e deriva o limiar da matriz
+    duas, dif_duas = calcular_duas_acoes(falso, u)
+    for m in MODELOS:
+        for r in ("ue", "limiar"):
+            a, b = duas[(duas["modelo"] == m) & (duas["regra"] == r)].iloc[0], sem[1][(sem[1]["modelo"] == m) & (sem[1]["regra"] == r)].iloc[0]
+            assert all(np.isclose(a[c], b[c]) for c in ["utilidade_media", "utilidade_media_ic_inf", "utilidade_media_ic_sup"])
+        d = dif_duas[dif_duas["modelo"] == m].set_index("comparacao")
+        ref = sem[2][sem[2]["modelo"] == m].iloc[0]
+        assert all(np.isclose(d.loc["ue - limiar", c], ref[k]) for c, k in [("dif_utilidade_media", "dif_utilidade_media"), ("dif_ic_inf", "dif_ic_inf"), ("dif_ic_sup", "dif_ic_sup")])
+        assert np.isclose(d.loc["ue - limiar", "dif_utilidade_media"], d.loc["ue - ue2", "dif_utilidade_media"] + d.loc["ue2 - limiar", "dif_utilidade_media"])
+    assert list(dif_duas["comparacao"][:3]) == ["ue - limiar", "ue - ue2", "ue2 - limiar"]
+    g, r = u["aprovar"], u["rejeitar"]
+    pstar = (g["bom"] - r["bom"]) / ((g["bom"] - r["bom"]) + (r["ruim"] - g["ruim"]))
+    assert acao_duas(pstar - 0.01, u) == "aprovar" and acao_duas(pstar + 0.01, u) == "rejeitar"
     print("verificar: ok")
 
 

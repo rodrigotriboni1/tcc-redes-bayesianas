@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from decisao import ACOES, limiar, ordenar, utilidade_esperada  # noqa: E402
+from decisao import ACOES, acao_duas, limiar, ordenar, utilidade_esperada  # noqa: E402
 
 
 def matriz(c, perda=400):
@@ -85,5 +85,19 @@ for p in [-0.01, 1.01, float("nan")]:
 
 # Limiar fixo.
 assert limiar(0.4999) == "aprovar" and limiar(0.5) == "rejeitar" and limiar(0.7) == "rejeitar"
+
+# Duas ações (UE só entre aprovar e rejeitar): o limiar vem da matriz.
+# Com ganho igual à perda o limiar é 0,5 e a regra coincide com o corte fixo.
+simetrica = {"aprovar": {"bom": 100, "ruim": -100}, "rejeitar": {"bom": 0, "ruim": 0}, "analise_manual": {"bom": 60, "ruim": -40}}
+assert all(acao_duas(p, simetrica) == limiar(p) for p in grade)
+# Matriz demonstrativa (G = 100, L = 400): aprova abaixo de G/(G + L) = 0,2; no empate, rejeita.
+assert all(acao_duas(p, matriz(40)) == ("aprovar" if p < 0.2 else "rejeitar") for p in grade)
+# Com L = 600 o limiar é 100/700; a análise manual não muda a regra de duas ações.
+assert all(acao_duas(p, matriz(c, perda=600)) == ("aprovar" if p < 100 / 700 else "rejeitar") for p in grade for c in (0, 40, 90))
+# A UE máxima com três ações nunca é menor que a máxima com duas.
+for c in (0, 40, 90):
+    for p in grade:
+        ue = utilidade_esperada(p, matriz(c))
+        assert max(ue.values()) >= max(ue["aprovar"], ue["rejeitar"])
 
 print("test_decisao: todos os testes passaram")
