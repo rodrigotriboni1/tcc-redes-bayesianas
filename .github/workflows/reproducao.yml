@@ -45,22 +45,23 @@ jobs:
       - name: Resultados iguais aos commitados
         run: |
           # A regressão logística não reproduz bit a bit entre plataformas: os arquivos que dependem
-          # dela podem diferir nos últimos dígitos. Aceita-se diferença numérica de até 1e-6 em células
+          # dela podem diferir nos últimos dígitos (nas probabilidades, na ordem de 1e-8; nas colunas em
+          # unidades de utilidade, até 500 vezes isso). Aceita-se diferença numérica de até 1e-4 em células
           # numéricas; qualquer outra diferença (texto, ação, contagem, linhas, JSON) reprova.
           git diff --stat -- 'resultados/*.csv' 'resultados/*.json'
           python3 - <<'PY'
           import csv, io, subprocess, sys
-          TOL = 1e-6
+          TOL = 1e-4
 
           def git(*args):
               return subprocess.run(["git", *args], capture_output=True, text=True, check=True).stdout
 
           def comparar(antigo, novo):
-              """(maior diferença numérica, erro) entre duas versões de um CSV."""
+              """(maior diferença numérica, primeiro erro) entre duas versões de um CSV."""
               a, b = list(csv.reader(io.StringIO(antigo))), list(csv.reader(io.StringIO(novo)))
               if len(a) != len(b) or a[0] != b[0]:
                   return 0.0, "cabeçalho ou número de linhas diferente"
-              maior = 0.0
+              maior, erro = 0.0, None
               for i, (la, lb) in enumerate(zip(a, b)):
                   for ca, cb in zip(la, lb):
                       if ca == cb:
@@ -68,11 +69,12 @@ jobs:
                       try:
                           d = abs(float(ca) - float(cb))
                       except ValueError:
-                          return maior, f"linha {i}: {ca!r} difere de {cb!r}"
-                      if d > TOL:
-                          return maior, f"linha {i}: {ca} difere de {cb} (diferença {d:.2e})"
+                          erro = erro or f"linha {i}: {ca!r} difere de {cb!r}"
+                          continue
                       maior = max(maior, d)
-              return maior, None
+                      if d > TOL:
+                          erro = erro or f"linha {i}: {ca} difere de {cb} (diferença {d:.2e})"
+              return maior, erro
 
           mudados = git("diff", "--name-only", "--", "resultados/*.csv", "resultados/*.json").split()
           if not mudados:
