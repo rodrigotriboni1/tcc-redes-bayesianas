@@ -129,6 +129,18 @@ Já foi executado uma única vez, em 17/11/2026, depois do congelamento do códi
 | Termos e dicionário das variáveis | [docs/glossario.md](docs/glossario.md) |
 | Regras de quem escreve código aqui | [AGENTS.md](AGENTS.md) |
 
+## Licença
+
+| Parte | Licença |
+|---|---|
+| `codigo/`, `config/`, `factory/`, `frontend/`, `.claude/`, `.github/` e os arquivos da raiz, exceto `PLANO.md` | MIT, em [LICENSE](LICENSE) |
+| `monografia/`, `docs/`, `resultados/` e `PLANO.md` | CC BY 4.0, em [LICENSE-docs.md](LICENSE-docs.md) |
+| `dados/` | Não é do autor: mantém a licença da fonte |
+
+Os dados são a base South German Credit (Grömping, 2019), do UCI Machine Learning Repository. Eles não são relicenciados aqui; confira a licença na página da base antes de redistribuí-los e cite a fonte.
+
+Para citar este trabalho, use o nome do autor (Rodrigo Mialichi Triboni), o título ("TCC: redes bayesianas e utilidade esperada") e o ano (2026).
+
 ## Problemas comuns
 
 - `uv: command not found`: instale o uv (veja Requisitos) e abra um terminal novo.
