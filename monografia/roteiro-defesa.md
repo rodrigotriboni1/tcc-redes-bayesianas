@@ -14,7 +14,7 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 
 **Nota de estrutura.** A skill tem duas regras que se chocam: "o slide de conclusões é o último fora do apêndice" e "o slide de referências é o último antes do apêndice". Prevalece a primeira (a conclusão fica na tela durante a arguição). As referências entram como slide R, primeiro do apêndice, logo depois das conclusões.
 
-**Ressalvas de linguagem usadas em todo o deck** (docs/plano-de-analise.md §4, §5, §8, §9): nada de "melhor modelo", "vence", "superior"; diferença de ROC-AUC < 0,03 é ruído (só ROC-AUC); PR-AUC só descrita; diferença de utilidade lida pelo IC 95% por *bootstrap*; Brier ≥ taxa base = "não melhor que prever a taxa base"; nenhuma causa; nenhuma generalização; simulação, não política real.
+**Ressalvas de linguagem usadas em todo o deck** (docs/plano-de-analise.md §4, §5, §8, §9): nada de "melhor modelo", "vence", "superior"; diferença de ROC-AUC < 0,03 é tratada como ruído, convenção descritiva do plano e não teste de equivalência (só ROC-AUC); PR-AUC só descrita; diferença de utilidade lida pelo IC 95% por *bootstrap*; Brier ≥ taxa base = "não melhor que prever a taxa base"; nenhuma causa; nenhuma generalização; simulação, não política real.
 
 ---
 
@@ -43,9 +43,9 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 - **Título-ação:** A pergunta tem duas partes: uma propriedade da política e um efeito medido contra o corte 0,5
 - **Exibição:** caixa de destaque com o texto exato do PLANO.md §1 / monografia §1.2:
   > Uma política que separa a estimativa do risco (rede bayesiana, com calibração medida) da escolha da ação (utilidade esperada) tem (1) limiares explícitos, que qualquer pessoa reproduz a partir da matriz de utilidade e de `p`, e (2) que efeito medido sobre as ações e a utilidade média, em comparação com um limiar fixo de 0,5?
-- **Texto extra (≈20 palavras):** "(1) vale por construção, para qualquer escore. (2) é o que o experimento mede. Leitura fixada antes dos resultados."
+- **Texto extra (≈20 palavras):** "(1) vale por construção, para qualquer escore. (2) é o que o experimento mede. Leitura definida no plano de análise."
 - **So what:** a banca sabe o que cada resultado responde.
-- **Notas de fala:** "Esta é a pergunta, como está no plano e no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore de probabilidade, inclusive a regressão logística, e não depende do experimento. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada desfecho foram escritas antes de existir qualquer resultado [docs/plano-de-analise.md §1]."
+- **Notas de fala:** "Esta é a pergunta, como está no plano e no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore de probabilidade, inclusive a regressão logística, e não depende do experimento. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada desfecho foram escritas no plano de 15/11, antes dos resultados; duas decisões complementares vieram em 18/11, depois da abertura do teste, e o estudo de seleção foi desenhado depois de ver o desenvolvimento [docs/plano-de-analise.md §1]."
 
 ### Slide 4 — Dados e protocolo (1:30)
 
@@ -85,19 +85,19 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 ### Slide 8 — Desenvolvimento (1:30)
 
 - **Título-ação:** No desenvolvimento, o TAN ficou abaixo do Naive Bayes nas cinco métricas; NB e logística ficaram a 0,001 de ROC-AUC
-- **Exibição (gráfico a gerar):** gráfico de pontos com barra de ±1 desvio, ROC-AUC média por modelo (NB, TAN, logística, taxa base). Destaque azul no TAN; chave "0,001 → ruído" entre NB e logística. Tabela de origem: `resultados/metricas_dev.csv` (roc_auc_media, roc_auc_desvio). Brier/ECE ficam no texto.
+- **Exibição (gráfico a gerar):** gráfico de pontos com barra de ±1 desvio, ROC-AUC média por modelo (NB, TAN, logística, taxa base). Destaque azul no TAN; chave "0,001 → abaixo de 0,03" entre NB e logística. Tabela de origem: `resultados/metricas_dev.csv` (roc_auc_media, roc_auc_desvio). Brier/ECE ficam no texto.
 - **Texto no slide (≈30 palavras):** "ROC-AUC: NB 0,789; logística 0,788; TAN 0,742 (desvio 0,049). / ECE do TAN 0,152 (NB 0,093). / Média de 5 partições, sem intervalo."
 - **So what:** o TAN, estrutura mais rica, não trouxe ganho aqui; o resultado entra como saiu.
-- **Notas de fala:** "No desenvolvimento, a ROC-AUC média foi 0,789 no Naive Bayes, 0,788 na logística e 0,742 no TAN [resultados/metricas_dev.csv, roc_auc_media]. NB e logística diferem em 0,001, abaixo de 0,03, e pela regra pré-registrada é ruído. O TAN ficou abaixo do NB nas cinco métricas; o erro de calibração do TAN foi 0,152, contra 0,093 do NB e 0,095 da logística [metricas_dev.csv, ece_media]. O desvio do TAN entre partições foi 0,049 [roc_auc_desvio]. Não ajustei nada por causa disso: o resultado vai como saiu."
+- **Notas de fala:** "No desenvolvimento, a ROC-AUC média foi 0,789 no Naive Bayes, 0,788 na logística e 0,742 no TAN [resultados/metricas_dev.csv, roc_auc_media]. NB e logística diferem em 0,001, abaixo de 0,03, e pela regra descritiva do plano é tratada como ruído. O TAN ficou abaixo do NB nas cinco métricas; o erro de calibração do TAN foi 0,152, contra 0,093 do NB e 0,095 da logística [metricas_dev.csv, ece_media]. O desvio do TAN entre partições foi 0,049 [roc_auc_desvio]. Não ajustei nada por causa disso: o resultado vai como saiu."
 
 ### Slide 9 — Teste: discriminação (1:30)
 
-- **Título-ação:** No teste, as diferenças de ROC-AUC entre os três modelos ficaram entre 0,001 e 0,022, abaixo de 0,03: pela regra, são ruído
+- **Título-ação:** No teste, as diferenças de ROC-AUC entre os três modelos ficaram entre 0,001 e 0,022, abaixo de 0,03: pela regra, são tratadas como ruído
 - **Exibição (gráfico a gerar):** *forest plot* horizontal de ROC-AUC com IC 95% (NB, TAN, logística; taxa base como linha vertical em 0,5). Faixa sombreada de largura 0,03 para mostrar a regra. Tabela de origem: `resultados/metricas_teste.csv` (roc_auc, roc_auc_ic_inf, roc_auc_ic_sup).
 - **Texto no slide (≈30 palavras):** "n = 200; 60 ruins. / NB 0,728; TAN 0,706; logística 0,729. / IC 95% por *bootstrap*, largos e sobrepostos. / PR-AUC: 0,490; 0,480; 0,500 (taxa base 0,300), só descrita."
 - **Citação no slide:** (EFRON; TIBSHIRANI, 1993)
 - **So what:** o teste não distingue os modelos pela discriminação.
-- **Notas de fala:** "No teste, a ROC-AUC foi 0,728 no NB, 0,706 no TAN e 0,729 na logística [resultados/metricas_teste.csv, roc_auc]. As diferenças são 0,001, 0,021 e 0,022; todas abaixo de 0,03 e, pela regra que fixei antes, ruído. Os intervalos de 95% por *bootstrap* são largos; o do TAN vai de 0,623 a 0,789 [roc_auc_ic_inf, roc_auc_ic_sup]. A PR-AUC foi 0,490, 0,480 e 0,500, contra 0,300 da taxa base [pr_auc]; para ela não fixei regra de ruído, então só descrevo. Também registro que todos caíram em relação ao desenvolvimento; não testei a causa."
+- **Notas de fala:** "No teste, a ROC-AUC foi 0,728 no NB, 0,706 no TAN e 0,729 na logística [resultados/metricas_teste.csv, roc_auc]. As diferenças são 0,001, 0,021 e 0,022; todas abaixo de 0,03 e, pela regra descritiva do plano, tratadas como ruído, sem apontar qual modelo é melhor. Os intervalos de 95% por *bootstrap* são largos; o do TAN vai de 0,623 a 0,789 [roc_auc_ic_inf, roc_auc_ic_sup]. A PR-AUC foi 0,490, 0,480 e 0,500, contra 0,300 da taxa base [pr_auc]; para ela não fixei regra de ruído, então só descrevo. Também registro que todos caíram em relação ao desenvolvimento; não testei a causa."
 
 ### Slide 10 — Teste: Brier e calibração (1:30)
 
@@ -106,15 +106,15 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 - **Texto no slide (≈30 palavras):** "Brier: NB 0,199; logística 0,191; TAN 0,215. / ECE: NB 0,115; TAN 0,157; logística 0,078. / Calibração só medida, sem correção."
 - **Citação no slide:** (BRIER, 1950; NAEINI; COOPER; HAUSKRECHT, 2015)
 - **So what:** a probabilidade do TAN, que alimenta a decisão principal, não supera a taxa base no teste.
-- **Notas de fala:** "O Brier mede o erro da probabilidade. No teste, o do TAN foi 0,215, acima dos 0,210 de quem prevê a taxa base para todo caso [resultados/metricas_teste.csv, brier, linhas tan e taxa_base]. Pela regra pré-registrada, digo: o TAN não foi melhor que prever a taxa base. NB, com 0,199, e logística, com 0,191, ficaram abaixo [brier]. O erro de calibração foi 0,115, 0,157 e 0,078 [ece]. A calibração foi só medida; não corrigi."
+- **Notas de fala:** "O Brier mede o erro da probabilidade. No teste, o do TAN foi 0,215, acima dos 0,210 de quem prevê a taxa base para todo caso [resultados/metricas_teste.csv, brier, linhas tan e taxa_base]. Pelo critério do plano, digo: o TAN não foi melhor que prever a taxa base; é uma comparação pontual, sem inferência. NB, com 0,199, e logística, com 0,191, ficaram abaixo [brier]. O erro de calibração foi 0,115, 0,157 e 0,078 [ece]. A calibração foi só medida; não corrigi."
 
 ### Slide 11 — Política de três ações contra corte 0,5 (2:00)
 
-- **Título-ação:** Com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5 (IC 95% de 9,2 a 37,2), uma vantagem que a matriz garante por construção
+- **Título-ação:** Com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5 (IC 95% de 9,2 a 37,2), uma vantagem prevista pela matriz, restrita à simulação
 - **Exibição (gráfico a gerar):** *forest plot* da diferença pareada `ue − limiar` com IC 95%: TAN (principal, azul, rotulado), NB, logística e sel em cinza; linha vertical em zero. Barra empilhada pequena embaixo, TAN: três ações 92 aprovar / 48 rejeitar / 60 análise manual; corte 0,5: 145 / 55 / 0. Tabelas de origem: `resultados/diferenca_politicas_teste.csv` e `resultados/resumo_politicas_teste.csv` (linhas tan).
 - **Texto no slide (≈35 palavras):** "IC exclui zero → diferença a favor das três ações; sem causa. / Os 60 que mudam = os 60 em análise manual. / Ressalvas: matriz demonstrativa; analista infalível; simulação, não política real."
 - **So what:** responde à parte 2: há efeito medido, mas ele vem da ação extra e da matriz, não da rede.
-- **Notas de fala:** "Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a política de três ações ganha do corte por construção; é consequência da matriz e do conjunto de ações, não evidência sobre a rede."
+- **Notas de fala:** "Esta é a comparação principal, fixada antes: TAN, política de três ações contra corte 0,5 de duas ações. A diferença pareada de utilidade média foi 22,5, com intervalo de 95% de 9,2 a 37,2 [resultados/diferenca_politicas_teste.csv, linha tan]. O intervalo exclui zero, então leio: diferença a favor da política de três ações, sem afirmar causa. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55; os 60 que mudaram são exatamente os da análise manual [resumo_politicas_teste.csv]. E a ressalva principal: com analista infalível, a análise manual quase não tem risco, então a matriz prevê vantagem para a política de três ações na utilidade esperada do modelo; a utilidade realizada depende da calibração, e o corte de 0,5 nem é o ótimo de duas ações, que é 0,2. A vantagem é consequência da matriz e do conjunto de ações, não evidência sobre a rede. Numa análise exploratória posterior ao teste, a diferença de 22,5 se decompõe, de forma descritiva, em 9,0 pela ação análise manual e 13,5 por o corte 0,5 não ser o limiar de duas ações da matriz."
 
 ### Slide 12 — Estudo de seleção secundário (1:15)
 
@@ -122,7 +122,7 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 - **Exibição (gráfico a gerar):** pontos de *log loss* médio (± desvio) das 8 configurações (nb_ess1…tan_ess50) e da linha "aninhado"; `nb_ess50` circulada como "escolhida em 5/5 partições". Tabela de origem: `resultados/selecao_dev.csv` (log_loss_media, log_loss_desvio) e `resultados/selecao_escolha.csv` (escolhida).
 - **Texto no slide (≈35 palavras):** "8 comparações; regra: menor *log loss* interno. / Escolhida: nb_ess50 em todas as partições. / **Viés declarado:** grade motivada pelas métricas do desenvolvimento. / Análise primária não muda."
 - **So what:** a seleção não muda a leitura; serve para mostrar que o viés foi declarado, não escondido.
-- **Notas de fala:** "Depois de ver o TAN abaixo do NB, desenhei um estudo secundário: 8 configurações, NB e TAN com tamanho equivalente 1, 5, 10 e 50, em validação cruzada aninhada. A regra escolheu nb_ess50 nas cinco partições externas e no desenvolvimento inteiro [resultados/selecao_escolha.csv, escolhida]. A ROC-AUC do aninhado, 0,788, difere em 0,001 da referência nb_ess5, 0,789: ruído [selecao_dev.csv, roc_auc_media]. O aninhamento corrige a escolha entre as 8, mas não o fato de a grade ter sido desenhada olhando o desenvolvimento; esse viés está declarado. A análise primária continua com NB e TAN de BDeu 5."
+- **Notas de fala:** "Depois de ver o TAN abaixo do NB, desenhei um estudo secundário: 8 configurações, NB e TAN com tamanho equivalente 1, 5, 10 e 50, em validação cruzada aninhada. A regra escolheu nb_ess50 nas cinco partições externas e no desenvolvimento inteiro [resultados/selecao_escolha.csv, escolhida]. A ROC-AUC do aninhado, 0,788, difere em 0,001 da referência nb_ess5, 0,789: abaixo de 0,03, tratada como ruído pela regra do plano [selecao_dev.csv, roc_auc_media]. O aninhamento corrige a escolha entre as 8, mas não o fato de a grade ter sido desenhada olhando o desenvolvimento; esse viés está declarado. A análise primária continua com NB e TAN de BDeu 5."
 
 ### Slide 13 — Limitações (1:30)
 
@@ -134,11 +134,11 @@ Plano do deck (modo *Structured Argument* da skill academic-pptx). **Não é o .
 
 ### Slide 14 — Conclusões (1:00; fica na tela durante a arguição)
 
-- **Título-ação:** Separar risco e ação dá limiares explícitos por construção; o efeito medido favorece as três ações, sem causa e sem modelo recomendado
+- **Título-ação:** Separar risco e ação dá limiares explícitos por construção; o efeito medido é a favor das três ações, sem causa nem modelo recomendado
 - **Exibição:** fundo navy, três itens numerados, contato no rodapé.
-- **Texto no slide (≈40 palavras):** "1. Limiares 0,10 e 0,60 saem da matriz; valem para qualquer escore. / 2. TAN: +22,5 de utilidade média [9,2; 37,2], por construção da matriz. / 3. ROC-AUC: diferenças são ruído; Brier do TAN não melhor que taxa base. / [e-mail] · [link do repositório]"
+- **Texto no slide (≈40 palavras):** "1. Limiares 0,10 e 0,60 saem da matriz; valem para qualquer escore. / 2. TAN: +22,5 de utilidade média [9,2; 37,2], prevista pela matriz. / 3. ROC-AUC: diferenças < 0,03, sem apontar qual modelo é melhor; Brier do TAN não melhor que taxa base. / [e-mail] · [link do repositório]"
 - **So what:** as duas partes da pergunta respondidas numa tela.
-- **Notas de fala:** "Concluindo. Parte 1: separar risco e ação dá limiares explícitos, 0,10 e 0,60 com esta matriz, que qualquer pessoa reproduz; isso vale por construção e não distingue a rede da logística. Parte 2: com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5, com intervalo de 9,2 a 37,2, uma vantagem que a matriz garante por construção. No risco, as diferenças de ROC-AUC foram ruído, e o TAN não foi melhor que a taxa base no Brier. Fico à disposição para perguntas e comentários da banca."
+- **Notas de fala:** "Concluindo. Parte 1: separar risco e ação dá limiares explícitos, 0,10 e 0,60 com esta matriz, que qualquer pessoa reproduz; isso vale por construção e não distingue a rede da logística. Parte 2: com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5, com intervalo de 9,2 a 37,2, uma vantagem prevista pela matriz, restrita à simulação. No risco, as diferenças de ROC-AUC ficaram abaixo de 0,03, sem apontar qual modelo é melhor, e o TAN não foi melhor que a taxa base no Brier. Fico à disposição para perguntas e comentários da banca."
 
 ---
 
@@ -195,21 +195,21 @@ ABNT curta, 13 pt (do arquivo monografia/referencias-abnt.md):
 - **Título-ação:** O teste ficou fechado até o congelamento; o único vazamento é brando e está declarado
 - **Resposta curta:** "Cortes das faixas aprendidos só no treino de cada partição; teste aberto uma vez, em 17/11/2026, sobre o *commit* 49d77ff. O espaço de estados de cada variável usa todos os valores do desenvolvimento inteiro, para uma categoria rara não quebrar a inferência; não usa o rótulo, mas é um vazamento brando, declarado [decisões P10; plano-de-análise §6, item 6]. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado antes."
 
-### A7 — O que significa "ganha por construção"?
+### A7 — A vantagem da política de três ações é garantida?
 
-- **Título-ação:** Com analista infalível, a análise manual garante um resultado intermediário que o corte de duas ações não tem
+- **Título-ação:** Com analista infalível, o modelo prevê vantagem para a análise manual; o ganho realizado depende da calibração e do corte de comparação
 - **Exibição:** gráfico do slide 6, com a reta da análise manual destacada entre 0,10 e 0,60.
-- **Resposta curta:** "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e de rejeitar. O corte 0,5 não tem essa ação, então a política de três ações tende a ganhar dele qualquer que seja o modelo; no teste, as quatro diferenças foram positivas, de 22,5 a 38,3 [diferenca_politicas_teste.csv]. Por isso a diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada."
+- **Resposta curta:** "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e de rejeitar. Pelo modelo, a política de três ações nunca tem utilidade esperada menor que a de duas. Isso não garante ganho realizado: depende da calibração (ECE do TAN no teste: 0,157, o maior dos três), e o corte 0,5 nem é o ótimo de duas ações (0,2). No teste, as quatro diferenças foram positivas, de 22,5 a 38,3 [diferenca_politicas_teste.csv]. Por isso a diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada."
 
 ### A8 — 60 casos ruins bastam?
 
-- **Título-ação:** Com 60 ruins, diferenças pequenas são indistinguíveis de ruído, e por isso a regra de 0,03 foi fixada antes
-- **Resposta curta:** "O plano já previa que, com 60 ruins, diferença de AUC de 0,02 a 0,03 é ruído [PLANO.md §6]. Os intervalos confirmam: ROC-AUC do TAN de 0,623 a 0,789; diferença de utilidade de 9,2 a 37,2 [metricas_teste.csv; diferenca_politicas_teste.csv]. E o intervalo reamostra só o teste, não o treino, então a incerteza total é maior."
+- **Título-ação:** Com 60 ruins, diferenças pequenas dificilmente se separam de ruído, e por isso o plano definiu antes o limite descritivo de 0,03
+- **Resposta curta:** "O plano já previa que, com 60 ruins, diferença de AUC de 0,02 a 0,03 dificilmente se separa de ruído (limite descritivo, não teste de equivalência) [PLANO.md §6]. Os intervalos confirmam: ROC-AUC do TAN de 0,623 a 0,789; diferença de utilidade de 9,2 a 37,2 [metricas_teste.csv; diferenca_politicas_teste.csv]. E o intervalo reamostra só o teste, não o treino, então a incerteza total é maior."
 
 ### A9 — Por que não há "melhor modelo"?
 
-- **Título-ação:** Nenhuma regra pré-registrada separou os modelos no teste, e escolher um seria decidir pelo resultado
-- **Resposta curta:** "As diferenças de ROC-AUC no teste foram até 0,022, ruído pela regra [metricas_teste.csv]. PR-AUC só descrita. No Brier, só o TAN foi não melhor que a taxa base. A comparação principal usa o TAN porque foi fixada antes (P5), não por desempenho. O estudo de seleção diz o que a regra escolheu, não o que adotar."
+- **Título-ação:** Nenhuma regra do plano separou os modelos no teste, e escolher um seria decidir pelo resultado
+- **Resposta curta:** "As diferenças de ROC-AUC no teste foram até 0,022, tratadas como ruído pela regra descritiva do plano [metricas_teste.csv]. PR-AUC só descrita. No Brier, só o TAN foi não melhor que a taxa base. A comparação principal usa o TAN porque foi fixada antes (P5), não por desempenho. O estudo de seleção diz o que a regra escolheu, não o que adotar."
 
 ---
 
@@ -225,12 +225,12 @@ Títulos-ação em sequência:
 6. Com a matriz demonstrativa, a utilidade esperada vira dois limiares: aprovar abaixo de 0,10, análise manual até 0,60, rejeitar acima
 7. Os limiares se movem com a perda e o custo da análise; com custo alto, a análise manual desaparece
 8. No desenvolvimento, o TAN ficou abaixo do Naive Bayes nas cinco métricas; NB e logística ficaram a 0,001 de ROC-AUC
-9. No teste, as diferenças de ROC-AUC entre os três modelos ficaram entre 0,001 e 0,022, abaixo de 0,03: pela regra, são ruído
+9. No teste, as diferenças de ROC-AUC entre os três modelos ficaram entre 0,001 e 0,022, abaixo de 0,03: pela regra, são tratadas como ruído
 10. No teste, o Brier do TAN (0,215) ficou acima do da taxa base (0,210): o TAN não foi melhor que prever a taxa base
-11. Com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5 (IC 95% de 9,2 a 37,2), uma vantagem que a matriz garante por construção
+11. Com o TAN, a política de três ações teve utilidade média 22,5 maior que o corte 0,5 (IC 95% de 9,2 a 37,2), uma vantagem prevista pela matriz, restrita à simulação
 12. O estudo de seleção secundário escolheu NB com BDeu 50, a 0,001 de ROC-AUC da referência; a grade foi desenhada depois de ver o desenvolvimento
 13. Os resultados valem para esta base, esta matriz demonstrativa e um analista infalível: é simulação, não política real
-14. Separar risco e ação dá limiares explícitos por construção; o efeito medido favorece as três ações, sem causa e sem modelo recomendado
+14. Separar risco e ação dá limiares explícitos por construção; o efeito medido é a favor das três ações, sem causa nem modelo recomendado
 
 **Resultado: passa.** Ajustes feitos na revisão: (a) o slide 1 tinha só o título oficial, que é rótulo de tema; ganhou o subtítulo-afirmação; (b) o slide 11 dizia só o número, e a banca leria "a proposta é melhor": entrou "que a matriz garante por construção" no próprio título; (c) o slide 3 era "Pergunta de pesquisa" e virou afirmação sobre as duas partes; (d) a estrutura sugerida foi mantida (ordem e número), sem fundir nem cortar slides.
 
@@ -301,5 +301,5 @@ Números que **não** vêm de CSV: data 17/11/2026 e *commit* 49d77ff (docs/deci
 5. Nome por extenso da faculdade na capa (a monografia marca "confirmar").
 6. Se o estudo de seleção (slide 12) fica no corpo ou vai para o apêndice.
 7. Se cita no slide R as entradas ainda marcadas para conferência (ELKAN, 2001 "A CONFERIR NO ORIGINAL"; GRÖMPING, 2019 "VERIFICAR").
-8. Aviso: o campo `hipoteses` de `config/utilidade.json` ainda diz "Matriz pendente de aprovação do orientador"; a monografia e o slide 6 dizem "aprovada". Não foi alterado (fora do escopo).
+8. O campo `hipoteses` de `config/utilidade.json` foi atualizado em 22/11/2026: agora diz que a matriz foi aceita pelo orientador em 18/11/2026 apenas para fins demonstrativos, como a monografia e o slide 6.
 9. Na monografia, o estudo de seleção aparece como "decidido por delegação, a rever pelo autor"; os slides e notas omitem essa expressão. Confirmar se o autor já revisou e como quer dizer isso à banca.

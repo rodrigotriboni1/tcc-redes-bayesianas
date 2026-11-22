@@ -11,16 +11,16 @@ Este texto é para você entender a sua própria apresentação e ensaiá-la. El
 1. Hoje, no crédito, um modelo dá uma nota e a nota é comparada com um corte; os custos de errar ficam escondidos nesse corte.
 2. Você separou o trabalho em duas camadas: uma estima a chance de o crédito ser ruim, a outra escolhe a ação pelos custos.
 3. Com a matriz de custos usada, a escolha vira duas fronteiras fáceis de conferir: aprovar abaixo de 0,10, mandar para análise manual até 0,60 e rejeitar acima.
-4. No teste, os três modelos não se separaram: as diferenças de ROC-AUC ficaram abaixo de 0,03, que é ruído, e o TAN não foi melhor que a taxa base no Brier.
-5. A política de três ações teve utilidade média 22,5 maior que o corte 0,5, mas essa vantagem vem da própria matriz (ganha por construção), não da rede.
+4. No teste, os três modelos não se separaram: as diferenças de ROC-AUC ficaram abaixo de 0,03, que o plano trata como ruído (sem apontar qual modelo é melhor), e o TAN não foi melhor que a taxa base no Brier.
+5. A política de três ações teve utilidade média 22,5 maior que o corte 0,5, mas essa vantagem é prevista pela própria matriz e só vale na simulação; não é evidência sobre a rede.
 
 ### As 5 ideias que você precisa decorar
 
 1. **Separar risco e ação.** Primeiro a probabilidade, depois a decisão. É a tese.
 2. **0,10 e 0,60 saem de uma conta.** 40/400 = 0,10 e 1 − 40/100 = 0,60. Qualquer pessoa refaz.
-3. **Abaixo de 0,03 é ruído.** Com só 60 casos ruins no teste, diferença pequena de ROC-AUC não quer dizer nada. A regra foi escrita antes.
+3. **Abaixo de 0,03 é tratado como ruído.** Com só 60 casos ruins no teste, diferença pequena de ROC-AUC dificilmente se separa de ruído. É uma regra descritiva do plano, não prova que os modelos são iguais.
 4. **O TAN não foi melhor que a taxa base no Brier.** 0,215 contra 0,210. Resultado ruim entra como saiu.
-5. **Os +22,5 são por construção.** Só a política de três ações tem a análise manual, e o analista é suposto infalível. Não é prova de que a rede é boa.
+5. **Os +22,5 são previstos pela matriz.** Só a política de três ações tem a análise manual, o analista é suposto infalível e o corte 0,5 nem é o ótimo de duas ações (0,2). Não é prova de que a rede é boa.
 
 ---
 
@@ -54,7 +54,7 @@ Cada termo: o que é, em uma ou duas frases, e uma comparação do dia a dia.
 
 **Utilidade esperada (UE).** É o ganho médio de uma ação, pesando cada resultado pela sua chance: UE = (1 − p) · ganho se bom + p · ganho se ruim. Escolhe-se a ação de maior UE. Analogia: decidir se leva guarda-chuva pesando o incômodo de carregar contra o risco de se molhar.
 
-**Matriz de utilidade.** A tabela com quanto se ganha ou perde em cada combinação de ação e cliente. Aqui: aprovar bom = +100 (G); aprovar ruim = −400 (L); rejeitar = 0; análise manual custa c = 40 e o analista acerta sempre. É demonstrativa: aprovada pelo orientador, não medida em banco real. Analogia: a tabela de preços de um jogo, que você combinou antes de jogar.
+**Matriz de utilidade.** A tabela com quanto se ganha ou perde em cada combinação de ação e cliente. Aqui: aprovar bom = +100 (G); aprovar ruim = −400 (L); rejeitar = 0; análise manual custa c = 40 e o analista acerta sempre. É demonstrativa: aceita pelo orientador apenas para fins demonstrativos, não medida em banco real. Analogia: a tabela de preços de um jogo, que você combinou antes de jogar.
 
 **Limiares 0,10 e 0,60 e de onde vêm.** Com a matriz, cada ação vira uma reta em p:
 - aprovar: 100 · (1 − p) − 400 · p = 100 − 500p
@@ -71,9 +71,9 @@ Regra final: p abaixo de 0,10 aprova; entre 0,10 e 0,60 manda para análise manu
 
 **Bootstrap e intervalo de 95%.** Sorteia-se, com reposição, muitas versões do teste e recalcula-se a métrica em cada uma. O intervalo de 95% é a faixa onde cai o meio das contas. Mostra o quanto o número balança. Analogia: repetir uma pesquisa de opinião várias vezes com sorteios diferentes e ver a margem de erro.
 
-**"Ruído" e a regra de 0,03.** Antes de ver qualquer resultado, ficou escrito: diferença de ROC-AUC menor que 0,03 é ruído, não diferença real. Com só 60 ruins no teste, o número balança mais que isso. Analogia: dois corredores que chegam com 1 centésimo de diferença num cronômetro de mão; não dá para dizer quem ganhou.
+**"Ruído" e a regra de 0,03.** No plano de 15/11, antes dos resultados, ficou escrito: diferença de ROC-AUC menor que 0,03 é tratada como ruído, sem apontar qual modelo é melhor. É uma convenção descritiva, não um teste de equivalência. Com só 60 ruins no teste, o número balança mais que isso. Analogia: dois corredores que chegam com 1 centésimo de diferença num cronômetro de mão; não dá para dizer quem ganhou.
 
-**"Ganha por construção".** A política de três ações tem uma ação a mais (análise manual), e essa ação, com analista infalível, nunca dá prejuízo grande. Então ela tende a ganhar do corte 0,5 com qualquer modelo. A vitória vem das regras do jogo, não da qualidade da rede. Analogia: um time que joga com um jogador a mais vai ganhar com frequência; isso não prova que o técnico é bom.
+**"Vantagem prevista pela matriz".** A política de três ações tem uma ação a mais (análise manual), e essa ação, com analista infalível, nunca dá prejuízo grande. Então, com as probabilidades do modelo, a utilidade esperada dela nunca é menor que a de duas ações. Mas isso é uma previsão do modelo: o ganho realizado depende de as probabilidades estarem calibradas, e o corte 0,5 nem é o ótimo de duas ações (0,2). A vantagem vem das regras do jogo, não da qualidade da rede. Analogia: um time que joga com um jogador a mais vai ganhar com frequência; isso não prova que o técnico é bom.
 
 **Estudo de seleção e seu viés.** Um estudo extra, secundário: testou 8 versões (NB e TAN com BDeu 1, 5, 10 e 50) e deixou uma regra escolher a de menor log loss. Escolheu NB com BDeu 50 em todas as partições. O viés: a lista de 8 foi montada depois de você ver o desenvolvimento, e isso está declarado. Analogia: escolher o cardápio depois de provar os pratos; a escolha final pode ser justa, mas a lista já estava influenciada.
 
@@ -125,14 +125,14 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - A pergunta inteira: a política que separa risco e ação tem "(1) limiares explícitos, que qualquer pessoa reproduz a partir da matriz de utilidade e de p, e (2) que efeito medido sobre as ações e a utilidade média, em comparação com um limiar fixo de 0,5?"
 - "(1) vale por construção, para qualquer escore."
 - "(2) é o que o experimento mede."
-- "Leitura fixada antes dos resultados."
+- "Leitura definida no plano de análise."
 
 **O que quer dizer.**
 - Parte 1 é matemática: vale sempre, nem precisa de dados.
 - Parte 2 é o experimento: comparar com o corte 0,5.
 - Você escreveu como ia ler cada resultado antes de ver qualquer número.
 
-**O que você fala.** "Esta é a pergunta, como está no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore, inclusive a logística. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada resultado foram escritas antes de existir resultado."
+**O que você fala.** "Esta é a pergunta, como está no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore, inclusive a logística. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada resultado foram escritas no plano de 15/11, antes dos resultados; duas decisões vieram depois, em 18/11."
 
 **Pergunta provável.** "Se a parte 1 vale por construção, qual o mérito?" Resposta: "Mostrar a conta de forma que qualquer um refaça. O mérito é a transparência, não a descoberta."
 
@@ -216,7 +216,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 ### Slide 8 — Desenvolvimento (1:30)
 
 **O que está escrito.**
-- "NB − logística: 0,001 → ruído"
+- "NB − logística: 0,001 → abaixo de 0,03"
 - "ROC-AUC: NB 0,789; logística 0,788; TAN 0,742 (desvio 0,049)."
 - "ECE do TAN 0,152 (NB 0,093)."
 - "Média de 5 partições, sem intervalo."
@@ -268,7 +268,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 ### Slide 11 — Três ações contra corte 0,5 (2:00)
 
 **O que está escrito.**
-- Título: utilidade média 22,5 maior que o corte 0,5 (IC 95%: 9,2 a 37,2), "vantagem que a matriz garante por construção".
+- Título: utilidade média 22,5 maior que o corte 0,5 (IC 95%: 9,2 a 37,2), "vantagem prevista pela matriz (simulação)".
 - "IC exclui zero → diferença a favor das três ações; sem causa."
 - "Os 60 que mudam = os 60 em análise manual."
 - "Ressalvas: matriz demonstrativa; analista infalível; simulação, não política real."
@@ -279,7 +279,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - Os únicos casos que mudaram de decisão foram os 60 mandados ao analista.
 - E isso é esperado pela própria regra, não mérito da rede.
 
-**O que você fala.** "Esta é a comparação principal, fixada antes: TAN com três ações contra o corte 0,5. A diferença de utilidade média foi 22,5, com intervalo de 9,2 a 37,2. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55. Os 60 que mudaram são os da análise manual. Com analista infalível, a política de três ações ganha por construção: é efeito da matriz, não evidência sobre a rede."
+**O que você fala.** "Esta é a comparação principal, fixada antes: TAN com três ações contra o corte 0,5. A diferença de utilidade média foi 22,5, com intervalo de 9,2 a 37,2. A política aprovou 92, rejeitou 48 e mandou 60 para análise manual; o corte aprovou 145 e rejeitou 55. Os 60 que mudaram são os da análise manual. Com analista infalível, a matriz prevê vantagem para a política de três ações; o ganho realizado depende da calibração, e o corte 0,5 nem é o ótimo de duas ações (0,2). É efeito da matriz, não evidência sobre a rede. Numa análise posterior ao teste, os 22,5 se decompõem em 9,0 pela análise manual e 13,5 por o corte 0,5 não ser o limiar de duas ações."
 
 **Pergunta provável.** "Então o resultado não prova nada?" Resposta: "Prova que, com esta matriz, a ação extra rende mais. Não prova que a rede é boa."
 
@@ -297,7 +297,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - A lista foi feita depois de olhar o desenvolvimento; você admite isso.
 - A análise principal continua com BDeu 5.
 
-**O que você fala.** "Depois de ver o TAN abaixo do NB, fiz um estudo secundário com 8 configurações: NB e TAN com tamanho equivalente 1, 5, 10 e 50. A regra escolheu nb_ess50 nas cinco partições. A ROC-AUC dele, 0,788, difere em 0,001 da referência, 0,789: ruído. A grade foi desenhada olhando o desenvolvimento, e esse viés está declarado."
+**O que você fala.** "Depois de ver o TAN abaixo do NB, fiz um estudo secundário com 8 configurações: NB e TAN com tamanho equivalente 1, 5, 10 e 50. A regra escolheu nb_ess50 nas cinco partições. A ROC-AUC dele, 0,788, difere em 0,001 da referência, 0,789: abaixo de 0,03, tratada como ruído pela regra do plano. A grade foi desenhada olhando o desenvolvimento, e esse viés está declarado."
 
 **Pergunta provável.** "Por que não usar o escolhido como principal?" Resposta: "Seria decidir pelo resultado. O estudo diz o que a regra escolheu, não o que adotar."
 
@@ -320,14 +320,14 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 **O que você fala.** "Seis limites acompanham tudo. A matriz é demonstrativa e supõe um analista que sempre acerta. A base não diz o que aconteceria com as ações não tomadas, então é simulação. O teste tem 200 casos e 60 ruins, e os intervalos são largos. Modelo e representação variam juntos, o intervalo não cobre o treino e a calibração foi só medida. Por isso não generalizo nem recomendo um modelo."
 
-**Pergunta provável.** "Qual a limitação mais grave?" Resposta: "O analista infalível, porque é ela que faz as três ações ganharem por construção."
+**Pergunta provável.** "Qual a limitação mais grave?" Resposta: "O analista infalível, porque é ele que faz a matriz prever vantagem para as três ações."
 
 ### Slide 14 — Conclusões (1:00, fica na tela na arguição)
 
 **O que está escrito.**
 - "1. Limiares 0,10 e 0,60 saem da matriz; valem para qualquer escore."
-- "2. TAN: +22,5 de utilidade média [9,2; 37,2], por construção da matriz."
-- "3. ROC-AUC: diferenças são ruído; Brier do TAN não melhor que taxa base."
+- "2. TAN: +22,5 de utilidade média [9,2; 37,2], prevista pela matriz."
+- "3. ROC-AUC: diferenças < 0,03, sem apontar qual modelo é melhor; Brier do TAN não melhor que taxa base."
 - Contato e link ainda a preencher.
 
 **O que quer dizer.**
@@ -335,7 +335,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - Item 2 responde à parte 2, com a ressalva.
 - Item 3 é o resultado do risco, como saiu.
 
-**O que você fala.** "Concluindo. Parte 1: separar risco e ação dá limiares explícitos, 0,10 e 0,60, que qualquer pessoa reproduz. Parte 2: com o TAN, as três ações tiveram utilidade média 22,5 maior que o corte 0,5, de 9,2 a 37,2, por construção da matriz. No risco, as diferenças de ROC-AUC foram ruído e o TAN não foi melhor que a taxa base no Brier. Fico à disposição."
+**O que você fala.** "Concluindo. Parte 1: separar risco e ação dá limiares explícitos, 0,10 e 0,60, que qualquer pessoa reproduz. Parte 2: com o TAN, as três ações tiveram utilidade média 22,5 maior que o corte 0,5, de 9,2 a 37,2, prevista pela matriz. No risco, as diferenças de ROC-AUC ficaram abaixo de 0,03, sem apontar qual modelo é melhor, e o TAN não foi melhor que a taxa base no Brier. Fico à disposição."
 
 **Pergunta provável.** "Qual modelo você recomenda?" Resposta: "Nenhum. Nenhuma regra fixada antes separou os modelos no teste."
 
@@ -409,33 +409,33 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 **Pergunta provável.** "Esse vazamento muda o resultado?" Resposta: "Não medi, mas ele não usa o bom/ruim, então é brando e está declarado."
 
-### Slide 22 — A7: O que significa "ganha por construção"?
+### Slide 22 — A7: A vantagem da política de três ações é garantida?
 
-**O que está escrito.** Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e rejeitar. As quatro diferenças no teste foram positivas, de 22,5 a 38,3. "A diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada."
+**O que está escrito.** Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa reta fica acima de aprovar e rejeitar. Com as probabilidades do modelo, a política de três ações nunca fica abaixo da mesma política restrita a duas ações; o ganho realizado depende da calibração, e o corte 0,5 nem é o ótimo de duas ações (0,2). As quatro diferenças no teste foram positivas, de 22,5 a 38,3. "A diferença não é evidência sobre a rede nem sobre o critério da utilidade esperada."
 
-**O que quer dizer.** Com qualquer modelo, a ação extra rende mais. Todos os quatro modelos testados ganharam do corte.
+**O que quer dizer.** Com as probabilidades do modelo, a ação extra nunca reduz a utilidade esperada. No teste, os quatro modelos tiveram diferença positiva, mas isso depende da calibração e do corte de comparação. Medido depois, com o TAN, os 22,5 se dividem em 9,0 (ação extra) e 13,5 (corte 0,5 contra o limiar 0,2).
 
-**O que você fala.** "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa opção é a melhor, e o corte 0,5 não a tem. Por isso as quatro diferenças foram positivas, de 22,5 a 38,3. Não é evidência sobre a rede." (0:40)
+**O que você fala.** "Na análise manual o analista acerta sempre: ganha 60 num bom e perde 40 num ruim. Entre 0,10 e 0,60 essa opção é a melhor para o modelo, e o corte 0,5 não a tem. As quatro diferenças no teste foram positivas, de 22,5 a 38,3, mas o ganho realizado depende de as probabilidades estarem calibradas, e o corte 0,5 nem é o ótimo de duas ações (0,2). Não é evidência sobre a rede." (0:50)
 
 **Pergunta provável.** "E se o analista errasse?" Resposta: "A vantagem diminuiria. Não simulei isso; é limitação declarada."
 
 ### Slide 23 — A8: 60 casos ruins bastam?
 
-**O que está escrito.** "Com 60 ruins, diferenças pequenas são indistinguíveis de ruído, e por isso a regra de 0,03 foi fixada antes." ROC-AUC do TAN de 0,623 a 0,789; diferença de utilidade de 9,2 a 37,2. O intervalo reamostra só o teste.
+**O que está escrito.** "Com 60 ruins, diferenças pequenas dificilmente se separam de ruído, e por isso o plano definiu antes o limite descritivo de 0,03." ROC-AUC do TAN de 0,623 a 0,789; diferença de utilidade de 9,2 a 37,2. O intervalo reamostra só o teste.
 
 **O que quer dizer.** Já se sabia, antes, que o teste era pequeno. A regra de 0,03 existe por isso.
 
-**O que você fala.** "O plano já previa que, com 60 ruins, diferença de 0,02 a 0,03 é ruído. Os intervalos confirmam: o do TAN vai de 0,623 a 0,789. E o intervalo não cobre o treino, então a incerteza real é maior." (0:30)
+**O que você fala.** "O plano já previa que, com 60 ruins, diferença de 0,02 a 0,03 dificilmente se separa de ruído; é um limite descritivo, não um teste de equivalência. Os intervalos confirmam: o do TAN vai de 0,623 a 0,789. E o intervalo não cobre o treino, então a incerteza real é maior." (0:30)
 
 **Pergunta provável.** "Por que não usou um teste maior?" Resposta: "A base tem 1.000 casos. Foi o que havia."
 
 ### Slide 24 — A9: Por que não há "melhor modelo"?
 
-**O que está escrito.** "Nenhuma regra pré-registrada separou os modelos no teste, e escolher um seria decidir pelo resultado." Diferenças de ROC-AUC até 0,022; PR-AUC só descrita; no Brier, só o TAN não foi melhor que a taxa base; o TAN é o principal porque foi fixado antes; o estudo de seleção diz o que a regra escolheu, não o que adotar.
+**O que está escrito.** "Nenhuma regra do plano separou os modelos no teste, e escolher um seria decidir pelo resultado." Diferenças de ROC-AUC até 0,022; PR-AUC só descrita; no Brier, só o TAN não foi melhor que a taxa base; o TAN é o principal porque foi fixado antes; o estudo de seleção diz o que a regra escolheu, não o que adotar.
 
 **O que quer dizer.** Sem regra que separe, qualquer escolha seria gosto pessoal olhando o placar.
 
-**O que você fala.** "As diferenças de ROC-AUC foram até 0,022, ruído pela regra. A PR-AUC só foi descrita. No Brier, só o TAN não foi melhor que a taxa base. O TAN é o principal porque foi fixado antes, não por desempenho." (0:30)
+**O que você fala.** "As diferenças de ROC-AUC foram até 0,022, tratadas como ruído pela regra descritiva do plano. A PR-AUC só foi descrita. No Brier, só o TAN não foi melhor que a taxa base. O TAN é o principal porque foi fixado antes, não por desempenho." (0:30)
 
 **Pergunta provável.** "Mas a logística teve o melhor Brier?" Resposta: "Teve o menor número, 0,191. Não há regra fixada para dizer que isso a torna melhor."
 
@@ -445,7 +445,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 ### Frases de segurança (honestas)
 
-- "O teste tem só 60 casos ruins, então diferenças pequenas são ruído."
+- "O teste tem só 60 casos ruins, então diferenças pequenas dificilmente se separam de ruído."
 - "Isso está no apêndice; posso mostrar."
 - "Não afirmo que um modelo é melhor."
 - "Não testei a causa, então não afirmo."
@@ -461,7 +461,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - "O TAN foi pior porque ..." como certeza (a causa não foi testada).
 - "A queda do desenvolvimento para o teste aconteceu porque ..." (não testado).
 - "Isso funciona em operação real" ou "num banco funcionaria" (é simulação).
-- "A política de três ações vence de verdade" ou "a rede bayesiana melhora a decisão" (ela ganha por construção: só ela tem a análise manual e o analista é suposto infalível).
+- "A política de três ações vence de verdade" ou "a rede bayesiana melhora a decisão" (a vantagem é prevista pela matriz: só ela tem a análise manual, o analista é suposto infalível e o corte 0,5 nem é o ótimo de duas ações).
 - "O TAN é bom no Brier" (não foi melhor que a taxa base).
 - "A PR-AUC mostra que ..." (só descrita).
 - "Escolhi esses custos porque deram melhor resultado" (não escolheu; são demonstrativos).
@@ -472,7 +472,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 A entrega é em 30/11. A defesa só pode ser marcada 15 dias depois, a partir de 15/12/2026. Não há data fixa ainda; faça os 5 dias nos dias antes da data que for marcada.
 
-**Dia 1 — Entender.** Leia o dicionário (parte B) em voz alta. Refaça no papel a conta de 0,10 e 0,60 sem olhar. Explique "ganha por construção" para alguém de fora.
+**Dia 1 — Entender.** Leia o dicionário (parte B) em voz alta. Refaça no papel a conta de 0,10 e 0,60 sem olhar. Explique "vantagem prevista pela matriz" para alguém de fora, e por que isso não é o mesmo que ganho garantido.
 
 **Dia 2 — Slides 1 a 7.** Fale cada slide com o cronômetro. Meta: cerca de 9 minutos. Decore os números: 1.000, 800, 240, 200, 60, 2026, 100, 400, 40, 0,10, 0,60.
 

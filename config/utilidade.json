@@ -4,5 +4,5 @@
     "rejeitar": {"bom": 0, "ruim": 0},
     "analise_manual": {"bom": 60, "ruim": -40}
   },
-  "hipoteses": "Valores demonstrativos, não calibrados com dados reais. Supõe que o analista da análise manual sempre acerta o estado do cliente. Matriz pendente de aprovação do orientador."
+  "hipoteses": "Valores demonstrativos, não calibrados com dados reais. Supõe que o analista da análise manual sempre acerta o estado do cliente. Matriz aceita pelo orientador em 18/11/2026 apenas para fins demonstrativos."
 }
