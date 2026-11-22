@@ -42,7 +42,7 @@ Cada termo: o que é, em uma ou duas frases, e uma comparação do dia a dia.
 
 **Validação cruzada em 5 partições.** Os 800 casos de desenvolvimento viram 5 blocos de 160. Treina em 4, testa no 5º, e roda até cada bloco ter sido teste uma vez. Analogia: estudar com 5 provas antigas, sempre deixando uma de fora para se testar.
 
-**Conjunto de teste, aberto uma vez só.** São 200 casos (60 ruins) guardados desde o começo. Ficaram trancados até tudo estar congelado e foram abertos uma única vez, em 17/11/2026. Se você abre antes, acaba ajustando o modelo à prova. Analogia: a prova final; se você vê a prova antes, a nota não vale.
+**Conjunto de teste, aberto uma vez só.** São 200 casos (60 ruins) guardados desde o começo. Ficaram trancados até tudo estar congelado e foram abertos uma única vez. Se você abre antes, acaba ajustando o modelo à prova. Analogia: a prova final; se você vê a prova antes, a nota não vale.
 
 **ROC-AUC.** Mede se o modelo põe os ruins acima dos bons na fila de risco. 0,5 é sorteio; 1 é perfeito. Analogia: pegue um ruim e um bom ao acaso; a ROC-AUC é a chance de o modelo dar nota de risco maior ao ruim.
 
@@ -71,7 +71,7 @@ Regra final: p abaixo de 0,10 aprova; entre 0,10 e 0,60 manda para análise manu
 
 **Bootstrap e intervalo de 95%.** Sorteia-se, com reposição, muitas versões do teste e recalcula-se a métrica em cada uma. O intervalo de 95% é a faixa onde cai o meio das contas. Mostra o quanto o número balança. Analogia: repetir uma pesquisa de opinião várias vezes com sorteios diferentes e ver a margem de erro.
 
-**"Ruído" e a regra de 0,03.** No plano de 15/11, antes dos resultados, ficou escrito: diferença de ROC-AUC menor que 0,03 é tratada como ruído, sem apontar qual modelo é melhor. É uma convenção descritiva, não um teste de equivalência. Com só 60 ruins no teste, o número balança mais que isso. Analogia: dois corredores que chegam com 1 centésimo de diferença num cronômetro de mão; não dá para dizer quem ganhou.
+**"Ruído" e a regra de 0,03.** No plano, escrito antes dos resultados, ficou escrito: diferença de ROC-AUC menor que 0,03 é tratada como ruído, sem apontar qual modelo é melhor. É uma convenção descritiva, não um teste de equivalência. Com só 60 ruins no teste, o número balança mais que isso. Analogia: dois corredores que chegam com 1 centésimo de diferença num cronômetro de mão; não dá para dizer quem ganhou.
 
 **"Vantagem prevista pela matriz".** A política de três ações tem uma ação a mais (análise manual), e essa ação, com analista infalível, nunca dá prejuízo grande. Então, com as probabilidades do modelo, a utilidade esperada dela nunca é menor que a de duas ações. Mas isso é uma previsão do modelo: o ganho realizado depende de as probabilidades estarem calibradas, e o corte 0,5 nem é o ótimo de duas ações (0,2). A vantagem vem das regras do jogo, não da qualidade da rede. Analogia: um time que joga com um jogador a mais vai ganhar com frequência; isso não prova que o técnico é bom.
 
@@ -132,7 +132,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - Parte 2 é o experimento: comparar com o corte 0,5.
 - Você escreveu como ia ler cada resultado antes de ver qualquer número.
 
-**O que você fala.** "Esta é a pergunta, como está no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore, inclusive a logística. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada resultado foram escritas no plano de 15/11, antes dos resultados; duas decisões vieram depois, em 18/11."
+**O que você fala.** "Esta é a pergunta, como está no capítulo 1. A parte 1 é uma propriedade da política: vale para qualquer escore, inclusive a logística. A parte 2 é o que medi: ações e utilidade média, contra um corte fixo de 0,5. A pergunta e a forma de ler cada resultado foram escritas no plano, antes dos resultados; duas decisões vieram depois, com o teste já aberto."
 
 **Pergunta provável.** "Se a parte 1 vale por construção, qual o mérito?" Resposta: "Mostrar a conta de forma que qualquer um refaça. O mérito é a transparência, não a descoberta."
 
@@ -140,7 +140,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 **O que está escrito.**
 - Barra P1 a P5 e Teste.
-- "Dev: 800 (240 ruins)"; "Teste: 200 (60 ruins), aberto 1× em 17/11/2026 (49d77ff)"
+- "Dev: 800 (240 ruins)"; "Teste: 200 (60 ruins), aberto 1× (49d77ff)"
 - "Divisão estratificada, semente 2026."
 - "Validação cruzada estratificada, 5 partições."
 - "3 contínuas em 3 faixas por tercis, cortes só no treino."
@@ -153,7 +153,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 - As 3 variáveis numéricas (como valor do crédito) viraram "baixo, médio, alto", com as fronteiras aprendidas só no treino.
 - 49d77ff é o código da versão congelada do programa.
 
-**O que você fala.** "A base é a South German Credit, a versão corrigida por Grömping. São 1.000 casos: 800 para desenvolvimento, com 240 ruins, e 200 para teste, com 60 ruins. No desenvolvimento usei validação cruzada em 5 partições, semente 2026. O teste foi aberto uma única vez, em 17/11/2026, depois de tudo congelado."
+**O que você fala.** "A base é a South German Credit, a versão corrigida por Grömping. São 1.000 casos: 800 para desenvolvimento, com 240 ruins, e 200 para teste, com 60 ruins. No desenvolvimento usei validação cruzada em 5 partições, semente 2026. O teste foi aberto uma única vez, depois de tudo congelado."
 
 **Pergunta provável.** "Por que discretizar?" Resposta: "As redes aqui trabalham com categorias. As faixas por tercis foram fixadas antes, com cortes só do treino."
 
@@ -401,11 +401,11 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 ### Slide 21 — A6: Houve vazamento?
 
-**O que está escrito.** "O teste ficou fechado até o congelamento; o único vazamento é brando e está declarado." Cortes das faixas só no treino; teste aberto uma vez em 17/11/2026 (49d77ff). A lista de categorias possíveis usa o desenvolvimento inteiro, sem o rótulo. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado.
+**O que está escrito.** "O teste ficou fechado até o congelamento; o único vazamento é brando e está declarado." Cortes das faixas só no treino; teste aberto uma vez (49d77ff). A lista de categorias possíveis usa o desenvolvimento inteiro, sem o rótulo. A divisão com semente 42 foi descartada porque seu teste já tinha sido usado.
 
 **O que quer dizer.** "Vazamento" = informação da prova passando para o estudo. O único caso: o modelo sabe que uma categoria rara existe, mas não sabe se ela é boa ou ruim. Você trocou a divisão antiga para não reaproveitar uma prova já vista.
 
-**O que você fala.** "O teste ficou fechado até o congelamento e foi aberto uma vez, em 17/11/2026. O único vazamento é brando: a lista de categorias usa todo o desenvolvimento para uma categoria rara não quebrar a conta, sem usar o rótulo. A divisão com semente 42 foi descartada porque o teste dela já tinha sido usado." (0:40)
+**O que você fala.** "O teste ficou fechado até o congelamento e foi aberto uma vez. O único vazamento é brando: a lista de categorias usa todo o desenvolvimento para uma categoria rara não quebrar a conta, sem usar o rótulo. A divisão com semente 42 foi descartada porque o teste dela já tinha sido usado." (0:40)
 
 **Pergunta provável.** "Esse vazamento muda o resultado?" Resposta: "Não medi, mas ele não usa o bom/ruim, então é brando e está declarado."
 
@@ -470,7 +470,7 @@ Tempo total do corpo: cerca de 19 minutos. Os slides 15 a 24 são o apêndice: s
 
 ## E. Plano de ensaio em 5 dias
 
-A entrega é em 30/11. A defesa só pode ser marcada 15 dias depois, a partir de 15/12/2026. Não há data fixa ainda; faça os 5 dias nos dias antes da data que for marcada.
+A defesa só pode ser marcada 15 dias depois da entrega das cópias. Não há data fixa ainda; faça os 5 dias nos dias antes da data que for marcada.
 
 **Dia 1 — Entender.** Leia o dicionário (parte B) em voz alta. Refaça no papel a conta de 0,10 e 0,60 sem olhar. Explique "vantagem prevista pela matriz" para alguém de fora, e por que isso não é o mesmo que ganho garantido.
 
