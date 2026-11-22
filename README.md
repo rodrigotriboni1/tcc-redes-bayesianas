@@ -2,7 +2,7 @@
 
 Trabalho de conclusão de curso de Rodrigo Mialichi Triboni (Engenharia de Controle e Automação, UFU).
 
-Uma rede bayesiana estima a probabilidade de um crédito ser ruim, e uma camada de utilidade esperada escolhe a ação: aprovar, rejeitar ou encaminhar para análise manual. Os dados são o South German Credit (1000 créditos). O repositório é um conjunto de scripts Python que leem CSV e gravam tabelas e figuras. Não há frontend, servidor nem banco de dados.
+Uma rede bayesiana estima a probabilidade de um crédito ser ruim, e uma camada de utilidade esperada escolhe a ação: aprovar, rejeitar ou encaminhar para análise manual. Os dados são o South German Credit (1000 créditos). O experimento é um conjunto de scripts Python que leem CSV e gravam tabelas e figuras, sem servidor nem banco de dados. O painel em `frontend/` só mostra os resultados já gerados.
 
 ## O que o experimento faz
 
@@ -16,7 +16,7 @@ Uma rede bayesiana estima a probabilidade de um crédito ser ruim, e uma camada 
 
 - Python 3.12 ou mais novo.
 - [uv](https://docs.astral.sh/uv/) (gerenciador de ambiente). Instalar: `brew install uv` (macOS) ou `curl -LsSf https://astral.sh/uv/install.sh | sh`.
-- Git e Bash. Testado no macOS; deve funcionar em Linux.
+- Git e Bash. Os resultados commitados foram gerados no macOS. No Linux, o fluxo roda no CI (`.github/workflows/reproducao.yml`); veja "Reproduzir em outra plataforma".
 
 Não precisa de GPU, internet depois da instalação, nem de conta em serviço nenhum.
 
@@ -53,6 +53,7 @@ uv run python codigo/avaliar.py                 # métricas e figura de calibra�
 uv run python codigo/modelos.py --ocultar       # evidência incompleta
 uv run python codigo/avaliar.py --ocultar
 uv run python codigo/decisao.py                 # políticas de decisão
+uv run python codigo/decisao.py --calibracao    # sensibilidade das ações ao erro de calibração (dev, análise posterior ao plano)
 uv run python codigo/sensibilidade.py           # variação da matriz de utilidade
 uv run python codigo/modelos.py --selecao       # estudo secundário de seleção
 uv run python codigo/avaliar.py --selecao
@@ -67,7 +68,7 @@ git status --short resultados/
 git diff --exit-code -- 'resultados/*.csv' 'resultados/*.json'
 ```
 
-Saída vazia e código 0: os CSV e JSON são idênticos aos commitados (a execução é determinística). As figuras PNG não são comparadas byte a byte.
+Saída vazia e código 0: os CSV e JSON são idênticos aos commitados (a execução é determinística na plataforma em que foram gerados, o macOS). As figuras PNG não são comparadas byte a byte. Em outra plataforma pode haver diferença nos últimos dígitos; veja "Reproduzir em outra plataforma".
 
 **5. Tudo de uma vez**
 
@@ -75,7 +76,21 @@ Saída vazia e código 0: os CSV e JSON são idênticos aos commitados (a execu�
 bash factory/checks.sh
 ```
 
-Confere os hashes dos dados, roda os autotestes, refaz os scripts do zero e compara com `resultados/`. Termina com "tudo certo" e código 0.
+Confere os hashes dos dados, roda os autotestes, refaz os scripts do zero e compara com `resultados/`. Termina com "tudo certo" e código 0. Usa `shasum` e compara byte a byte, então é para o macOS; no Linux use o fluxo do CI, descrito abaixo.
+
+## Reproduzir em outra plataforma
+
+O workflow [`.github/workflows/reproducao.yml`](.github/workflows/reproducao.yml) roda em Linux limpo (Ubuntu, Python 3.12, `uv sync --frozen`): os autotestes, os scripts de desenvolvimento e a conferência independente. Os passos 1 a 3 acima fazem o mesmo em qualquer máquina.
+
+A regressão logística não reproduz bit a bit entre plataformas. Nos arquivos que dependem dela, as probabilidades podem diferir na ordem de 1e-8, e as colunas em unidades de utilidade até 500 vezes isso. O workflow aceita diferença numérica de até 1e-4 em células numéricas e reprova qualquer outra diferença (texto, ação, contagem, número de linhas). Em outra plataforma, `git diff` pode mostrar essas diferenças pequenas; o que importa é que as ações e as contagens coincidam.
+
+## Conferência independente
+
+```bash
+uv run python codigo/auditoria_independente.py
+```
+
+Refaz em NumPy, sem `pgmpy`, `scikit-learn` nem `pandas`, a divisão em 5 partições, a árvore do TAN, a estimação com prior BDeu e a inferência exata, as métricas e as ações das políticas, e compara com os arquivos de `resultados/`. Imprime a maior diferença de cada conferência e termina com código diferente de 0 se alguma passar de 1e-12 ou se uma ação ou contagem diferir. Não grava arquivo e não abre as linhas do teste. Foi escrita pelo mesmo autor, então ler o código e rodar é a conferência de quem chega de fora.
 
 ## Ver uma decisão de crédito
 

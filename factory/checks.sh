@@ -11,7 +11,7 @@ set -euo pipefail
 
 AQUI="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 RAMO="$PWD"
-PERMITIDOS="preparar_sgc.py modelos.py avaliar.py decisao.py sensibilidade.py demo.py test_decisao.py baseline_logreg.py"
+PERMITIDOS="preparar_sgc.py modelos.py avaliar.py decisao.py sensibilidade.py demo.py test_decisao.py baseline_logreg.py auditoria_independente.py"
 # Fora das buscas: o primeiro é o único que pode ler os dados brutos; o segundo
 # é herdado e some na issue 01.
 ISENTOS="preparar_sgc.py baseline_logreg.py"
@@ -126,6 +126,7 @@ fi
 if [ -f codigo/decisao.py ]; then
   rodar codigo/test_decisao.py
   rodar codigo/decisao.py
+  tem '--calibracao' decisao.py && rodar codigo/decisao.py --calibracao
 fi
 if [ -f codigo/sensibilidade.py ]; then
   rodar codigo/sensibilidade.py --verificar
