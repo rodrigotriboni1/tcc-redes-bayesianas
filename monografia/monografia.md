@@ -390,7 +390,7 @@ Neste trabalho, entende-se por *next best action* (próxima melhor ação) a aç
 
 <!-- Entradas do.bib marcadas "% VERIFICAR" ou "A CONFERIR" só podem ser citadas depois de conferidas no original (PLANO.md §9). -->
 
-Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas em 18/11/2026, após sua abertura, conforme a Seção 3.6; uma análise exploratória posterior foi decidida em 22/11/2026 (Seção 4.7).
+Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas em 18/11/2026, após sua abertura, conforme a Seção 3.6; duas análises exploratórias posteriores foram decididas em 22/11/2026 (Seções 4.7 e 4.8).
 
 ## 3.1 Base de dados
 
@@ -504,7 +504,7 @@ em que $B_b$ é o conjunto de casos cuja $p_k$ cai na faixa $b$, e $\bar{y}_b$ e
 
 No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por *bootstrap* com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993}. O intervalo não cobre a variação devida ao treino.
 
-As regras principais de leitura foram fixadas em 15/11/2026, antes dos resultados; houve complementações documentadas em 18/11/2026, após a abertura do teste (Apêndice B), e uma análise exploratória decidida em 22/11/2026, descrita na Seção 4.7. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
+As regras principais de leitura foram fixadas em 15/11/2026, antes dos resultados; houve complementações documentadas em 18/11/2026, após a abertura do teste (Apêndice B), e duas análises exploratórias decididas em 22/11/2026, descritas nas Seções 4.7 e 4.8. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
 
 O limite de 0,03 vale só para ROC-AUC: a PR-AUC é descrita sem conclusão de ruído, e a diferença pareada de utilidade é lida pelo intervalo de 95%, por decisão do autor registrada em docs/decisoes.md.
 
