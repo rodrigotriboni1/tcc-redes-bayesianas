@@ -301,5 +301,5 @@ Números que **não** vêm de CSV: data 17/11/2026 e *commit* 49d77ff (docs/deci
 5. Nome por extenso da faculdade na capa (a monografia marca "confirmar").
 6. Se o estudo de seleção (slide 12) fica no corpo ou vai para o apêndice.
 7. Se cita no slide R as entradas ainda marcadas para conferência (ELKAN, 2001 "A CONFERIR NO ORIGINAL"; GRÖMPING, 2019 "VERIFICAR").
-8. Aviso: o campo `hipoteses` de `config/utilidade.json` ainda diz "Matriz pendente de aprovação do orientador"; a monografia e o slide 6 dizem "aprovada". Não foi alterado (fora do escopo).
+8. O campo `hipoteses` de `config/utilidade.json` foi atualizado em 22/11/2026: agora diz que a matriz foi aceita pelo orientador em 18/11/2026 apenas para fins demonstrativos, como a monografia e o slide 6.
 9. Na monografia, o estudo de seleção aparece como "decidido por delegação, a rever pelo autor"; os slides e notas omitem essa expressão. Confirmar se o autor já revisou e como quer dizer isso à banca.

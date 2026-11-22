@@ -10,7 +10,7 @@ Utiliza-se a base South German Credit \cite{gromping2019}, versão corrigida da 
 
 Das 20 variáveis preditoras, três são contínuas (duração do crédito, valor do crédito e idade) e as 17 restantes já são categóricas. No texto e nas tabelas de resultados, adotam-se os nomes traduzidos para o português; os nomes originais em alemão são mantidos apenas no código-fonte e na Tabela 1 para referência à base original. O identificador `record_id` é removido antes de qualquer etapa de modelagem.
 
-**Tabela 3.1** – Dicionário das variáveis. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n = 800), calculado a partir de `dados/processados/dev.csv`; os códigos e seus significados seguem o codetable.txt da UCI (South German Credit (UPDATE), https://archive.ics.uci.edu/dataset/573/south+german+credit+update), traduzidos para o português.
+**Tabela 3.1** – Dicionário das variáveis. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n = 800), calculado a partir de `dados/processados/dev.csv`; os códigos e seus significados seguem o codetable.txt da UCI (South German Credit, https://archive.ics.uci.edu/dataset/573/south+german+credit+update), traduzidos para o português.
 
 | Variável | Tradução | Tipo | Categorias |
 |---|---|---|---|
@@ -36,7 +36,7 @@ Das 20 variáveis preditoras, três são contínuas (duração do crédito, valo
 | `pers` | Pessoas dependentes (`people_liable`) | Categórica | 2 |
 | `gastarb` | Trabalhador estrangeiro | Categórica | 2 |
 
-Traduções e códigos conferidos, variável a variável, no codetable.txt do conjunto South German Credit (UPDATE), UCI, https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Na fonte, finalidade do crédito tem 11 códigos (0 a 10); 10 aparecem no conjunto de desenvolvimento.
+Traduções e códigos conferidos, variável a variável, no codetable.txt do conjunto South German Credit, UCI, https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Na fonte, finalidade do crédito tem 11 códigos (0 a 10); 10 aparecem no conjunto de desenvolvimento.
 
 A base apresenta categorias raras, por exemplo número de créditos no banco = 4 e finalidade do crédito = 8. Essa característica motiva o uso de *prior* bayesiano na estimação dos parâmetros (Seção 3.5).
 

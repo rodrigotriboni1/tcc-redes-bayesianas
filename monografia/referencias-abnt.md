@@ -80,7 +80,7 @@ SIDDIQI, Naeem. **Credit Risk Scorecards**: developing and implementing intellig
 THOMAS, Lyn C. A survey of credit and behavioural scoring: forecasting financial risk of lending to consumers. **International Journal of Forecasting**, v. 16, n. 2, p. 149–172, 2000.
 <!-- thomas2000: Bloco "referências da proposta": conferir no original. -->
 
-UCI MACHINE LEARNING REPOSITORY. **South German Credit (UPDATE)**. 2020. Conjunto de dados n. 573. UCI Machine Learning Repository. DOI: 10.24432/C5QG88. Disponível em: https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Acesso em: 10 nov. 2026.
+UCI MACHINE LEARNING REPOSITORY. **South German Credit**. 2020. Conjunto de dados n. 573. UCI Machine Learning Repository. DOI: 10.24432/C5QG88. Disponível em: https://archive.ics.uci.edu/dataset/573/south+german+credit+update. Acesso em: 10 nov. 2026.
 <!-- uci573: Ano 2020 = criação do conjunto na UCI (decidido pelo autor, 17/11/2026). DOI conferido na API da UCI (docs/conferencia-referencias.md). -->
 
 ZADROZNY, Bianca; ELKAN, Charles. Obtaining calibrated probability estimates from decision trees and naive Bayesian classifiers. In: INTERNATIONAL CONFERENCE ON MACHINE LEARNING, 18., 2001. **Proceedings** [...]. [S. l.: s. n.], 2001. p. 609–616.

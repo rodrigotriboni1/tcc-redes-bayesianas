@@ -1,6 +1,6 @@
 # Resposta às revisões do orientador (revisão 1 e parecer 2)
 
-Arquivo revisado: `TCC_Rodrigo_Final_Revisao_3.docx` (a Revisão 2 incorpora a revisão 1; a Revisão 3 incorpora o parecer 2). Nenhum resultado, hiperparâmetro, semente, faixa, modelo ou valor da matriz foi alterado. As mudanças são de texto, mais uma análise exploratória declarada como posterior ao teste (Seção 4.7). As verificações estão marcadas como tais.
+Arquivo revisado: `TCC_Rodrigo_Final_Revisao_4.docx` (a Revisão 2 incorpora a revisão 1; a Revisão 3, o parecer 2; a Revisão 4 acrescenta o sumário e as listas com número de página e a correção da referência da UCI). Nenhum resultado, hiperparâmetro, semente, faixa, modelo ou valor da matriz foi alterado. As mudanças são de texto, mais uma análise exploratória declarada como posterior ao teste (Seção 4.7). As verificações estão marcadas como tais.
 
 ## Parecer 2 (pontos fracos) e o que foi feito
 
@@ -25,8 +25,8 @@ Arquivo revisado: `TCC_Rodrigo_Final_Revisao_3.docx` (a Revisão 2 incorpora a r
 | ALTA: raiz do TAN no pgmpy 1.1.2 | Verificado no código-fonte (`TreeSearch.py`, linhas 145–150) e nas 5 partições: a raiz é a coluna de maior soma de informação mútua não condicional, e a soma inclui a classe `kredit`, que nunca fica no topo. O texto foi mantido. | 3.5 |
 | ALTA: reprodutibilidade | Conferido: `49d77ff` está no histórico do ramo; `uv.lock` fixa pgmpy 1.1.2; `resultados/` está versionado. Entre `49d77ff` e `cc2badc` não houve mudança em código, configuração, dependências nem plano. Em 22/11, `decisao.py --final` foi executado de novo sobre as predições já gravadas (sem reabrir o arquivo do teste); os seis arquivos anteriores ficaram idênticos (MD5). Não conferido: a presença dos dados em `dados/`. | 3.2, A.4, Apêndice B |
 | MÉDIA: regra de 0,03 não é teste de equivalência | Dita em 3.6 e repetida nos resultados, na discussão e no Apêndice B. | 3.6, 4.1, 5.2, B.2, B.4 |
-| MÉDIA: referências | As 26 referências e as citações do texto se correspondem (primeiro autor e ano), sem órfãs. DOI e URL foram conferidos em 17/11 (`docs/conferencia-referencias.md`); seguem em aberto UCI 573, Siddiqi e Platt (páginas). | Referências |
-| MÉDIA: pré-textuais | O relatório do orientador saiu do arquivo. Seguem em aberto, e são do autor: número de páginas e CDU da ficha catalográfica, folha de aprovação (só após a defesa) e o sumário e as listas definitivos. O sumário e as listas do `.docx` são texto fixo, sem número de página, e os títulos não usam estilos de título; um sumário definitivo exige aplicar os estilos no Word. | Pré-textuais |
+| MÉDIA: referências | As 26 referências e as citações do texto se correspondem (primeiro autor e ano), sem órfãs. DOI e URL foram conferidos em 17/11 (`docs/conferencia-referencias.md`). Três pendências resolvidas por delegação do autor, a rever: UCI 573 com o título "South German Credit" (sem "(UPDATE)", que é só o final do URL) e ano 2020 mantido; Siddiqi mantido como 1ª edição, 2006; Platt mantido em 1999, p. 61–74, com a ressalva de que os catálogos divergem entre 1999 e 2000 e as páginas não foram confirmadas (acesso à UCI e ao Crossref bloqueado). | Referências |
+| MÉDIA: pré-textuais | O relatório do orientador saiu do arquivo. O sumário e as listas de ilustrações e de tabelas agora são campos do Word: os 67 títulos têm nível de estrutura (sem mudar a aparência) e as listas usam referência cruzada às legendas. Ao abrir, o Word pergunta se deve atualizar os campos; a resposta é "Sim". As páginas conferidas no teste de atualização (13, 51, 65 e 67 para a Introdução, a Seção 4.7, as Referências e o Apêndice A) foram calculadas com fontes substitutas e podem mudar no Word. Ficam com o orientador: CDU e número de páginas da ficha catalográfica e a folha de aprovação. | Pré-textuais |
 | MÉDIA: equações e figuras | As 11 equações foram comparadas com as definições e com o código (Brier, log loss, ECE de 10 faixas, limiar p* = G/(G+L)). As 3 figuras são idênticas byte a byte às de `resultados/`. | Cap. 2 a 4 |
 
 ## Também atualizados
@@ -35,9 +35,10 @@ Os capítulos em `.md` (`resumo.md`, `cap1` a `cap6`, `apendices.md` na parte A)
 
 ## Para o autor decidir ou fazer
 
-- Confirmar com o orientador se o prazo de 30/11 é entrega das cópias ou defesa (regulamento: 15 dias entre as duas).
+- O prazo de 30/11 é de entrega das cópias. Pelo regulamento, a defesa só pode ser agendada 15 dias depois, em 15/12 ou depois; vale confirmar a data final do semestre letivo, porque sem defesa no semestre o conceito é "NÃO CONCLUIU".
 - Uma auditoria feita por outra pessoa continua pendente; a reimplementação acima é do mesmo autor, sobre as mesmas saídas.
-- `config/utilidade.json` ainda diz "Matriz pendente de aprovação do orientador", enquanto o texto diz "aprovada apenas para fins demonstrativos". O arquivo é do autor e não foi alterado.
+- `config/utilidade.json` foi atualizado em 22/11: o campo `hipoteses` agora diz que a matriz foi aceita em 18/11/2026 apenas para fins demonstrativos. Os valores não mudaram.
+- Revisar as três escolhas de referência feitas por delegação (UCI 2020, Siddiqi 2006, Platt 1999), registradas em `docs/decisoes.md`.
 - `docs/reproduzir.md` não lista `decisao.py --verificar`, e o passo 10 do `factory/checks.sh` roda `test_decisao.py` e `decisao.py`, mas não `decisao.py --verificar`. O `checks.sh` usa `shasum`, que não existe em Linux. São arquivos do autor.
 - O parágrafo em amarelo (5.6, "diferenças pequenas dificilmente se distinguem de ruído") é redação própria para trecho marcado sem sugestão.
 - `monografia/monografia.md`, `esqueleto.md` e `apendices.md` (cópia literal do plano, exceto A.3 e A.4) não foram atualizados no resto: o `.docx` é a referência.

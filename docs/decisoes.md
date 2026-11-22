@@ -142,6 +142,16 @@ Registrada antes de rodar, como pede a §7 do [plano de análise](plano-de-anali
 | 22/11/2026 | A comparação principal (TAN, `ue` × corte 0,5), a matriz, os modelos e a leitura anterior não mudam, qualquer que seja o resultado. A política de duas ações não é adotada nem recomendada por causa dele | Regras 3 e 5 do `AGENTS.md`: nada se ajusta por métrica; a escolha de política depende de número e é do autor | Autor |
 | 22/11/2026 | `factory/checks.sh`, passo 7: as 2 tabelas novas são opcionais, mas vêm juntas; as 6 do teste continuam obrigatórias | Não reprovar o ramo antes de o autor rodar `--final` e manter a checagem de que não sobra arquivo de teste fora da lista | Autor |
 
+## Esclarecimentos e delegações do autor (22/11/2026)
+
+| Data | Decisão | Motivo | Quem |
+|---|---|---|---|
+| 22/11/2026 | O prazo de 30/11/2026 é de **entrega das cópias**, não de defesa (completa a linha de 18/11/2026, que não dizia qual dos dois). Pelo regulamento (Art. 6º, §6º a §8º), a defesa só pode ser agendada 15 dias depois da entrega: com entrega em 30/11, em 15/12/2026 ou depois | Resposta do autor | Autor |
+| 22/11/2026 | O CDU e o número de páginas da ficha catalográfica e a folha de aprovação da banca ficam com o orientador. Na versão de entrega, a ficha mantém os marcadores `[nº de páginas]` e `[CDU: a preencher pela biblioteca]` | Resposta do autor | Autor |
+| 22/11/2026 | Sumário e listas de ilustrações e de tabelas passam a ser campos do Word: os 67 títulos ganham nível de estrutura, sem mudar a aparência, e as listas usam referência cruzada às legendas. Ao abrir `TCC_Rodrigo_Final_Revisao_4.docx`, o Word pergunta se deve atualizar os campos; a resposta é "Sim", e as páginas aparecem | A entrega é encadernada e o sumário e as listas não tinham número de página | Autor, pedido ao agente |
+| 22/11/2026 | Referências, por delegação ao agente, a rever pelo autor. UCI 573: título "South German Credit" (o "(UPDATE)" é só o final do URL) e ano 2020 mantido, o do campo de criação do registro (a UCI indica doação em 28/11/2019). Siddiqi: mantido como 1ª edição, Wiley, 2006. Platt: mantido 1999, p. 61–74; os catálogos divergem entre 1999 e 2000 e as páginas não foram confirmadas (o acesso ao Crossref e à UCI foi bloqueado nesta sessão, e o Platt não consta no Crossref) | `docs/conferencia-referencias.md` (17/11/2026): "o autor decide" | Por delegação, a rever pelo autor |
+| 22/11/2026 | `config/utilidade.json`: o campo `hipoteses` deixa de dizer "pendente de aprovação do orientador" e passa a dizer que a matriz foi aceita em 18/11/2026 apenas para fins demonstrativos. Os valores da matriz não mudam | Coerência com a linha de 18/11/2026 e com o painel de defesa, que exibe o campo | Autor, pedido ao agente |
+
 ## 6. Em aberto
 
 | Questão | Depende de |
