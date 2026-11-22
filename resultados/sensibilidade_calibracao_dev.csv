@@ -1,0 +1,10 @@
+modelo,cenario,deslocamento,n_aprovar,n_rejeitar,n_analise_manual,utilidade_media,n_acao_muda_vs_base
+nb,menos_ece,-0.09339372730046833,395,121,284,27.3,171
+nb,base,0.0,274,171,355,32.625,0
+nb,mais_ece,0.09339372730046833,15,216,569,30.8,304
+tan,menos_ece,-0.15244483906374667,476,107,217,16.4,185
+tan,base,0.0,361,177,262,22.275,0
+tan,mais_ece,0.15244483906374667,0,234,566,28.325,418
+logreg,menos_ece,-0.09509759627164328,391,91,318,28.475,199
+logreg,base,0.0,243,142,415,30.875,0
+logreg,mais_ece,0.09509759627164328,3,200,597,30.775,298

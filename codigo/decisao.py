@@ -15,9 +15,17 @@ limiar vem da matriz, ao lado de ue (três ações) e do corte 0,5: utilidade m�
 diferenças pareadas ue − limiar, ue − ue2 e ue2 − limiar, nas mesmas reamostras do bootstrap.
 Análise exploratória posterior ao teste: não substitui a comparação principal.
 
+Com --calibracao, mede no dev quanto a ação de utilidade esperada muda se a probabilidade estiver
+errada pelo erro de calibração do próprio modelo: troca p por p − ECE, p e p + ECE (ECE médio de
+metricas_dev.csv, sem número escrito aqui) e refaz a ação de cada caso. A ação depende só de p frente
+às fronteiras da matriz, então p ± ECE não é cortado em [0, 1]. Não treina nem recalibra nada e não
+abre o teste. Análise posterior ao plano (a decisão P1 é "calibração só medida"): não altera o
+protocolo primário nem as saídas dos outros modos.
+
 Entradas:
   resultados/predicoes_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg
   resultados/predicoes_teste.csv record_id,kredit,p_nb,p_tan,p_logreg[,p_sel] (só com --final)
+  resultados/metricas_dev.csv   modelo,...,ece_media (só com --calibracao)
   config/utilidade.json         matriz de utilidade U(ação, estado) e hipóteses
 Saídas:
   resultados/politicas_dev.csv         ação de cada regra, segunda ação e diferença de UE por caso
@@ -27,10 +35,12 @@ Saídas:
   com p_sel, as três tabelas do teste ganham sel (colunas ou linhas)
   resultados/duas_acoes_teste.csv           modelo,regra,utilidade_media,n_*,IC por regra: ue, ue2, limiar (só com --final)
   resultados/diferenca_duas_acoes_teste.csv modelo,comparacao,dif_utilidade_media,dif_ic_inf,dif_ic_sup,n_acao_diferente (só com --final)
+  resultados/sensibilidade_calibracao_dev.csv  modelo,cenario,deslocamento,n_*,utilidade_media,n_acao_muda_vs_base (só com --calibracao)
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/decisao.py          grava as saídas do dev
   uv run python codigo/decisao.py --final  grava só as saídas do teste
+  uv run python codigo/decisao.py --calibracao  grava só a sensibilidade das ações ao erro de calibração, no dev
   uv run python codigo/decisao.py --verificar  roda os autotestes e não grava nada
 """
 import json
@@ -44,6 +54,7 @@ import pandas as pd
 RAIZ = Path(__file__).resolve().parent.parent
 PREDICOES = RAIZ / "resultados/predicoes_dev.csv"
 TESTE = RAIZ / "resultados/predicoes_teste.csv"
+METRICAS = RAIZ / "resultados/metricas_dev.csv"
 UTILIDADE = RAIZ / "config/utilidade.json"
 SAIDA = RAIZ / "resultados"
 MODELOS = ["nb", "tan", "logreg"]
@@ -131,6 +142,41 @@ def calcular_duas_acoes(pred, u):
     return pd.DataFrame(linhas), pd.DataFrame(diferencas)
 
 
+def acao_deslocada(q, u):
+    """Ação de maior UE para a estimativa deslocada q = p ± ECE, com o mesmo desempate de ordenar().
+    Não confere q em [0, 1]: a ação só depende de q frente às fronteiras da matriz."""
+    ue = {a: (1 - q) * u[a]["bom"] + q * u[a]["ruim"] for a in ACOES}
+    return next(a for a in PRIORIDADE if ue[a] >= max(ue.values()) - TOLERANCIA)
+
+
+def calcular_calibracao(pred, u, ece):
+    """Refaz a ação de UE de cada caso com p − ECE, p e p + ECE (ece: ECE médio de cada modelo no dev).
+    A utilidade é a realizada: a ação deslocada aplicada ao estado verdadeiro do caso."""
+    estado = ["ruim" if k == 0 else "bom" for k in pred["kredit"]]  # kredit: 0 = ruim, 1 = bom
+    linhas = []
+    for m in MODELOS:
+        base = [acao_deslocada(x, u) for x in pred[f"p_{m}"]]
+        for cenario, desloc in [("menos_ece", -ece[m]), ("base", 0.0), ("mais_ece", ece[m])]:
+            acao = [acao_deslocada(x + desloc, u) for x in pred[f"p_{m}"]]
+            linhas.append({"modelo": m, "cenario": cenario, "deslocamento": desloc, **{f"n_{a}": acao.count(a) for a in ACOES},
+                           "utilidade_media": sum(u[a][e] for a, e in zip(acao, estado)) / len(acao),
+                           "n_acao_muda_vs_base": sum(x != y for x, y in zip(acao, base))})
+    return pd.DataFrame(linhas)
+
+
+def ler_ece():
+    """ECE médio de cada modelo no dev, de metricas_dev.csv; termina com erro se faltar arquivo, modelo ou valor."""
+    if not METRICAS.exists():
+        sys.exit(f"ERRO: {METRICAS} não existe; rode codigo/avaliar.py antes")
+    metricas = pd.read_csv(METRICAS)
+    if "ece_media" not in metricas.columns or not set(MODELOS) <= set(metricas["modelo"]):
+        sys.exit(f"ERRO: {METRICAS}: faltam a coluna ece_media ou os modelos {MODELOS}")
+    ece = metricas.set_index("modelo")["ece_media"]
+    if ece[MODELOS].isna().any():
+        sys.exit(f"ERRO: {METRICAS}: ece_media vazia")
+    return {m: float(ece[m]) for m in MODELOS}
+
+
 def ler(entrada, final=False):
     """Lê as predições e termina com erro se faltar coluna, não houver linhas ou alguma p_* for inválida."""
     if not entrada.exists():
@@ -213,6 +259,13 @@ def main(entrada=PREDICOES, sufixo="dev"):
         print(f"Gravados também {SAIDA / 'duas_acoes_teste.csv'} e {SAIDA / 'diferenca_duas_acoes_teste.csv'}")
 
 
+def main_calibracao():
+    """Grava sensibilidade_calibracao_dev.csv; lê só as predições do dev e metricas_dev.csv."""
+    tabela = calcular_calibracao(ler(PREDICOES), carregar_utilidade(), ler_ece())
+    tabela.to_csv(SAIDA / "sensibilidade_calibracao_dev.csv", index=False)
+    print(f"Gravado {SAIDA / 'sensibilidade_calibracao_dev.csv'}")
+
+
 def verificar():
     """Autoteste do --final com arquivo falso montado do dev, com e sem p_sel; não grava nada."""
     u = carregar_utilidade()
@@ -242,15 +295,31 @@ def verificar():
     g, r = u["aprovar"], u["rejeitar"]
     pstar = (g["bom"] - r["bom"]) / ((g["bom"] - r["bom"]) + (r["ruim"] - g["ruim"]))
     assert acao_duas(pstar - 0.01, u) == "aprovar" and acao_duas(pstar + 0.01, u) == "rejeitar"
+    # calibração: o cenário base reproduz o dev de calcular()
+    cal = calcular_calibracao(falso, u, {m: 0.1 for m in MODELOS})
+    dev = calcular(falso, u, False)[1]
+    for m in MODELOS:
+        b = cal[(cal["modelo"] == m) & (cal["cenario"] == "base")].iloc[0]
+        r = dev[(dev["modelo"] == m) & (dev["regra"] == "ue")].iloc[0]
+        assert b["n_acao_muda_vs_base"] == 0 and np.isclose(b["utilidade_media"], r["utilidade_media"])
+        assert all(b[f"n_{a}"] == r[f"n_{a}"] for a in ACOES)
+    # calibração: com as fronteiras 0,10 e 0,60 da matriz, 0,55 vira rejeitar com +0,1 e 0,05 vira análise manual
+    pouco = pd.DataFrame({"record_id": [1, 2], "kredit": [1, 0], **{f"p_{m}": [0.55, 0.05] for m in MODELOS}})
+    c = calcular_calibracao(pouco, u, {m: 0.1 for m in MODELOS}).set_index(["modelo", "cenario"])
+    assert (c.loc[("nb", "base"), ["n_aprovar", "n_analise_manual", "n_rejeitar"]] == [1, 1, 0]).all()
+    assert (c.loc[("nb", "mais_ece"), ["n_aprovar", "n_analise_manual", "n_rejeitar"]] == [0, 1, 1]).all()
+    assert c.loc[("nb", "mais_ece"), "n_acao_muda_vs_base"] == 2 and c.loc[("nb", "menos_ece"), "n_acao_muda_vs_base"] == 0
     print("verificar: ok")
 
 
 if __name__ == "__main__":
     if sys.argv[1:] == ["--final"]:
         main(TESTE, "teste")
+    elif sys.argv[1:] == ["--calibracao"]:
+        main_calibracao()
     elif sys.argv[1:] == ["--verificar"]:
         verificar()
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/decisao.py [--final | --verificar]")
+        sys.exit("Uso: uv run python codigo/decisao.py [--final | --calibracao | --verificar]")
     else:
         main()
