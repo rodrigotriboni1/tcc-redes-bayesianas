@@ -4,7 +4,7 @@
 
 Todos os arquivos de `resultados/` são gerados por sete scripts Python que leem CSV e gravam tabelas e figuras, sem servidor, banco de dados nem modelo salvo em arquivo. Os comandos abaixo partem da raiz do repositório, rodam sem interação e usam Python 3.12 com as dependências travadas pelo `uv`, inclusive o `pgmpy` 1.1.2.
 
-O repositório é público e está em https://github.com/rodrigotriboni1/tcc-redes-bayesianas. O `README.md` traz o passo a passo e a conferência da reprodução; o código tem licença MIT, o texto e os resultados, CC BY 4.0, e os dados mantêm a licença da fonte (UCI Machine Learning Repository).
+O repositório é público e está em https://github.com/rodrigotriboni1/tcc-redes-bayesianas. O `README.md` traz o passo a passo para outra pessoa clonar o repositório, rodar os scripts e conferir a reprodução; o código tem licença MIT, o texto e os resultados, CC BY 4.0, e os dados mantêm a licença da fonte (UCI Machine Learning Repository).
 
 ### A.1 Ambiente
 
