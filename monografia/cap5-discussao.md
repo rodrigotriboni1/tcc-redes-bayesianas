@@ -22,6 +22,8 @@ Os resultados de desenvolvimento (Tabelas 4.1, 4.3, 4.4, 4.7, 4.9, 4.10) vêm s�
 
 **Brier e calibração.** O Brier do TAN no teste foi 0,215, maior que o da taxa base, 0,210: pela regra pré-registrada, o TAN **não foi melhor que prever a taxa base** no teste. NB (0,199) e logística (0,191) ficaram abaixo da taxa base. O ECE foi 0,115 (NB), 0,157 (TAN) e 0,078 (regressão logística) (Figura 4.2). A calibração foi apenas medida, sem correção (Seção 5.9); essas probabilidades entram como estão na política.
 
+**Implicação para a camada de decisão.** A política supõe que *p* seja uma estimativa calibrada (Seção 2.7), e o TAN, modelo da comparação principal, é o que mais se afasta disso no teste: tem o Brier acima da taxa base e o maior ECE dos três. A camada de decisão não corrige essa falha, apenas a herda: os limiares 0,10 e 0,60 são aplicados a um *p* que, no TAN, errou mais em erro quadrático que a taxa base. A diferença de 22,5 é, portanto, o resultado da política com um estimador fraco, e não com um bom. O sinal da diferença é o mesmo nos três modelos, e o valor cai à medida que o ECE sobe (regressão logística, 38,3 com ECE de 0,078; NB, 29,5 com 0,115; TAN, 22,5 com 0,157). São três pontos, sem teste, com modelo, representação e conjunto de ações variando juntos (Seção 5.7), e a coincidência não é atribuída à calibração. O que o resultado sustenta é que, neste experimento, uma estimativa mal calibrada não impediu a política de três ações de superar o corte 0,5; ele não sustenta que o TAN seja adequado para decidir.
+
 **Políticas.** Na comparação principal, com o TAN (decisão P5), a diferença pareada de utilidade média (`ue` − `limiar`) foi 22,5, com intervalo de 95% de 9,2 a 37,2 (Tabela 4.6). O intervalo exclui zero, de modo que, pela regra pré-registrada (intervalo de 95%, plano de análise §8), o resultado é **a favor da política de três ações**, sem afirmação de causa. NB e regressão logística aparecem nas tabelas, sem destaque na leitura principal; os intervalos do NB (29,5; de 13,1 a 46,3) e da regressão logística (38,3; de 20,2 a 56,4) também excluem zero. A leitura carrega as ressalvas das Seções 5.4 e 5.5 (vantagem por construção, analista infalível, matriz demonstrativa e utilidade simulada sobre o rótulo observado). O resultado não indica qual modelo usar nem que a política seria vantajosa fora deste experimento.
 
 ## 5.3 Estudo de seleção
@@ -39,6 +41,8 @@ O estudo da §9 do plano é secundário e não altera a análise primária, que 
 ## 5.4 Simulação, não política real
 
 A base não traz o resultado das ações que não foram tomadas. A utilidade de cada política é, portanto, calculada aplicando a matriz de utilidade ao rótulo observado, como se cada ação tivesse sido executada. Isso é uma simulação: não há efeito causal da política nem lucro real medido. Os resultados não afirmam que a política seria vantajosa em operação, nem que se generalizam a outras bases ou carteiras.
+
+O trabalho é, por isso, uma demonstração metodológica: mostra como estimar o risco, derivar os limiares e medir a diferença entre duas regras sob uma matriz dada. Não é validação operacional, que exigiria uma matriz levantada com a instituição, o desfecho observado das ações não tomadas e acompanhamento ao longo do tempo.
 
 ## 5.5 Matriz demonstrativa e analista infalível
 
@@ -64,6 +68,8 @@ O intervalo por *bootstrap* do teste final reamostra os casos de teste com os mo
 
 A calibração das probabilidades é medida, mas não corrigida (decisão P1). Métodos de correção, como a sigmoide de Platt e a regressão isotônica \cite{platt1999,zadrozny2002,niculescu2005}, são citados na fundamentação sem aplicação. Como a política consome a probabilidade diretamente, um erro de calibração alto, como o do TAN no desenvolvimento, entra sem correção nas ações escolhidas. Isso é um desvio em relação à proposta, que prometia calibrar.
 
+A sensibilidade das ações a esse erro não foi quantificada: medi-la exigiria recalcular as ações com probabilidades corrigidas, o que está fora do protocolo primário e do plano. Dá para dizer, porém, onde o efeito se concentra. Com *c* = 40, a ação muda nos limiares 0,10 e 0,60, e um caso troca de ação quando o erro de *p* o faz atravessar um deles; são os casos próximos dessas fronteiras que se afetam, e o corte 0,5 de duas ações tem o mesmo problema em torno de 0,5. O ECE mede a diferença média entre a probabilidade estimada e a frequência observada em 10 faixas, e uma diferença média de 0,157, como a do TAN no teste, pode mudar a ação de casos próximos de um limiar. O sinal do efeito sobre a utilidade média não é conhecido, porque o erro desloca *p* para cima em umas faixas e para baixo em outras. Nada disso altera o protocolo primário: os resultados dos Capítulos 4 e 5 usam as probabilidades dos modelos, sem correção.
+
 ## 5.10 Direções futuras
 
 As direções a seguir decorrem das limitações acima, não das métricas do desenvolvimento, e não há promessa sobre o resultado de nenhuma delas:
@@ -71,6 +77,7 @@ As direções a seguir decorrem das limitações acima, não das métricas do de
 - substituir a matriz demonstrativa por valores levantados com especialistas e modelar o erro do analista na análise manual, o que permitiria examinar a comparação sem a vantagem por construção discutida na Seção 5.5;
 - avaliar políticas com dados que registrem o desfecho das ações não tomadas, condição para falar em efeito, e não só em simulação;
 - comparar modelos sob a mesma representação das variáveis, separando modelo e representação;
+- medir a sensibilidade das ações à calibração, recalibrando em dados separados daqueles em que a política é avaliada e sem alterar a análise primária;
 - estimar a incerteza incluindo a variação do treino.
 
 O teste final não acrescenta direções, e seu resultado não motiva mudança de modelo, parâmetro, faixa ou variável.

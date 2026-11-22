@@ -1,6 +1,6 @@
 # REFERÊNCIAS
 
-<!-- Formato ABNT NBR 6023 (autor-data). Gerado de referencias.bib; só campos do .bib. -->
+<!-- Formato ABNT NBR 6023 (autor-data). Gerado de referencias.bib; só campos do.bib. -->
 <!-- normas ABNT não citadas retiradas da lista: abnt6023, abnt10520, abnt14724 -->
 
 ANKAN, Ankur; TEXTOR, Johannes. pgmpy: a Python toolkit for Bayesian networks. **Journal of Machine Learning Research**, v. 25, n. 265, p. 1–8, 2024.
@@ -126,4 +126,4 @@ ZADROZNY, Bianca; ELKAN, Charles. Transforming classifier scores into accurate m
 | zadrozny2001 | cap2, cap3, cap5 | usada |
 | zadrozny2002 | cap2, cap5 | usada |
 
-Chaves citadas nos capítulos e ausentes do .bib: nenhuma.
+Chaves citadas nos capítulos e ausentes do.bib: nenhuma.

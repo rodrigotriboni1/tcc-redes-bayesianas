@@ -38,6 +38,8 @@ O trabalho é um experimento composto por *scripts* que leem arquivos de dados e
 
 O trabalho também não propõe uma regra de tipo distinto do limiar: como a utilidade esperada de cada ação é uma reta em `p`, a política equivale a uma regra de limiares sobre `p`, e a contribuição é derivar esses limiares dos custos de forma explícita. A parte 1 da pergunta vale para qualquer escore e não distingue a rede da regressão logística. Os resultados não se generalizam a outras bases nem validam uma política real de concessão.
 
+Convém separar o que o trabalho toma da teoria, o que implementa e o que observa. A equivalência entre maximizar a utilidade esperada e aplicar limiares sobre a probabilidade, e a ação intermediária análoga à opção de rejeição, são resultados conhecidos \cite{elkan2001,chow1970}, e o trabalho não os apresenta como novidade. A parte própria é a implementação: três modelos de risco treinados em um protocolo fixado antes das métricas, fronteiras calculadas a partir de `config/utilidade.json`, a política de três ações aplicada aos casos, a comparação com o corte 0,5 por *bootstrap* e a análise de sensibilidade dos limiares. O que se observou empiricamente vale só para o conjunto de teste de 200 casos: diferenças de ROC-AUC dentro do ruído, calibração pior no TAN e diferença pareada de utilidade a favor da política de três ações, lida com a ressalva da Seção 5.5.
+
 ## 1.5 Mudanças em relação à proposta
 
 Dez pontos mudaram em relação à proposta submetida, cada um com o motivo.
