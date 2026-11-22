@@ -10,7 +10,7 @@ Quanto aos objetivos de sensibilidade e de demonstração (Seção 1.3), os limi
 
 ## 6.2 Efeito medido nas ações e na utilidade média
 
-A segunda parte é respondida pelo conjunto de teste, aberto uma única vez em 17/11/2026, com 200 casos, dos quais 60 ruins. O critério de leitura é a diferença pareada de utilidade média entre a política de três ações por utilidade esperada e o corte 0,5 de duas ações, com intervalo de 95% por *bootstrap* (Tabela 4.6); o nível de 95% segue a decisão do autor registrada na §8 do plano de análise.
+A segunda parte é respondida pelo conjunto de teste, aberto uma única vez, com 200 casos, dos quais 60 ruins. O critério de leitura é a diferença pareada de utilidade média entre a política de três ações por utilidade esperada e o corte 0,5 de duas ações, com intervalo de 95% por *bootstrap* (Tabela 4.6); o nível de 95% segue a decisão do autor registrada na §8 do plano de análise.
 
 Na comparação principal, com o TAN, a diferença foi de 22,5, com intervalo de 9,2 a 37,2. O intervalo bootstrap da diferença pareada simulada exclui zero e, neste conjunto de teste, a diferença observada é a favor da política de três ações; esse achado não demonstra benefício operacional ou causal. Nas ações, a política de três ações aprovou 92, rejeitou 48 e encaminhou 60 casos para análise manual, contra 145 aprovações e 55 rejeições do corte 0,5; os 60 casos que mudaram de ação são exatamente os encaminhados para análise manual.
 
