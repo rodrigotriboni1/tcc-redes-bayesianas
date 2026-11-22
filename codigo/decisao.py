@@ -15,9 +15,24 @@ limiar vem da matriz, ao lado de ue (três ações) e do corte 0,5: utilidade m�
 diferenças pareadas ue − limiar, ue − ue2 e ue2 − limiar, nas mesmas reamostras do bootstrap.
 Análise exploratória posterior ao teste: não substitui a comparação principal.
 
+Com --calibracao, mede o quanto as ações e a utilidade se movem se a probabilidade que entra na camada de
+decisão tiver um viés de calibração. Análise de sensibilidade; no teste, exploratória e posterior à abertura
+do teste; não altera a análise primária. Não recalibra nada: nenhum modelo é treinado ou reajustado e nenhum
+método de calibração é aplicado. A cada delta da grade (-1; -0,5; -0,25; 0; +0,25; +0,5; +1, na log-odds),
+cada p_* vira p' = expit(logit(p) + delta); delta > 0 faz o modelo parecer mais pessimista (p' maior) e
+delta < 0, mais otimista. Sobre p', aplica ue (três ações), ue2 (duas ações, limiar da matriz) e o corte 0,5.
+Os rótulos observados (kredit) não são perturbados: a utilidade é medida contra o rótulo real. Por modelo e
+delta, grava utilidade média com intervalo de 95% (mesmo bootstrap, semente e reamostras de calcular_duas_acoes),
+contagem de ações, as diferenças pareadas ue − limiar, ue − ue2 e ue2 − limiar, e as fronteiras equivalentes
+na escala original de p: um viés delta com fronteira f equivale a deslocar f para expit(logit(f) − delta). As
+fronteiras (inferior e superior de ue, corte de ue2) vêm da matriz; o corte 0,5 é o fixo. Se algum p for
+exatamente 0 ou 1 (logit infinito), termina com erro. A grade não busca delta melhor nem aponta um delta.
+Lê os dois arquivos de predição já gravados (o do teste só é lido, nunca regerado) e grava os dois CSV de
+uma vez; se um faltar, não grava nenhum.
+
 Entradas:
   resultados/predicoes_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg
-  resultados/predicoes_teste.csv record_id,kredit,p_nb,p_tan,p_logreg[,p_sel] (só com --final)
+  resultados/predicoes_teste.csv record_id,kredit,p_nb,p_tan,p_logreg[,p_sel] (com --final e --calibracao)
   config/utilidade.json         matriz de utilidade U(ação, estado) e hipóteses
 Saídas:
   resultados/politicas_dev.csv         ação de cada regra, segunda ação e diferença de UE por caso
@@ -27,10 +42,13 @@ Saídas:
   com p_sel, as três tabelas do teste ganham sel (colunas ou linhas)
   resultados/duas_acoes_teste.csv           modelo,regra,utilidade_media,n_*,IC por regra: ue, ue2, limiar (só com --final)
   resultados/diferenca_duas_acoes_teste.csv modelo,comparacao,dif_utilidade_media,dif_ic_inf,dif_ic_sup,n_acao_diferente (só com --final)
+  resultados/sensibilidade_calibracao_dev.csv    uma linha por modelo × delta (só com --calibracao)
+  resultados/sensibilidade_calibracao_teste.csv  o mesmo sobre as predições já gravadas do teste (só com --calibracao)
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/decisao.py          grava as saídas do dev
   uv run python codigo/decisao.py --final  grava só as saídas do teste
+  uv run python codigo/decisao.py --calibracao  grava as duas tabelas de sensibilidade à calibração
   uv run python codigo/decisao.py --verificar  roda os autotestes e não grava nada
 """
 import json
@@ -56,6 +74,11 @@ TOLERANCIA = 1e-9
 REAMOSTRAS = 2000
 SEMENTE = 2026
 PERCENTIS = [2.5, 97.5]
+CORTE = 0.5  # limiar fixo da regra de comparação
+# Viés aditivo na log-odds do modo --calibracao (grade fixada em 22/11/2026, antes de ver os números).
+DELTAS = [-1.0, -0.5, -0.25, 0.0, 0.25, 0.5, 1.0]
+ROTULO_DEV = "análise de sensibilidade; não altera a análise primária"
+ROTULO_TESTE = "análise de sensibilidade; exploratória e posterior à abertura do teste; não altera a análise primária"
 
 
 def carregar_utilidade(caminho=UTILIDADE):
@@ -93,7 +116,7 @@ def ordenar(p, u):
 def limiar(p):
     """Regra de comparação: aprova se p < 0,5, senão rejeita."""
     conferir_p(p)
-    return "aprovar" if p < 0.5 else "rejeitar"
+    return "aprovar" if p < CORTE else "rejeitar"
 
 
 def acao_duas(p, u):
@@ -213,6 +236,72 @@ def main(entrada=PREDICOES, sufixo="dev"):
         print(f"Gravados também {SAIDA / 'duas_acoes_teste.csv'} e {SAIDA / 'diferenca_duas_acoes_teste.csv'}")
 
 
+def deslocar(p, delta):
+    """p' = expit(logit(p) + delta), com p escalar ou série. Com delta = 0 devolve p sem conta,
+    para a linha sem viés ser idêntica à original, sem erro de arredondamento."""
+    if delta == 0:
+        return p
+    return 1 / (1 + np.exp(-(np.log(p / (1 - p)) + delta)))
+
+
+def fronteira(a, b, u):
+    """P(ruim) em que UE(a) = UE(b): onde as duas retas se cruzam."""
+    dbom = u[a]["bom"] - u[b]["bom"]
+    return dbom / (dbom + u[b]["ruim"] - u[a]["ruim"])
+
+
+def fronteiras_matriz(u):
+    """(inferior, superior, corte de duas ações) de p, derivados da matriz: ue aprova abaixo do inferior,
+    manda à análise manual entre os dois e rejeita acima do superior; ue2 aprova abaixo do corte."""
+    inferior, superior = fronteira("aprovar", "analise_manual", u), fronteira("analise_manual", "rejeitar", u)
+    duas = fronteira("aprovar", "rejeitar", u)
+    if not (0 < inferior < superior < 1 and 0 < duas < 1):
+        sys.exit(f"ERRO: {UTILIDADE}: com esta matriz a análise manual nunca é escolhida; as fronteiras equivalentes não se aplicam")
+    return inferior, superior, duas
+
+
+def conferir_logit(pred, entrada):
+    """Termina com erro se algum p_* for exatamente 0 ou 1: o logit seria infinito."""
+    for m in MODELOS + ["sel"] * ("p_sel" in pred.columns):
+        if ((pred[f"p_{m}"] <= 0) | (pred[f"p_{m}"] >= 1)).any():
+            sys.exit(f"ERRO: {entrada}: p_{m} tem valor exatamente 0 ou 1; o logit é infinito e o viés não é definido")
+
+
+def sensibilidade_calibracao(pred, u, rotulo):
+    """Uma linha por modelo × delta. Reaproveita calcular_duas_acoes sobre as probabilidades deslocadas,
+    então os números de delta = 0 são os da análise primária. O kredit não é deslocado."""
+    inferior, superior, duas = fronteiras_matriz(u)
+    modelos = MODELOS + ["sel"] * ("p_sel" in pred.columns)
+    por_delta = [calcular_duas_acoes(pred.assign(**{f"p_{m}": deslocar(pred[f"p_{m}"], d) for m in modelos}), u) for d in DELTAS]
+    linhas = []
+    for m in modelos:
+        for d, (resumo, dif) in zip(DELTAS, por_delta):
+            # fronteira equivalente na escala original de p: expit(logit(f) − delta)
+            linha = {"analise": rotulo, "modelo": m, "delta": d,
+                     "ue_fronteira_inf_eq": deslocar(inferior, -d), "ue_fronteira_sup_eq": deslocar(superior, -d),
+                     "ue2_corte_eq": deslocar(duas, -d), "limiar_corte_eq": deslocar(CORTE, -d)}
+            for r in resumo[resumo["modelo"] == m].to_dict("records"):
+                linha.update({f"{r['regra']}_{k}": v for k, v in r.items() if k not in ("modelo", "regra")})
+            for r in dif[dif["modelo"] == m].to_dict("records"):
+                linha.update({f"{k}_{r['comparacao'].replace(' - ', '_')}": v for k, v in r.items() if k not in ("modelo", "comparacao")})
+            linhas.append(linha)
+    return pd.DataFrame(linhas)
+
+
+def main_calibracao():
+    """Lê os dois arquivos de predição antes de gravar qualquer coisa; grava as duas tabelas de sensibilidade."""
+    u = carregar_utilidade()
+    fronteiras_matriz(u)
+    entradas = [(PREDICOES, "dev", ROTULO_DEV), (TESTE, "teste", ROTULO_TESTE)]
+    preds = [ler(entrada, True) for entrada, _, _ in entradas]
+    for pred, (entrada, _, _) in zip(preds, entradas):
+        conferir_logit(pred, entrada)
+    tabelas = [sensibilidade_calibracao(pred, u, rotulo) for pred, (_, _, rotulo) in zip(preds, entradas)]
+    for tabela, (_, sufixo, _) in zip(tabelas, entradas):
+        tabela.to_csv(SAIDA / f"sensibilidade_calibracao_{sufixo}.csv", index=False)
+        print(f"Gravado {SAIDA / f'sensibilidade_calibracao_{sufixo}.csv'}")
+
+
 def verificar():
     """Autoteste do --final com arquivo falso montado do dev, com e sem p_sel; não grava nada."""
     u = carregar_utilidade()
@@ -242,15 +331,59 @@ def verificar():
     g, r = u["aprovar"], u["rejeitar"]
     pstar = (g["bom"] - r["bom"]) / ((g["bom"] - r["bom"]) + (r["ruim"] - g["ruim"]))
     assert acao_duas(pstar - 0.01, u) == "aprovar" and acao_duas(pstar + 0.01, u) == "rejeitar"
+    # calibração: delta = 0 reproduz o caso sem viés; o viés tem o sinal e a inversa esperados
+    assert deslocar(0.3, 0) == 0.3 and deslocar(0.3, 1.0) > 0.3 > deslocar(0.3, -1.0)
+    assert all(abs(deslocar(deslocar(x, 0.7), -0.7) - x) < 1e-12 for x in [0.01, 0.3, 0.5, 0.99])
+    assert abs(deslocar(0.5, 1.0) - 1 / (1 + math.exp(-1.0))) < 1e-15
+    # fronteiras da matriz batem com a conta à mão (c/400, 1 - c/100, corte de duas ações) (com c = 40: 0,10, 0,60 e 0,20)
+    g, perda, c = u["aprovar"]["bom"], -u["aprovar"]["ruim"], -u["analise_manual"]["ruim"]
+    assert u["analise_manual"]["bom"] == g - c and u["rejeitar"] == {"bom": 0, "ruim": 0}
+    inferior, superior, corte2 = fronteiras_matriz(u)
+    assert np.isclose(inferior, c / perda) and np.isclose(superior, 1 - c / g) and np.isclose(corte2, g / (g + perda))
+    acao_ue = lambda p, u: ordenar(p, u)[0]
+    # a fronteira equivalente é onde a ação muda quando o viés entra: abaixo aprova, acima manda à análise manual
+    for d in DELTAS:
+        eq = deslocar(inferior, -d)
+        assert acao_ue(deslocar(eq - 1e-6, d), u) == "aprovar" and acao_ue(deslocar(eq + 1e-6, d), u) == "analise_manual"
+        eq = deslocar(superior, -d)
+        assert acao_ue(deslocar(eq - 1e-6, d), u) == "analise_manual" and acao_ue(deslocar(eq + 1e-6, d), u) == "rejeitar"
+        eq = deslocar(corte2, -d)
+        assert acao_duas(deslocar(eq - 1e-6, d), u) == "aprovar" and acao_duas(deslocar(eq + 1e-6, d), u) == "rejeitar"
+    tab = sensibilidade_calibracao(falso, u, "teste")
+    assert len(tab) == len(MODELOS) * len(DELTAS) and list(tab["delta"][: len(DELTAS)]) == DELTAS
+    assert len(sensibilidade_calibracao(falso.assign(p_sel=falso["p_tan"]), u, "teste")) == (len(MODELOS) + 1) * len(DELTAS)
+    for m in MODELOS:
+        t = tab[tab["modelo"] == m].set_index("delta")
+        zero = t.loc[0.0]
+        ref = sem[1][sem[1]["modelo"] == m].set_index("regra")
+        for r in ("ue", "limiar"):
+            assert zero[f"{r}_utilidade_media"] == ref.loc[r, "utilidade_media"]
+            assert all(zero[f"{r}_n_{a}"] == ref.loc[r, f"n_{a}"] for a in ACOES)
+        assert zero["dif_utilidade_media_ue_limiar"] == sem[2].set_index("modelo").loc[m, "dif_utilidade_media"]
+        assert (zero["ue_fronteira_inf_eq"], zero["ue_fronteira_sup_eq"], zero["ue2_corte_eq"], zero["limiar_corte_eq"]) == (inferior, superior, corte2, CORTE)
+        for r in ("ue", "ue2", "limiar"):
+            assert (t[[f"{r}_n_{a}" for a in ACOES]].sum(axis=1) == len(falso)).all()
+        # mais pessimista (delta maior): aprova menos e a fronteira equivalente cai
+        assert t["ue_n_aprovar"].is_monotonic_decreasing and t["limiar_n_aprovar"].is_monotonic_decreasing and t["ue_fronteira_inf_eq"].is_monotonic_decreasing
+    # entrada inválida: p exatamente 0 ou 1
+    for ruim in (0.0, 1.0):
+        try:
+            conferir_logit(falso.assign(p_tan=ruim), PREDICOES)
+        except SystemExit:
+            continue
+        raise AssertionError(f"p = {ruim} deveria terminar com erro")
+    conferir_logit(falso, PREDICOES)
     print("verificar: ok")
 
 
 if __name__ == "__main__":
     if sys.argv[1:] == ["--final"]:
         main(TESTE, "teste")
+    elif sys.argv[1:] == ["--calibracao"]:
+        main_calibracao()
     elif sys.argv[1:] == ["--verificar"]:
         verificar()
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/decisao.py [--final | --verificar]")
+        sys.exit("Uso: uv run python codigo/decisao.py [--final | --calibracao | --verificar]")
     else:
         main()
