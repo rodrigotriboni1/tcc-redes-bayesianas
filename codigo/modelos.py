@@ -12,6 +12,7 @@ Saídas:
   resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg,p_sel (só com --final;
                                        p_sel é secundário)
   resultados/predicoes_selecao.csv     config,record_id,fold_externo,fold_interno,p_ruim (só com --selecao)
+  resultados/predicoes_calibradas_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg (só com --calibrar)
 
 Com --ocultar, os modelos são treinados com as 20 variáveis e cada variável é escondida,
 uma por vez, só na previsão: as redes ficam sem aquela evidência e a regressão logística
@@ -29,12 +30,17 @@ externo e prevê a partição (fold_interno = -1); o treino externo é dividido 
 partições internas, e cada rede treinada no treino interno prevê a validação interna.
 Imprime o tempo total, em segundos.
 
+Com --calibrar, lê só resultados/predicoes_dev.csv (análise secundária, calibração de Platt).
+Para cada partição k e cada modelo, ajusta LogisticRegression(max_iter=1000) de ruim sobre
+logit(p) nas outras 4 partições e aplica o ajuste à partição k. p igual a 0 ou 1 é erro.
+
 Uso: a partir da raiz do repositório,
   uv run python codigo/modelos.py              grava as saídas
   uv run python codigo/modelos.py --verificar  roda os autotestes e não grava nada
   uv run python codigo/modelos.py --ocultar    grava só predicoes_dev_oculta.csv
   uv run python codigo/modelos.py --final <arquivo>  grava só predicoes_teste.csv
   uv run python codigo/modelos.py --selecao    grava só predicoes_selecao.csv
+  uv run python codigo/modelos.py --calibrar   grava só predicoes_calibradas_dev.csv
 """
 import json
 import sys
@@ -223,6 +229,38 @@ def main_selecao():
     SAIDA.mkdir(exist_ok=True)
     tabela.to_csv(SAIDA / "predicoes_selecao.csv", index=False)
     print(f"tempo total de --selecao: {time.perf_counter() - inicio:.1f} s")
+
+
+def platt(p, ruim):
+    """Regressão logística de ruim sobre a única variável logit(p)."""
+    return LogisticRegression(max_iter=1000).fit(np.log(p / (1 - p)).reshape(-1, 1), ruim)
+
+
+def calibrar(pred):
+    """p_* de cada partição k trocado pela correção de Platt ajustada nas outras partições."""
+    for m in MODELOS:
+        p = pred[f"p_{m}"]
+        if not ((p > 0) & (p < 1)).all():
+            sys.exit(f"ERRO: p_{m} fora de (0, 1); a calibração precisa de logit(p) finito")
+    saida = pred.copy()
+    folds, ruim = pred["fold"].to_numpy(), 1 - pred["kredit"].to_numpy()
+    for k in range(5):
+        for m in MODELOS:
+            p = pred[f"p_{m}"].to_numpy()
+            ajuste = platt(p[folds != k], ruim[folds != k])
+            saida.loc[folds == k, f"p_{m}"] = ajuste.predict_proba(np.log(p[folds == k] / (1 - p[folds == k])).reshape(-1, 1))[:, 1]
+    for m in MODELOS:
+        p = saida[f"p_{m}"]
+        if not ((p > 0) & (p < 1)).all():
+            sys.exit(f"ERRO: p_{m} calibrada fora de (0, 1)")
+    return saida
+
+
+def main_calibrar():
+    entrada = SAIDA / "predicoes_dev.csv"
+    if not entrada.exists():
+        sys.exit(f"ERRO: arquivo ausente: {entrada}")
+    calibrar(pd.read_csv(entrada)).to_csv(SAIDA / "predicoes_calibradas_dev.csv", index=False)
 
 
 def main():
@@ -415,6 +453,29 @@ def verificar():
             except SystemExit:
                 pass
             assert not (Path(pasta2) / "predicoes_teste.csv").exists()
+    # 12a: guarda de vazamento: trocar kredit da partição k não muda a p calibrada da partição k
+    calibrada = calibrar(gravado)
+    for k in range(5):
+        trocado = gravado.copy()
+        trocado.loc[folds == k, "kredit"] = 1 - trocado.loc[folds == k, "kredit"]
+        outra = calibrar(trocado)
+        for m in MODELOS:
+            assert np.abs(outra.loc[folds == k, f"p_{m}"].to_numpy() - calibrada.loc[folds == k, f"p_{m}"].to_numpy()).max() < 1e-12, (k, m)
+    # 12b: recupera inclinação 0,5 e intercepto 1 de dados sintéticos
+    rng = np.random.default_rng(2026)
+    p = rng.uniform(0.05, 0.95, 20000)
+    ruim = (rng.uniform(size=20000) < 1 / (1 + np.exp(-(0.5 * np.log(p / (1 - p)) + 1)))).astype(int)
+    ajuste = platt(p, ruim)
+    assert abs(ajuste.coef_[0][0] - 0.5) < 0.05 and abs(ajuste.intercept_[0] - 1) < 0.1, (ajuste.coef_, ajuste.intercept_)
+    # 12c: p igual a 0 ou 1 termina com erro
+    for v in (0.0, 1.0):
+        ruim_p = gravado.copy()
+        ruim_p.loc[0, "p_nb"] = v
+        try:
+            calibrar(ruim_p)
+            assert False, f"--calibrar aceitou p = {v}"
+        except SystemExit as e:
+            assert e.code not in (0, None)
     print("verificar: ok")
 
 
@@ -425,9 +486,11 @@ if __name__ == "__main__":
         main_oculta()
     elif sys.argv[1:] == ["--selecao"]:
         main_selecao()
+    elif sys.argv[1:] == ["--calibrar"]:
+        main_calibrar()
     elif sys.argv[1:2] == ["--final"] and len(sys.argv) == 3:
         final(sys.argv[2], SAIDA)
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/modelos.py [--verificar | --ocultar | --selecao | --final <arquivo>]")
+        sys.exit("Uso: uv run python codigo/modelos.py [--verificar | --ocultar | --selecao | --calibrar | --final <arquivo>]")
     else:
         main()

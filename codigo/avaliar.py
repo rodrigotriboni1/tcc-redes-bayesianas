@@ -20,12 +20,16 @@ ordem da grade, com log_loss_interno até 1e-9 acima do menor. Em selecao_dev.cs
 e a linha aninhado (em cada partição externa, a configuração escolhida naquele bloco) têm as
 métricas das partições externas resumidas como em metricas_dev.csv.
 
+Com --calibrada, mede as predições calibradas por Platt (análise secundária) do mesmo jeito
+que o modo sem opção mede as originais. Não ajusta nada.
+
 Entradas:
   resultados/predicoes_dev.csv         record_id,kredit,fold,p_nb,p_tan,p_logreg
   resultados/predicoes_dev_oculta.csv  record_id,modelo,variavel_oculta,p_ruim (só com --ocultar)
   resultados/metricas_dev.csv          desempenho com todas as variáveis (só com --ocultar)
   resultados/predicoes_teste.csv       record_id,kredit,p_nb,p_tan,p_logreg[,p_sel] (só com --final)
   resultados/predicoes_selecao.csv     config,record_id,fold_externo,fold_interno,p_ruim (só com --selecao)
+  resultados/predicoes_calibradas_dev.csv  record_id,kredit,fold,p_nb,p_tan,p_logreg (só com --calibrada)
   dados/processados/dev.csv            proporção de ruins do dev para a taxa_base (só com --final)
 Saídas:
   resultados/metricas_dev.csv   média e desvio amostral, entre as 5 partições, de cada métrica
@@ -35,6 +39,8 @@ Saídas:
   resultados/calibracao_teste.png diagrama de calibração no teste (só com --final)
   resultados/selecao_escolha.csv  fold_externo,config,log_loss_interno,escolhida (só com --selecao)
   resultados/selecao_dev.csv      métricas de cada configuração e do aninhado, colunas de metricas_dev.csv (só com --selecao)
+  resultados/metricas_calibradas_dev.csv  colunas de metricas_dev.csv, para p calibrada (só com --calibrada)
+  resultados/calibracao_calibrada_dev.png diagrama de calibração da p calibrada (só com --calibrada)
 
 Uso: a partir da raiz do repositório,
   uv run python codigo/avaliar.py              grava as saídas
@@ -42,6 +48,7 @@ Uso: a partir da raiz do repositório,
   uv run python codigo/avaliar.py --ocultar    grava só evidencia_incompleta.csv
   uv run python codigo/avaliar.py --final      grava só metricas_teste.csv e calibracao_teste.png
   uv run python codigo/avaliar.py --selecao    grava só selecao_escolha.csv e selecao_dev.csv
+  uv run python codigo/avaliar.py --calibrada  grava só metricas_calibradas_dev.csv e calibracao_calibrada_dev.png
 """
 import sys
 from pathlib import Path
@@ -60,6 +67,7 @@ PREDICOES = SAIDA / "predicoes_dev.csv"
 OCULTA = SAIDA / "predicoes_dev_oculta.csv"
 TESTE = SAIDA / "predicoes_teste.csv"
 SELECAO = SAIDA / "predicoes_selecao.csv"
+CALIBRADAS = SAIDA / "predicoes_calibradas_dev.csv"
 # mesma grade e ordem de desempate de modelos.py
 CONFIGS = ["nb_ess1", "nb_ess5", "nb_ess10", "nb_ess50", "tan_ess1", "tan_ess5", "tan_ess10", "tan_ess50"]
 DEV = RAIZ / "dados/processados/dev.csv"
@@ -277,6 +285,12 @@ def main_selecao():
     tabela.to_csv(SAIDA / "selecao_dev.csv", index=False)
 
 
+def main_calibrada():
+    pred = ler(CALIBRADAS, COLUNAS)
+    calcular(pred).to_csv(SAIDA / "metricas_calibradas_dev.csv", index=False)
+    desenhar(pred, "calibracao_calibrada_dev.png", "no dev, p calibrado por Platt")
+
+
 def verificar():
     # tudo 0,8 sem nenhum ruim: erro de calibração 0,8
     assert abs(ece(np.zeros(10), np.full(10, 0.8)) - 0.8) < 1e-12
@@ -311,9 +325,11 @@ if __name__ == "__main__":
         main_oculta()
     elif sys.argv[1:] == ["--selecao"]:
         main_selecao()
+    elif sys.argv[1:] == ["--calibrada"]:
+        main_calibrada()
     elif sys.argv[1:] == ["--final"]:
         main_final()
     elif sys.argv[1:]:
-        sys.exit("Uso: uv run python codigo/avaliar.py [--verificar | --ocultar | --selecao | --final]")
+        sys.exit("Uso: uv run python codigo/avaliar.py [--verificar | --ocultar | --selecao | --calibrada | --final]")
     else:
         main()
