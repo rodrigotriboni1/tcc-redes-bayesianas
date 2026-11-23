@@ -234,7 +234,7 @@ Issue 119. Depende das issues 01 e 02 já no `main` e do registro prévio em `do
 8. `roc_auc_media` e `pr_auc_media` de `nb`, `tan` e `logreg` são iguais às de `metricas_dev.csv` a 1e-9, porque a correção é monótona. Se não forem, é motivo para parar e perguntar (inclinação negativa), não para ajustar.
 9. Os demais arquivos de `resultados/` ficam idênticos byte a byte; duas execuções geram arquivos iguais; a descrição do PR não usa "melhor" nem comenta valores.
 
-`factory/checks.sh` ganha duas linhas, uma para cada modo novo, no molde das de `--selecao` (autorizado na issue 119). Nenhuma outra mudança em `factory/`.
+`factory/checks.sh` ganhou o bloco dos dois modos novos, no molde do de `--selecao`, no PR 121, antes da construção: `factory/*` é caminho protegido e o builder não o edita. O PR da issue não toca em `factory/`.
 
 Fora do escopo: `--final` e qualquer uso de `predicoes_teste.csv`; regressão isotônica e qualquer outro método; trocar `p` por `p` calibrada em `decisao.py` ou `sensibilidade.py`; escolher entre `p` e `p` calibrada; intervalo por bootstrap; mudar os Capítulos 4 e 5.
 
