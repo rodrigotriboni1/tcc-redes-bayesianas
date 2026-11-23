@@ -28,6 +28,7 @@ Cada script grava apenas em `resultados/`; a exceção é `preparar_sgc.py`, que
 | Evidência incompleta | `uv run python codigo/modelos.py --ocultar`, depois `uv run python codigo/avaliar.py --ocultar` | `predicoes_dev_oculta.csv`, `evidencia_incompleta.csv` |
 | Camada de decisão | `uv run python codigo/decisao.py` | `politicas_dev.csv`, `resumo_politicas_dev.csv` |
 | Sensibilidade à calibração (posterior ao plano) | `uv run python codigo/decisao.py --calibracao` | `sensibilidade_calibracao_dev.csv` |
+| Calibração de Platt (secundária, posterior ao plano) | `uv run python codigo/modelos.py --calibrar`, depois `uv run python codigo/avaliar.py --calibrada` | `predicoes_calibradas_dev.csv`, `metricas_calibradas_dev.csv`, `calibracao_calibrada_dev.png` |
 | Sensibilidade ao erro do analista (posterior ao plano) | `uv run python codigo/decisao.py --analista` | `sensibilidade_analista_dev.csv` |
 | Sensibilidade | `uv run python codigo/sensibilidade.py` | `sensibilidade.csv`, `sensibilidade.png` |
 | Estudo de seleção (secundário) | `uv run python codigo/modelos.py --selecao`, depois `uv run python codigo/avaliar.py --selecao` | `predicoes_selecao.csv`, `selecao_dev.csv`, `selecao_escolha.csv` |
@@ -89,13 +90,13 @@ A política que separa a estimativa do risco (rede bayesiana, com calibração m
 
 | Item | Arquivo | Onde entra |
 |---|---|---|
-| ROC-AUC, PR-AUC, Brier, log loss e erro de calibração dos três modelos e da taxa base, com média e desvio entre as 5 partições | `metricas_dev.csv` | Capítulo 4.1 |
-| Diagrama de calibração | `calibracao_dev.png` | Capítulo 4.1 |
-| Queda por variável escondida | `evidencia_incompleta.csv` | Capítulo 4.2 |
-| Utilidade média e distribuição das ações por modelo e regra | `resumo_politicas_dev.csv` | Capítulo 4.3 |
-| Fronteiras de decisão por perda e custo da análise | `sensibilidade.csv`, `sensibilidade.png` | Capítulo 4.4 |
-| Arestas do TAN em cada partição | `tan_arestas.csv` | Capítulo 4.1 |
-| No teste final: métricas com intervalo, utilidade média com intervalo e a diferença pareada entre as regras | `metricas_teste.csv`, `resumo_politicas_teste.csv`, `diferenca_politicas_teste.csv` | Capítulos 4.1 e 4.3 |
+| ROC-AUC, PR-AUC, Brier, log loss e erro de calibração dos três modelos e da taxa base, com média e desvio entre as 5 partições | `metricas_dev.csv` | Seção 4.1 |
+| Diagrama de calibração | `calibracao_dev.png` | Seção 4.1 |
+| Queda por variável escondida | `evidencia_incompleta.csv` | Seção 4.2 |
+| Utilidade média e distribuição das ações por modelo e regra | `resumo_politicas_dev.csv` | Seção 4.3 |
+| Fronteiras de decisão por perda e custo da análise | `sensibilidade.csv`, `sensibilidade.png` | Seção 4.4 |
+| Arestas do TAN em cada partição | `tan_arestas.csv` | Seção 4.1 |
+| No teste final: métricas com intervalo, utilidade média com intervalo e a diferença pareada entre as regras | `metricas_teste.csv`, `resumo_politicas_teste.csv`, `diferenca_politicas_teste.csv` | Seções 4.1 e 4.3 |
 
 Todos os três modelos aparecem em todas as tabelas, também os que não vão para o texto principal.
 
@@ -152,6 +153,7 @@ Qualquer mudança neste plano depois de existirem resultados vira uma linha em [
 
 - O intervalo de 95% é o critério de leitura da diferença (seção 4), o mesmo nível do bootstrap das métricas. Decidido depois da abertura do teste: confirma o que já estava escrito.
 - O limite de 0,03 de AUC, que vem do plano, vale só para ROC-AUC. PR-AUC é apenas descrita, sem conclusão de ruído. Decidido depois da abertura do teste; registro em `docs/decisoes.md`.
+- A correção sigmoide de Platt sobre as predições do desenvolvimento (Seção 4.10) é uma análise secundária, decidida depois da abertura do teste e registrada em `docs/decisoes.md` antes de rodar. Ela não substitui a regra de que a calibração só é medida nos resultados principais.
 
 ### 9. Estudo de seleção (secundário, pré-registrado)
 

@@ -52,7 +52,7 @@ Dez pontos mudaram em relação à proposta submetida, cada um com o motivo.
 
 **Protótipo.** O protótipo previsto na proposta, que mostraria evidência, risco estimado, ação recomendada e justificativa, passou a ser uma demonstração em terminal, que recebe um caso e mostra o risco estimado e a utilidade de cada ação. A justificativa textual da recomendação ficou de fora: a demonstração mostra a conta (risco, utilidade de cada ação e fronteiras), não uma explicação em texto. Uma interface de uma tela foi deixada para depois do experimento pronto.
 
-**Calibração.** A proposta previa calibrar as probabilidades; o trabalho apenas mede o erro de calibração, sem aplicar correção. Essa opção decorre do fato de que corrigir exigiria escolher o método depois de ver as métricas do desenvolvimento, o que fere a pré-especificação da análise. A exigência de probabilidade calibrada para a decisão por custos vem da literatura, não do experimento; ela é discutida no Capítulo 2.
+**Calibração.** A proposta previa calibrar as probabilidades; o trabalho apenas mede o erro de calibração, sem aplicar correção. Essa opção decorre do fato de que corrigir exigiria escolher o método depois de ver as métricas do desenvolvimento, o que fere a pré-especificação da análise. A exigência de probabilidade calibrada para a decisão por custos vem da literatura, não do experimento; ela é discutida no Capítulo 2. Uma análise secundária, posterior ao teste, aplica a correção sigmoide de Platt às predições do desenvolvimento e mede o efeito (Seção 4.10); ela não altera os resultados principais.
 
 **Pergunta de pesquisa.** A proposta perguntava se a política baseada em probabilidades calibradas e utilidade esperada produz decisões mais consistentes e transparentes que a política por escore e limiar; "consistentes" aparece na etapa A e "transparentes", no Resumo. A pergunta foi reformulada nas duas partes da Seção 1.2. A reformulação ocorreu porque "consistentes" e "transparentes" não correspondiam a grandezas medidas. A forma em duas partes separa a propriedade da política do efeito medido, e a troca de "calibrada" por "com calibração medida" acompanha a mudança anterior.
 
@@ -62,7 +62,7 @@ Dez pontos mudaram em relação à proposta submetida, cada um com o motivo.
 
 **Estrutura da rede.** A proposta previa comparar uma estrutura guiada por conhecimento do domínio com outra aprendida dos dados por BIC (critério de informação bayesiano) ou BDeu (*Bayesian Dirichlet equivalent uniform*); o trabalho usa *Naive Bayes* e TAN, sem estrutura de domínio, e a busca por *hill climbing*, prevista como opcional, não foi rodada. As duas estruturas foram escolhidas porque o *Naive Bayes* é a referência simples e o TAN permite dependência entre variáveis. 
 
-**Linha de base.** A proposta previa a regressão logística com probabilidades calibradas; no trabalho ela não é calibrada, e só se mede o seu erro de calibração. 
+**Linha de base.** A proposta previa a regressão logística com probabilidades calibradas; no trabalho ela não é calibrada nos resultados principais, e só se mede o seu erro de calibração; a Seção 4.10 aplica Platt a ela como análise secundária. 
 
 **Diagramas de influência e explicação da evidência.** A revisão sobre diagramas de influência e, na etapa F, o uso de Streamlit e a apresentação da evidência mais relevante e da mudança em relação à probabilidade a priori não entram no trabalho. 
 
