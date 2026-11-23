@@ -2,13 +2,13 @@
 
 <!-- Entradas do.bib marcadas "% VERIFICAR" ou "A CONFERIR" só podem ser citadas depois de conferidas no original (PLANO.md §9). -->
 
-Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas após sua abertura, conforme a Seção 3.6; três análises exploratórias posteriores foram decididas depois dos resultados (Seções 4.7 a 4.9).
+Este capítulo descreve a base de dados, o protocolo de divisão e validação, os modelos de risco, as métricas, a camada de decisão por utilidade esperada, a análise de sensibilidade, o estudo secundário de seleção e os cuidados de reprodutibilidade. O plano principal de análise foi estabelecido antes da observação dos resultados do teste; duas decisões complementares de leitura foram registradas após sua abertura, conforme a Seção 3.6; quatro análises exploratórias posteriores foram decididas depois dos resultados (Seções 4.7 a 4.10).
 
 ## 3.1 Base de dados
 
 Utiliza-se a base South German Credit \cite{gromping2019}, versão corrigida da German Credit Data \cite{hofmann1994}, disponibilizada no repositório da UCI \cite{uci573}. A base contém 1000 registros, 20 variáveis preditoras e a variável-alvo risco do crédito, com 300 casos classificados como ruins e 700 como bons. A codificação do alvo é invertida em relação ao usual: o valor 0 indica crédito ruim e o valor 1, crédito bom; a classe positiva adotada em todo o trabalho é a classe ruim, e toda probabilidade reportada refere-se à probabilidade de o caso ser ruim.
 
-Das 20 variáveis preditoras, três são contínuas (duração do crédito, valor do crédito e idade) e as 17 restantes já são categóricas. No texto e nas tabelas de resultados, adotam-se os nomes traduzidos para o português; os nomes originais em alemão são mantidos apenas no código-fonte e na Tabela 1 para referência à base original. O identificador `record_id` é removido antes de qualquer etapa de modelagem.
+Das 20 variáveis preditoras, três são contínuas (duração do crédito, valor do crédito e idade) e as 17 restantes já são categóricas. No texto e nas tabelas de resultados, adotam-se os nomes traduzidos para o português; os nomes originais em alemão são mantidos apenas no código-fonte e na Tabela 3.1 para referência à base original. O identificador `record_id` é removido antes de qualquer etapa de modelagem.
 
 **Tabela 3.1** – Dicionário das variáveis. Categorias: número de valores inteiros distintos observados no conjunto de desenvolvimento (n = 800), calculado a partir de `dados/processados/dev.csv`; os códigos e seus significados seguem o codetable.txt da UCI (South German Credit, https://archive.ics.uci.edu/dataset/573/south+german+credit+update), traduzidos para o português.
 
@@ -94,7 +94,7 @@ A inferência é exata, por eliminação de variáveis, viável porque as redes 
 
 A regressão logística é configurada como `LogisticRegression(max_iter=1000)`, herdada da avaliação anterior, e recebe as três variáveis contínuas em sua forma original, sem discretização. Em consequência, a diferença entre as redes e a regressão logística mistura modelo e representação das variáveis, e não é interpretada como efeito do modelo isoladamente.
 
-A calibração das probabilidades é apenas medida, sem aplicação de método de correção.
+A calibração das probabilidades é apenas medida nos resultados principais, sem aplicação de método de correção. Uma análise secundária, posterior ao plano, aplica a correção sigmoide de Platt às predições do desenvolvimento (Seção 4.10).
 
 ### 3.5.1 Evidência incompleta
 
@@ -116,7 +116,7 @@ em que $B_b$ é o conjunto de casos cuja $p_k$ cai na faixa $b$, e $\bar{y}_b$ e
 
 No conjunto de teste, ROC-AUC, PR-AUC, Brier e utilidade média recebem intervalo por *bootstrap* com 2000 reamostras, semente 2026 e percentis 2,5 e 97,5 \cite{efron1993}. O intervalo não cobre a variação devida ao treino.
 
-As regras principais de leitura foram fixadas antes dos resultados; houve complementações documentadas após a abertura do teste (Apêndice B), e três análises exploratórias decididas depois dos resultados, descritas nas Seções 4.7 a 4.9. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
+As regras principais de leitura foram fixadas antes dos resultados; houve complementações documentadas após a abertura do teste (Apêndice B), e quatro análises exploratórias decididas depois dos resultados, descritas nas Seções 4.7 a 4.10. Diferença de ROC-AUC menor que 0,03 entre dois modelos é tratada como ruído, sem apontar vencedor (convenção descritiva do plano, que não constitui teste de equivalência nem permite concluir que os modelos são iguais); Brier igual ou maior que o da taxa base é relatado como "não melhor que prever a taxa base", comparação pontual, sem inferência estatística.
 
 O limite de 0,03 vale só para ROC-AUC: a PR-AUC é descrita sem conclusão de ruído, e a diferença pareada de utilidade é lida pelo intervalo de 95%, por decisão do autor registrada em docs/decisoes.md.
 
